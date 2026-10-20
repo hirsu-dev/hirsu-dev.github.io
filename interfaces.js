@@ -1,19 +1,19 @@
 export const interfaces = {
   neon: {
-    name: "Neon District",
+    name: "Nightshift",
     number: "01",
-    tagline: "A little human. A little machine.",
+    tagline: "Built outside the lines.",
     description:
-      "An electric project gallery. Cyan light, magenta accents, a procedural skyline, and room to explore.",
-    color: "#07101c",
+      "2077-inspired: acid yellow, black, red/cyan HUD details, cut edges and an original city-workshop illustration.",
+    color: "#0a0a0c",
   },
   blacksite: {
-    name: "Blacksite",
+    name: "Overdrive",
     number: "02",
-    tagline: "Build. Break. Rebuild.",
+    tagline: "Keep building. No brakes.",
     description:
-      "A focused field terminal. Amber signals, a file-system navigator, and a radar-inspired workbench.",
-    color: "#11120e",
+      "Edgerunners-inspired: chartreuse, violet, hard cel-shaded contrast, kinetic type and a focused project terminal.",
+    color: "#171325",
   },
 };
 export function validInterface(value) {

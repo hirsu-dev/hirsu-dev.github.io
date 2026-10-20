@@ -6,10 +6,12 @@ Hrushi's portfolio: https://hrushikbarani-hub.github.io/. Free GitHub Pages, no 
 
 Use the top-right interface menu on any page:
 
-- **Neon District** — cyan and magenta, a procedural isometric skyline, horizontal project directory, large editorial typography, and a seven-project gallery. Direct link: https://hrushikbarani-hub.github.io/?view=neon
-- **Blacksite** — amber and olive, a radar-inspired hero, vertical file navigator, compact scrollable terminal, pointer-following ASCII optic, and rotating schematic. Direct link: https://hrushikbarani-hub.github.io/?view=blacksite
+- **Nightshift** — Cyberpunk 2077-inspired acid yellow / black, an original city-workshop illustration, horizontal project directory, large editorial typography, and a seven-project gallery. Direct link: https://hrushikbarani-hub.github.io/?view=neon
+- **Overdrive** — Edgerunners-inspired chartreuse / violet, an angular key-art hero, vertical file navigator, compact scrollable terminal, pointer-following ASCII optic, and rotating schematic. Direct link: https://hrushikbarani-hub.github.io/?view=blacksite
 
 These are distinct layouts, not palette swaps. Switching preserves the current project, screenshot index, command output, and motion setting. The selected interface is saved locally. An explicit valid view query parameter overrides the saved choice; invalid values fall back safely. Links preserve the selected project hash. Browser back/forward supports both page and interface navigation. Initial preference is applied before CSS loads to reduce flashing.
+
+See ART-DIRECTION.md for official visual references, the original generated asset, and its complete built-in image-generation prompt. The official trailer was age-restricted; no full-series viewing is claimed.
 
 The older hancore.dev reference informed the terminal-exploration idea, but the new layouts, skyline, radar, schematic, interface art, and personal content are original. No reference-site code or assets are bundled. The old curved wheel, branching spine, and hand diagrams are no longer displayed.
 
@@ -19,7 +21,7 @@ The older hancore.dev reference informed the terminal-exploration idea, but the 
 - Use ← / → or image buttons for available project screenshots. Click a preview to enlarge; Escape closes dialogs.
 - Press : for the browser-local command line. help lists commands; ↑ / ↓ recall history.
 - Commands: ls, whoami, open maintaineros, stack, interfaces (or themes), workbench, search python, view neon, view blacksite, status, clear, and motion / eye / worm / ghost [on|off]. theme is an alias for view, not the old four-palette selector.
-- Pause animation in the interface menu or footer. System reduced-motion preference is respected by default; explicit choice overrides it. Rendering pauses in hidden tabs. Eye controls are relevant to Blacksite's optic panel.
+- Pause animation in the interface menu or footer. System reduced-motion preference is respected by default; explicit choice overrides it. Rendering pauses in hidden tabs. Eye controls are relevant to Overdrive's optic panel.
 - Commands never execute on your computer. Only interface and motion preferences are persisted.
 
 ## Edit and verify

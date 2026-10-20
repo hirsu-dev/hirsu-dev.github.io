@@ -6,7 +6,7 @@ import {
   validInterface,
   interfaceFromSearch,
   interfaceURL,
-} from "./interfaces.js";
+} from "./interfaces.js?v=4";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -209,12 +209,12 @@ function setView(name, { url = true } = {}) {
   $("#hero-interface-number").textContent = interfaces[name].number;
   $("#cyber-title").innerHTML =
     name === "neon"
-      ? "HUMAN IDEAS.<br><span>MACHINE WORLDS.</span>"
-      : "BUILD. BREAK.<br><span>REBUILD.</span>";
+      ? "BUILT OUTSIDE<br><span>THE LINES.</span>"
+      : "KEEP BUILDING.<br><span>NO BRAKES.</span>";
   $("#hero-render-label").textContent =
     name === "neon"
-      ? "PROCEDURAL SKYLINE / CANVAS 2D"
-      : "SECTOR SCAN / GENERATIVE VISUAL";
+      ? "ORIGINAL CONCEPT ART / FICTIONAL SCENE"
+      : "ORIGINAL KEY ART / NOT A PORTRAIT";
   document.querySelectorAll("[data-view-choice]").forEach((button) => {
     const active = button.dataset.viewChoice === name;
     button.setAttribute("aria-pressed", String(active));
