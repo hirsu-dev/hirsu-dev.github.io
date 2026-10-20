@@ -1,0 +1,105 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="800"
+  height="520"
+  viewBox="0 0 800 520"
+>
+  <rect width="800" height="520" fill="#27372e" />
+  <g stroke="#a8ba9877" fill="none">
+    <circle cx="400" cy="257" r="196" stroke-dasharray="4 9" />
+    <circle cx="400" cy="257" r="144" />
+  </g>
+  <g font-family="Consolas,monospace">
+    <rect
+      x="287"
+      y="58"
+      width="226"
+      height="416"
+      rx="33"
+      fill="#15251e"
+      stroke="#a8bb96"
+      stroke-width="3"
+    />
+    <rect x="300" y="73" width="200" height="385" rx="23" fill="#1e3028" />
+    <rect x="366" y="81" width="68" height="14" rx="7" fill="#101d17" />
+    <text x="322" y="135" fill="#cce292" font-size="12" letter-spacing="3">
+      NEXUS
+    </text>
+    <text
+      x="322"
+      y="162"
+      fill="#e8efdd"
+      font-family="Arial,sans-serif"
+      font-size="20"
+      font-weight="bold"
+    >
+      Personal AI.
+    </text>
+    <text
+      x="322"
+      y="183"
+      fill="#e8efdd"
+      font-family="Arial,sans-serif"
+      font-size="20"
+      font-weight="bold"
+    >
+      Home connected.
+    </text>
+    <rect x="320" y="209" width="158" height="80" rx="10" fill="#34493b" />
+    <text x="332" y="233" fill="#cce292" font-size="10">ASK NEXUS</text>
+    <path
+      d="M332 253h102m-102 13h72"
+      stroke="#8f9f86"
+      stroke-width="4"
+      stroke-linecap="round"
+    />
+    <rect x="320" y="306" width="74" height="59" rx="9" fill="#34493b" />
+    <rect x="404" y="306" width="74" height="59" rx="9" fill="#34493b" />
+    <text x="357" y="342" text-anchor="middle" fill="#dce8cc" font-size="10">
+      Pi-hole
+    </text>
+    <text x="441" y="342" text-anchor="middle" fill="#dce8cc" font-size="10">
+      Media
+    </text>
+    <rect x="320" y="381" width="158" height="32" rx="6" fill="#cce292" />
+    <text x="399" y="402" text-anchor="middle" fill="#263c27" font-size="10">
+      PERSONAL COMMAND CENTER
+    </text>
+    <path
+      d="M371 442h59"
+      stroke="#809376"
+      stroke-width="3"
+      stroke-linecap="round"
+    />
+    <rect
+      x="83"
+      y="170"
+      width="150"
+      height="58"
+      rx="8"
+      fill="#34493b"
+      stroke="#78916a"
+    />
+    <text x="158" y="205" text-anchor="middle" fill="#d5e4c2" font-size="13">
+      LOCAL MODELS
+    </text>
+    <rect
+      x="570"
+      y="318"
+      width="150"
+      height="58"
+      rx="8"
+      fill="#34493b"
+      stroke="#78916a"
+    />
+    <text x="645" y="353" text-anchor="middle" fill="#d5e4c2" font-size="13">
+      HOME SERVICES
+    </text>
+    <path
+      d="m233 200 54 35m226 73 57 37"
+      stroke="#9ab47f"
+      stroke-width="2"
+      stroke-dasharray="5 6"
+    />
+  </g>
+</svg>

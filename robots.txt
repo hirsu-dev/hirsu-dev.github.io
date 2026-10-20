@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://hrushikbarani-hub.github.io/sitemap.xml

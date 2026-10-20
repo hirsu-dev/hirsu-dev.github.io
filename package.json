@@ -1,0 +1,10 @@
+{
+  "name": "hirsu-workshop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hrushi's static developer and hardware portfolio",
+  "scripts": {
+    "check": "node --check app.js && node --check projects.js"
+  }
+}
