@@ -119,6 +119,18 @@ export const projects = [
     status: "Published · v0.3",
     artwork: "maintainer",
     image: "assets/maintaineros.jpg",
+    gallery: [
+      {
+        image: "assets/maintaineros-policy.jpg",
+        alt: "MaintainerOS capture policy dialog for a fictional demo repository, with no token entered",
+        caption: "Capture policy · fictional demo project",
+      },
+      {
+        image: "assets/maintaineros-comparison.jpg",
+        alt: "MaintainerOS saved-capture comparison for a fictional demo project",
+        caption: "Capture comparison · includes fictional demo records",
+      },
+    ],
     alt: "MaintainerOS dashboard showing repository health history and recommended next steps",
     caption: "App screenshot · includes fictional demo projects",
     description:
