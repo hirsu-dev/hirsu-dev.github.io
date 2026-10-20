@@ -244,6 +244,7 @@ function select(index, { hash = true, focus = false } = {}) {
   $("#terminal-title").textContent = `fish — ~ · ${page.label}`;
   document.title = `hirsu — ${page.label}`;
   const p = projects.find((p) => p.id === page.id);
+  content.classList.toggle("stack-content", page.id === "stack");
   content.innerHTML = p
     ? projectView(p)
     : page.id === "stack"
