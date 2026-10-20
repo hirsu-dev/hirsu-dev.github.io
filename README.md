@@ -1,42 +1,51 @@
-# hirsu — projects, experiments & the workbench
+# hirsu — two cyberpunk interfaces, one workbench
 
-Hrushi's interactive portfolio, published for free at https://hrushikbarani-hub.github.io/. Static HTML, CSS, ES modules, and Canvas 2D. No backend, framework, remote fonts, analytics, API keys, or install step. It does not run on a Raspberry Pi.
+Hrushi's portfolio: https://hrushikbarani-hub.github.io/. Free GitHub Pages, no Raspberry Pi or backend required. Static HTML, CSS, ES modules and original Canvas 2D graphics; no dependencies, third-party fonts, tracking, login, API keys, or installation step.
 
-## Experience
+## Choose an interface
 
-A curved project wheel, animated branching linework, live ASCII eye, terminal-style project pages, an animated workbench diagram, four persistent palettes, optional worm and ghost companions, enlarged previews, keyboard navigation, and public-source stack statistics. Inspired by the layout and interaction style of [hancore.dev](https://hancore.dev/site/); this site's implementation, graphics, palettes, and personal content are original. No reference-site source or assets are bundled.
+Use the top-right interface menu on any page:
 
-- Scroll or drag the desktop wheel; use ↑ / ↓ to browse and Home / End to jump.
-- Use ← / → or the image arrows to browse available project screenshots; click a preview to enlarge it.
-- On phones, swipe the thumbnail rail or use its arrow buttons.
-- Press : to focus the command line. Type help for commands; ↑ / ↓ recall command history.
-- Commands include ls, whoami, open maintaineros, stack, themes, workbench, search python, theme amber, status, clear, and motion / eye / worm / ghost [on|off].
-- The terminal only operates this portfolio; it never executes shell commands.
-- Footer controls pause motion, close the eye, and toggle companions. System reduced-motion preference is respected initially; an explicit toggle overrides it. Animations pause while the tab is hidden.
-- Page hashes are shareable and browser back/forward works. Old project- hashes remain supported.
+- **Neon District** — cyan and magenta, a procedural isometric skyline, horizontal project directory, large editorial typography, and a seven-project gallery. Direct link: https://hrushikbarani-hub.github.io/?view=neon
+- **Blacksite** — amber and olive, a radar-inspired hero, vertical file navigator, compact scrollable terminal, pointer-following ASCII optic, and rotating schematic. Direct link: https://hrushikbarani-hub.github.io/?view=blacksite
+
+These are distinct layouts, not palette swaps. Switching preserves the current project, screenshot index, command output, and motion setting. The selected interface is saved locally. An explicit valid view query parameter overrides the saved choice; invalid values fall back safely. Links preserve the selected project hash. Browser back/forward supports both page and interface navigation. Initial preference is applied before CSS loads to reduce flashing.
+
+The older hancore.dev reference informed the terminal-exploration idea, but the new layouts, skyline, radar, schematic, interface art, and personal content are original. No reference-site code or assets are bundled. The old curved wheel, branching spine, and hand diagrams are no longer displayed.
+
+## Controls
+
+- Click a directory entry, use ↑ / ↓ or Home / End, or swipe the horizontal directory on phones.
+- Use ← / → or image buttons for available project screenshots. Click a preview to enlarge; Escape closes dialogs.
+- Press : for the browser-local command line. help lists commands; ↑ / ↓ recall history.
+- Commands: ls, whoami, open maintaineros, stack, interfaces (or themes), workbench, search python, view neon, view blacksite, status, clear, and motion / eye / worm / ghost [on|off]. theme is an alias for view, not the old four-palette selector.
+- Pause animation in the interface menu or footer. System reduced-motion preference is respected by default; explicit choice overrides it. Rendering pauses in hidden tabs. Eye controls are relevant to Blacksite's optic panel.
+- Commands never execute on your computer. Only interface and motion preferences are persisted.
 
 ## Edit and verify
 
-Project descriptions, status, images, provenance, and source links live in projects.js. Terminal pages and navigation are in app.js. Motion is in motion.js; styles are in styles.css. HTML includes the accessible shell and no-JavaScript fallback. After adding projects, update page/count copy in app.js and index.html.
+Project descriptions, source links, images, status and provenance: projects.js. Shared pages and interactions: app.js. Interface registry, URL resolution and validation: interfaces.js. Artwork and motion: motion.js. Shared base utilities: styles.css; both current layouts and responsive rules: cyberpunk.css. HTML contains the shell, menu, lightweight preference bootstrap, accessible dialogs and no-JavaScript fallback.
+
+After adding projects, update the displayed page / project / repo counts. Current content is seven projects: five public project repositories plus two personal builds.
 
 Run from this directory:
 
     python -m http.server 8130 --bind 127.0.0.1
 
-Open http://127.0.0.1:8130/. ES modules require a web server. Run npm run check for JavaScript syntax checks and the dependency-free Node tests for circular navigation, language aggregation, and UTC calendar boundaries. No npm install is needed.
+Open http://127.0.0.1:8130/. ES modules require a web server. npm run check performs syntax checks and five dependency-free Node tests covering the two-mode registry, explicit / saved preference resolution, URL and project-hash preservation, circular navigation, language counts and UTC calendar boundaries. No npm install is needed.
 
-## Data, privacy, and honesty
+## Grounded content and privacy
 
-All five public project repos are included: custom-keyboard, nexus-mobile, hyprland-forge, maintaineros, and civiclens. Robo Telescope and Raspberry Pi Home Lab descriptions were supplied by Hrushi.
+All five public project repos are included: custom-keyboard, nexus-mobile, hyprland-forge, maintaineros and civiclens. Robo Telescope and Raspberry Pi Home Lab descriptions came from Hrushi.
 
-stack-data.js contains a dated GitHub REST snapshot. Language numbers count the five project repos containing that language, not skill level or lines written. Tool numbers reflect repository source evidence. The calendar is a bounded snapshot of 78 authored public default-branch commits across those five repos plus the portfolio, fetched October 20, 2026. Each commits endpoint response was below the 100-result limit; commits were filtered to author login hrushikbarani-hub. It is not a live GitHub contributions calendar. To refresh, fetch /repos/hrushikbarani-hub/{repo}/languages and /commits?per_page=100&since=2026-04-20T00:00:00Z, paginate if needed, aggregate UTC author dates, and update the snapshot date and UI caption. Never silently claim a capped response is complete.
+NEXUS Mobile is an experimental client for existing local models, not a self-trained foundation model or a claim of inference on the Pi. Robo Telescope previously worked and is currently under repair. Macro pad assembly, physical fit and testing are pending. Forge still needs real hardware validation. MaintainerOS and CivicLens v0.3 are runnable local apps, not backend services hosted by the portfolio.
 
-The footer timer and decorative signal graph describe this local page session, not global visitors. Pointer tracking, command history, themes, and motion stay in the browser. Only theme and motion preferences are persisted. There are no live connections to home services, network endpoints, private contact details, or credentials.
+SVG project images are labeled illustrations. assets/nexus-cad.jpg is the public custom-keyboard/photos/fit-v1.2.jpg CAD preview, not a device photograph. App screenshots originate from the public repositories and include labeled fictional demo records. Captions appear on both gallery cards and detail pages.
 
-NEXUS Mobile uses existing models; it does not imply a self-trained foundation model or inference on the Pi. Robo Telescope previously worked and is currently under repair. The macro pad is at design stage with assembly, fit, and physical testing pending. Hyprland Forge still needs real hardware validation. MaintainerOS and CivicLens v0.3 are runnable local apps, not backend services hosted by this portfolio.
+stack-data.js is a dated public GitHub REST snapshot: language numbers count five project repos with that language, not proficiency; tool numbers reflect source evidence. The calendar shows 78 authored public default-branch commits across those repos plus the portfolio, April–October 20, 2026. All six bounded responses were below the 100-result limit. It is not a live GitHub contributions calendar. Refresh using /repos/hrushikbarani-hub/{repo}/languages and /commits?per_page=100&since=2026-04-20T00:00:00Z; paginate as needed, filter author login hrushikbarani-hub and aggregate UTC dates. Update the dated caption with the data. Do not imply capped responses are complete.
 
-SVG project images are labeled illustrations. assets/nexus-cad.jpg is the public custom-keyboard/photos/fit-v1.2.jpg CAD preview, not a physical-device photo. App screenshots originate from their public repositories and include labeled fictional demo records.
+The skyline, radar, moving geometry and signal bars are generative visuals, not live network telemetry. The optic reacts to local pointer coordinates; it does not use a camera. Timer, pointer coordinates, command history and optional companions stay in the page. No analytics, home endpoints, credentials, network addresses or private contact details are published.
 
 ## Deployment
 
-Push to main. GitHub Pages deploys main / (root), with .nojekyll and HTTPS enabled. No paid domain, subscription, build workflow, or server is required. The MIT license covers this original portfolio code.
+Push main. GitHub Pages deploys main / (root), with .nojekyll and HTTPS. No paid domain, subscription, build workflow or server is needed. The MIT license covers this original portfolio code.

@@ -1,6 +1,12 @@
 import { projects } from "./projects.js?v=2";
 import { snapshot, languageCounts, calendarDays } from "./stack-data.js";
-import { createEffects, wrap } from "./motion.js";
+import { createEffects, wrap } from "./motion.js?v=3";
+import {
+  interfaces,
+  validInterface,
+  interfaceFromSearch,
+  interfaceURL,
+} from "./interfaces.js";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -30,26 +36,9 @@ const savePreference = (key, value) => {
     /* Private browsing can disable storage. */
   }
 };
-const themes = {
-  bone: {
-    description: "ink, bone & a little rose",
-    colors: ["#0b0c0a", "#d3d0b9", "#93917f", "#db6e88", "#90ada0"],
-  },
-  phosphor: {
-    description: "a green-screen kind of night",
-    colors: ["#07100b", "#c5e8c1", "#84a688", "#8fe28b", "#add7bf"],
-  },
-  amber: {
-    description: "warm light, late-night builds",
-    colors: ["#100d09", "#e2d1b0", "#ae9472", "#e3a854", "#cdb57a"],
-  },
-  violet: {
-    description: "quiet ultraviolet",
-    colors: ["#0e0c13", "#dbd0e4", "#a193b0", "#c292dc", "#a6b0d4"],
-  },
-};
+
 const pages = [
-  { id: "about", label: "whoami", art: "monogram-art", html: "h⌁" },
+  { id: "about", label: "overview", art: "monogram-art", html: "h⌁" },
   ...projects.map((p) => ({
     id: p.id,
     label:
@@ -63,7 +52,7 @@ const pages = [
   { id: "stack", label: "stack/", art: "stack-art", html: "⌘ ◈ ◫ ⬡\n⎇ ◉ ◇ ⌁" },
   {
     id: "themes",
-    label: "themes/",
+    label: "interfaces/",
     art: "theme-art",
     html: ["#d3d0b9", "#db6e88", "#90ada0", "#e3a854", "#c292dc", "#8fe28b"]
       .map((c) => `<i style="--swatch:${c}"></i>`)
@@ -80,11 +69,13 @@ const media = matchMedia("(prefers-reduced-motion: reduce)");
 const state = {
   index: 0,
   target: 0,
+  view: interfaceFromSearch(location.search, readPreference("view", "neon")),
   motion: readPreference("motion", media.matches ? "off" : "on") === "on",
   eye: true,
   worm: false,
   ghost: false,
 };
+const initialView = state.view;
 const content = $("#content");
 const input = $("#command-input");
 let effects;
@@ -97,7 +88,7 @@ const currentShot = (p) => shotsFor(p)[shotIndices.get(p.id) || 0];
 $("#wheel-track").innerHTML = pages
   .map(
     (p, i) =>
-      `<button type="button" class="wheel-item" id="page-${p.id}" role="option" aria-selected="false" aria-label="${escape(p.label)}" tabindex="-1" data-index="${i}">${p.image ? `<img src="${p.image}" alt="" decoding="async" draggable="false" />` : `<span class="nav-art ${p.art}" aria-hidden="true">${p.html}</span>`}<span class="wheel-caption" aria-hidden="true">${escape(p.label)}</span></button>`,
+      `<button type="button" class="wheel-item" id="page-${p.id}" role="option" aria-selected="false" aria-label="${escape(p.label)}" tabindex="-1" data-index="${i}"><span class="nav-index" aria-hidden="true">${String(i).padStart(2, "0")}</span>${p.image ? `<img src="${p.image}" alt="" decoding="async" draggable="false" />` : `<span class="nav-art ${p.art}" aria-hidden="true">${p.html}</span>`}<span class="wheel-caption" aria-hidden="true">${escape(p.label)}</span></button>`,
   )
   .join("");
 
@@ -108,13 +99,13 @@ function calendar() {
 }
 
 function about() {
-  return `<div class="blueprint"><div class="blueprint-top"><span>H / EXPERIMENTS IN MOTION</span><span>section A—A</span></div><canvas id="blueprint-canvas" aria-hidden="true"></canvas><div class="blueprint-tags"><span>SOFTWARE</span><span>CIRCUITS</span><span>CURIOSITY →</span></div><span class="blueprint-label">seven projects · one curious mind</span></div>${prompt("whoami")}<p class="intro-copy">Hi, I'm <strong>Hrushi</strong>. I build useful software, tinker with electronics, and occasionally convince a telescope to move.<br>Python, Raspberry Pis, personal AI, and a desktop that feels like mine. This is the workbench.</p>${prompt("fetch hrushikbarani-hub")}<dl class="metrics"><dt>projects</dt><dd><b>7</b> software + hardware</dd><dt>public repos</dt><dd><b>5</b> project repositories</dd><dt>home lab</dt><dd>Pi-hole · VPN · Tailscale</dd><dt>on the bench</dt><dd>Robo Telescope <span class="dim">/ under repair</span></dd></dl>${prompt("ls links/")}<div class="inline-links">${external(github, "github")}<a href="#stack">stack/</a><a href="#log">workbench/</a>${external(`${github}/hrushikbarani-hub.github.io`, "site source")}</div>`;
+  return `<section class="profile-panel"><div><p class="kicker">THE PERSON BEHIND THE PROJECTS</p><h2>Not just code.<br>Things that do something.</h2><p>I'm <strong>Hrushi</strong>. I build useful software, tinker with electronics, and occasionally convince a telescope to move. This is the workbench: some shipped, some still in pieces.</p><div class="inline-links">${external(github, "Find me on GitHub")}<a href="#stack">Explore my stack ↗</a></div></div><dl class="metrics"><dt>PROJECTS</dt><dd><b>07</b> software + hardware</dd><dt>PUBLIC REPOS</dt><dd><b>05</b> project repositories</dd><dt>HOME LAB</dt><dd>Pi-hole / VPN / Tailscale</dd><dt>TELESCOPE</dt><dd>Under repair <span class="dim">/ previously working</span></dd></dl></section><div class="blueprint"><div class="blueprint-top"><span>WORKBENCH / GENERATIVE SCHEMATIC</span><span>VISUAL ONLY</span></div><canvas id="blueprint-canvas" aria-hidden="true"></canvas><span class="blueprint-label">software × hardware × curiosity</span></div><section class="project-catalog" aria-labelledby="catalog-title"><div class="catalog-heading"><div><p class="kicker">SELECTED WORK / 7 PROJECTS</p><h2 id="catalog-title">Built out of curiosity.</h2></div><a href="#log">View workbench ↗</a></div><div class="catalog-grid">${projects.map((p, i) => `<a class="catalog-card" href="#${p.id}"><div class="catalog-art"><img src="${p.image}" alt="${escape(p.alt)}" loading="lazy"><span class="card-art-caption">${escape(p.caption)}</span><span class="card-index">0${i + 1} /</span><span class="card-arrow">↗</span></div><div class="catalog-copy"><span class="kicker">${escape(p.category)}</span><h3>${escape(p.title)}</h3><p>${escape(p.description)}</p><span class="card-status">${escape(p.status)}</span></div></a>`).join("")}</div></section>`;
 }
 
 function projectView(p) {
   const shot = currentShot(p),
     total = shotsFor(p).length;
-  return `<div class="project-title"><h2>${escape(p.title)}</h2><span class="status-tag">${escape(p.status)}</span></div><button type="button" class="project-preview" data-preview="${p.id}" aria-label="Enlarge ${escape(p.title)} preview"><img id="project-shot" src="${shot.image}" alt="${escape(shot.alt)}" /><span class="preview-label">view large ↗</span></button><div class="gallery-meta"><p class="tiny-note" id="shot-caption">${escape(shot.caption)}</p><div class="shot-controls"><button type="button" data-shot-step="-1" aria-label="Previous image" ${total < 2 ? "disabled" : ""}>←</button><span id="shot-counter" role="status">${(shotIndices.get(p.id) || 0) + 1} / ${total}</span><button type="button" data-shot-step="1" aria-label="Next image" ${total < 2 ? "disabled" : ""}>→</button></div></div>${prompt(`cat ${p.id}/README.md`)}<p>${escape(p.overview)}</p>${prompt("ls features/")}<ul class="feature-list">${p.features.map((x) => `<li>${escape(x)}</li>`).join("")}</ul><div class="tag-row">${p.tags.map((t) => `<span>${escape(t)}</span>`).join("")}</div>${prompt("status --honest")}<p class="tiny-note">${escape(p.progress)}</p>${p.source ? `${prompt("open source/")}<div class="inline-links">${external(p.source, "repository")}${external(`${p.source}#readme`, "setup & details")}</div>` : '<p class="tiny-note">Personal build · no public repository linked.</p>'}<p class="tiny-note evidence-note">Source: ${escape(p.evidence)}</p>`;
+  return `<div class="project-title"><div><p class="kicker">${escape(p.category)}</p><h2>${escape(p.title)}</h2></div><span class="status-tag">${escape(p.status)}</span></div><div class="project-detail"><div class="project-media"><button type="button" class="project-preview" data-preview="${p.id}" aria-label="Enlarge ${escape(p.title)} preview"><img id="project-shot" src="${shot.image}" alt="${escape(shot.alt)}"><span class="preview-label">ENLARGE ↗</span></button><div class="gallery-meta"><p class="tiny-note" id="shot-caption">${escape(shot.caption)}</p><div class="shot-controls"><button type="button" data-shot-step="-1" aria-label="Previous image" ${total < 2 ? "disabled" : ""}>←</button><span id="shot-counter" role="status">${(shotIndices.get(p.id) || 0) + 1} / ${total}</span><button type="button" data-shot-step="1" aria-label="Next image" ${total < 2 ? "disabled" : ""}>→</button></div></div></div><div class="project-copy">${prompt("read " + p.id)}<p>${escape(p.overview)}</p>${prompt("capabilities")}<ul class="feature-list">${p.features.map((x) => `<li>${escape(x)}</li>`).join("")}</ul><div class="tag-row">${p.tags.map((t) => `<span>${escape(t)}</span>`).join("")}</div>${prompt("status --honest")}<p class="tiny-note">${escape(p.progress)}</p>${p.source ? `<div class="inline-links">${external(p.source, "Repository")}${external(p.source + "#readme", "Setup & details")}</div>` : '<p class="tiny-note">Personal build / no public repository linked.</p>'}<p class="tiny-note evidence-note">Source: ${escape(p.evidence)}</p></div></div>`;
 }
 
 function changeShot(step) {
@@ -159,17 +150,16 @@ function stack() {
   return `${prompt("stack --languages")}<div class="stack-list">${counts.map(([name, count]) => `<div class="language-row"><span class="lang-name"><span class="lang-icon">${icons[name] || "·"}</span>${name}</span><span class="language-bar" aria-hidden="true"><i style="--size:${(count / 4) * 100}%"></i></span><span class="lang-count"><b>${count}</b> ${count === 1 ? "repo" : "repos"}</span></div>`).join("")}</div><p class="tiny-note" style="margin-top:6px">Language presence, not proficiency. 5 project repos · ${snapshot.date}.</p>${prompt("stack --tools")}<div class="tools-grid">${tools.map(([name, count, icon]) => `<div><span><span class="tool-icon">${icon}</span>${name}</span><b>${count}</b></div>`).join("")}</div><p class="tiny-note" style="margin-top:5px">numbers: project repos with public source evidence</p>${prompt("stack --ai")}<div class="inline-links"><span>⌘ Codex</span><span>◈ NEXUS local-model client</span></div><p class="tiny-note" style="margin-top:5px">AI-assisted building + experiments with existing models. Not a claim of training a foundation model.</p>${prompt("stack --site")}<div class="site-stack"><span>◇ HTML / CSS</span><span>index.html · styles.css</span><span>JS JavaScript</span><span>app.js · motion.js</span><span>⎇ GitHub Pages</span><span>free static hosting</span></div>${calendar()}`;
 }
 
-function themeView() {
-  return `${prompt("ls themes/")}<h2>Four palettes. Same little corner of the internet.</h2><p class="tiny-note">Choose one to recolor the entire site, including the live graphics. Saved only in your browser.</p><div class="theme-grid">${Object.entries(
-    themes,
-  )
+function interfaceCards() {
+  return Object.entries(interfaces)
     .map(
-      ([name, t]) =>
-        `<button class="theme-card" type="button" data-theme-choice="${name}" aria-pressed="${document.documentElement.dataset.theme === name}" aria-label="Use ${name} theme"><div class="theme-preview" style="${["bg", "fg", "muted", "accent", "link"].map((s, i) => `--theme-${s}:${t.colors[i]}`).join(";")}"><span>hirsu@workshop ~</span><br>› theme ${name}<br><span class="preview-accent">████████ ░░░░░░</span><br>make something useful_</div><div class="theme-caption"><span>${name}</span><span>apply ↵</span></div></button>`,
+      ([id, mode]) =>
+        `<button type="button" class="interface-choice" data-view-choice="${id}" aria-pressed="${state.view === id}" aria-label="Use ${mode.name}"><span class="mode-preview preview-${id}" aria-hidden="true"><i></i><i></i><i></i><i></i><b>H/</b></span><span class="mode-copy"><small>INTERFACE ${mode.number}</small><strong>${mode.name}</strong><span>${mode.description}</span></span><span class="mode-check" aria-hidden="true">${state.view === id ? "●" : "↗"}</span></button>`,
     )
-    .join(
-      "",
-    )}</div>${prompt("cat preferences")}<p class="tiny-note">bone / ink, olive and rose<br>phosphor / a green-screen kind of night<br>amber / warm light, late-night builds<br>violet / quiet ultraviolet</p><p class="tiny-note">Motion can be paused from the footer. Your system's reduced-motion preference is respected by default.</p>`;
+    .join("");
+}
+function themeView() {
+  return `<section class="interface-page"><p class="kicker">PERSONALIZE YOUR FREQUENCY</p><h2>Two worlds.<br>One workbench.</h2><p>Switch the entire layout, not just the accent color. Your project, screenshot selection, and motion setting stay with you.</p><div class="interface-page-choices">${interfaceCards()}</div><p class="tiny-note">The header menu is always available. Your choice is remembered locally; nothing is sent to a server.</p></section>`;
 }
 
 function log() {
@@ -208,17 +198,35 @@ function log() {
   return `${prompt("cat workbench.log")}<h2>Some shipped. Some still in pieces.</h2><p class="tiny-note">Current project notes, not an automated activity feed.</p><div class="log-list">${entries.map(([date, title, text, id]) => `<article class="log-entry"><time>${date}</time><h3><a href="#${id}">${title} ↗</a></h3><p>${text}</p></article>`).join("")}</div>`;
 }
 
-function setTheme(name) {
-  if (!Object.hasOwn(themes, name)) return false;
-  document.documentElement.dataset.theme = name;
-  $('meta[name="theme-color"]').content = themes[name].colors[0];
-  $("#current-theme").textContent = `palette: ${name}`;
-  savePreference("theme", name);
-  document
-    .querySelectorAll("[data-theme-choice]")
-    .forEach((b) =>
-      b.setAttribute("aria-pressed", String(b.dataset.themeChoice === name)),
-    );
+function setView(name, { url = true } = {}) {
+  if (!validInterface(name)) return false;
+  state.view = name;
+  document.documentElement.dataset.view = name;
+  $('meta[name="theme-color"]').content = interfaces[name].color;
+  $("#interface-label").textContent = interfaces[name].name;
+  $("#current-theme").textContent = "interface: " + interfaces[name].name;
+  $("#hero-interface-name").textContent = interfaces[name].name.toUpperCase();
+  $("#hero-interface-number").textContent = interfaces[name].number;
+  $("#cyber-title").innerHTML =
+    name === "neon"
+      ? "HUMAN IDEAS.<br><span>MACHINE WORLDS.</span>"
+      : "BUILD. BREAK.<br><span>REBUILD.</span>";
+  $("#hero-render-label").textContent =
+    name === "neon"
+      ? "PROCEDURAL SKYLINE / CANVAS 2D"
+      : "SECTOR SCAN / GENERATIVE VISUAL";
+  document.querySelectorAll("[data-view-choice]").forEach((button) => {
+    const active = button.dataset.viewChoice === name;
+    button.setAttribute("aria-pressed", String(active));
+    button.querySelector(".mode-check").textContent = active ? "●" : "↗";
+  });
+  savePreference("view", name);
+  if (url) {
+    const next = interfaceURL(location.href, name);
+    if (next.href !== location.href) history.pushState(null, "", next);
+    if (state.index === 0) window.scrollTo({ top: 0, behavior: "instant" });
+    else $("#terminal").scrollIntoView({ block: "start", behavior: "instant" });
+  }
   effects?.refresh();
   return true;
 }
@@ -241,7 +249,9 @@ function select(index, { hash = true, focus = false } = {}) {
   $("#wheel-track").setAttribute("aria-activedescendant", `page-${page.id}`);
   $("#position").textContent =
     `${String(next + 1).padStart(2, "0")} / ${pages.length}`;
-  $("#terminal-title").textContent = `fish — ~ · ${page.label}`;
+  document.documentElement.dataset.page = page.id;
+  $("#terminal-title").textContent =
+    `ARCHIVE / ${page.label.replaceAll("/", "").toUpperCase()}`;
   document.title = `hirsu — ${page.label}`;
   const p = projects.find((p) => p.id === page.id);
   content.classList.toggle("stack-content", page.id === "stack");
@@ -256,13 +266,14 @@ function select(index, { hash = true, focus = false } = {}) {
           : about();
   $("#command-output").textContent = "";
   $("#terminal-scroll").scrollTop = 0;
-  if (matchMedia("(max-width: 640px)").matches) {
-    const b = $(`#page-${page.id}`);
-    $("#wheel-track").scrollTo({
-      left: b.offsetLeft,
-      behavior: state.motion ? "smooth" : "instant",
-    });
-  }
+  const navButton = $(`#page-${page.id}`);
+  navButton.scrollIntoView({
+    block: "nearest",
+    inline: "nearest",
+    behavior: "instant",
+  });
+  if (state.view === "neon" && next !== 0)
+    $("#terminal").scrollIntoView({ block: "start", behavior: "instant" });
   if (focus) $(`#page-${page.id}`).focus({ preventScroll: true });
   effects?.refresh();
 }
@@ -284,6 +295,8 @@ function route() {
     bench: "log",
     "nexus-mobile": "nexus-ai",
     whoami: "about",
+    overview: "about",
+    interfaces: "themes",
   };
   const index = pages.findIndex((p) => p.id === (aliases[raw] || raw));
   const next = index < 0 ? 0 : index;
@@ -303,6 +316,8 @@ function toggle(kind, forced) {
   button.setAttribute("aria-pressed", String(state[kind]));
   button.querySelector("b").textContent = labels[kind][state[kind] ? 0 : 1];
   if (kind === "motion") {
+    $("#menu-motion").setAttribute("aria-pressed", String(state.motion));
+    $("#menu-motion span").textContent = state.motion ? "On" : "Off";
     document.documentElement.classList.toggle("motion-off", !state.motion);
     document.documentElement.classList.toggle("motion-on", state.motion);
     savePreference("motion", state.motion ? "on" : "off");
@@ -335,7 +350,7 @@ function execute(command) {
   if (!lower) return;
   if (lower === "help")
     say(
-      "whoami · ls · open <name or 1–11> · stack · themes · workbench\nsearch <term> · theme bone|phosphor|amber|violet\nmotion on|off · eye · worm · ghost · status · clear\n↑↓ browse projects outside this input; ↑↓ recall commands here.",
+      "whoami · ls · open <name or 1–11> · stack · themes · workbench\nsearch <term> · view neon|blacksite\nmotion on|off · eye · worm · ghost · status · clear\n↑↓ browse projects outside this input; ↑↓ recall commands here.",
     );
   else if (lower === "ls")
     say(
@@ -343,10 +358,17 @@ function execute(command) {
         .map((p, i) => `${String(i + 1).padStart(2, "0")}  ${p.label}`)
         .join("\n"),
     );
-  else if (["whoami", "stack", "themes", "workbench", "log"].includes(lower)) {
+  else if (
+    ["whoami", "stack", "themes", "interfaces", "workbench", "log"].includes(
+      lower,
+    )
+  ) {
     select(
       pages.findIndex(
-        (p) => p.id === ({ whoami: "about", workbench: "log" }[lower] || lower),
+        (p) =>
+          p.id ===
+          ({ whoami: "about", workbench: "log", interfaces: "themes" }[lower] ||
+            lower),
       ),
     );
   } else if (["open", "cd"].includes(lower)) {
@@ -366,11 +388,11 @@ function execute(command) {
           : "No projects match that search."
         : "Usage: search <term>",
     );
-  } else if (lower === "theme")
+  } else if (lower === "theme" || lower === "view")
     say(
-      setTheme(arg.toLowerCase())
-        ? `Applied ${arg}.`
-        : "Choose: bone, phosphor, amber, violet.",
+      setView(arg.toLowerCase())
+        ? `Interface: ${interfaces[state.view].name}.`
+        : "Choose: neon or blacksite. Or use the header menu.",
     );
   else if (["motion", "eye", "worm", "ghost"].includes(lower)) {
     if (arg && !["on", "off"].includes(arg)) say(`Usage: ${lower} [on|off]`);
@@ -422,7 +444,6 @@ input.addEventListener("keydown", (event) => {
   }
 });
 $("#wheel-track").addEventListener("click", (event) => {
-  if (dragged) return;
   const b = event.target.closest("[data-index]");
   if (b) select(Number(b.dataset.index));
 });
@@ -450,8 +471,8 @@ for (const dialog of document.querySelectorAll("dialog"))
 content.addEventListener("click", (event) => {
   const step = event.target.closest("[data-shot-step]");
   if (step) changeShot(Number(step.dataset.shotStep));
-  const theme = event.target.closest("[data-theme-choice]");
-  if (theme) setTheme(theme.dataset.themeChoice);
+  const choice = event.target.closest("[data-view-choice]");
+  if (choice) setView(choice.dataset.viewChoice);
   const button = event.target.closest("[data-preview]");
   if (button) {
     const p = projects.find((p) => p.id === button.dataset.preview);
@@ -463,50 +484,26 @@ content.addEventListener("click", (event) => {
   }
 });
 
-let wheelAccum = 0,
-  lastWheel = 0,
-  dragStart = null,
-  dragged = false;
-$("#wheel").addEventListener(
-  "wheel",
-  (event) => {
-    if (matchMedia("(max-width:640px)").matches) return;
-    event.preventDefault();
-    const now = performance.now();
-    if (now - lastWheel > 180) wheelAccum = 0;
-    wheelAccum += event.deltaY;
-    if (Math.abs(wheelAccum) > 45 && now - lastWheel > 130) {
-      select(state.index + Math.sign(wheelAccum));
-      wheelAccum = 0;
-      lastWheel = now;
-    }
-  },
-  { passive: false },
-);
-$("#wheel-track").addEventListener("pointerdown", (e) => {
-  if (e.button !== 0 || matchMedia("(max-width:640px)").matches) return;
-  dragStart = { y: e.clientY, index: state.index, pointer: e.pointerId };
-  dragged = false;
+$("#interface-choices").innerHTML = interfaceCards();
+$("#interface-toggle").addEventListener("click", () => {
+  $("#interface-menu").showModal();
+  $("#interface-toggle").setAttribute("aria-expanded", "true");
 });
-window.addEventListener("pointermove", (e) => {
-  if (!dragStart) return;
-  const diff = dragStart.y - e.clientY;
-  if (Math.abs(diff) > 12) {
-    dragged = true;
-    const next = wrap(dragStart.index + Math.round(diff / 80), pages.length);
-    if (next !== state.index) select(next);
+$("#close-interface").addEventListener("click", () =>
+  $("#interface-menu").close(),
+);
+$("#menu-motion").addEventListener("click", () => toggle("motion"));
+$("#interface-menu").addEventListener("close", () =>
+  $("#interface-toggle").setAttribute("aria-expanded", "false"),
+);
+$("#interface-choices").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-view-choice]");
+  if (button) {
+    setView(button.dataset.viewChoice);
+    $("#interface-menu").close();
   }
 });
-window.addEventListener("pointerup", () => {
-  dragStart = null;
-  setTimeout(() => {
-    dragged = false;
-  }, 0);
-});
-window.addEventListener("pointercancel", () => {
-  dragStart = null;
-  dragged = false;
-});
+
 let echoTimer;
 window.addEventListener("keydown", (event) => {
   if (document.querySelector("dialog[open]")) return;
@@ -551,10 +548,14 @@ media.addEventListener("change", () => {
   if (media.matches) toggle("motion", false);
 });
 window.addEventListener("hashchange", route);
-setTheme(readPreference("theme", "bone"));
+setView(initialView, { url: false });
+window.addEventListener("popstate", () => {
+  setView(interfaceFromSearch(location.search, initialView), { url: false });
+  route();
+});
 route();
 toggle("motion", state.motion);
-effects = createEffects(state, pages.length);
+effects = createEffects(state);
 effects.refresh();
 const started = Date.now();
 setInterval(() => {

@@ -3,27 +3,25 @@ const seeded = (n) => {
   const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
   return x - Math.floor(x);
 };
-
-export function createEffects(state, count) {
-  const $ = (s) => document.querySelector(s);
-  const wheel = $("#wheel-ink"),
+export function createEffects(state) {
+  const $ = (s) => document.querySelector(s),
     worm = $("#worm-canvas"),
     graph = $("#session-graph");
-  const pointer = { x: innerWidth * 0.7, y: innerHeight * 0.35 };
-  const ghost = { x: innerWidth * 0.7, y: innerHeight * 0.7 };
+  const pointer = { x: innerWidth * 0.7, y: innerHeight * 0.35 },
+    ghost = { x: innerWidth * 0.7, y: innerHeight * 0.7 };
   const tail = Array.from({ length: 48 }, () => ({ ...pointer }));
   let colors = {},
-    position = state.target,
     frame = 0,
     previous = 0,
-    lastEye = 0;
-  let sizes = new WeakMap();
+    lastEye = -200,
+    sizes = new WeakMap(),
+    hadWorm = false;
   function palette() {
-    const s = getComputedStyle(document.documentElement);
+    const style = getComputedStyle(document.documentElement);
     colors = Object.fromEntries(
-      ["fg", "muted", "faint", "accent", "line", "bg"].map((k) => [
+      ["bg", "fg", "muted", "faint", "accent", "secondary", "line"].map((k) => [
         k,
-        s.getPropertyValue(`--${k}`).trim(),
+        style.getPropertyValue("--" + k).trim(),
       ]),
     );
   }
@@ -47,184 +45,277 @@ export function createEffects(state, count) {
     ctx.clearRect(0, 0, size.w, size.h);
     return { ctx, ...size };
   }
-  function wheelLayout() {
-    const track = $("#wheel-track");
-    if (matchMedia("(max-width:640px)").matches) return;
-    const h = track.clientHeight,
-      center = h / 2 - 47;
-    for (const [i, button] of [...track.children].entries()) {
-      let d = wrap(i - position + count / 2, count) - count / 2;
-      const x = Math.pow(Math.abs(d), 1.65) * 12;
-      const scale = Math.max(0.65, 1 - Math.abs(d) * 0.105);
-      button.style.transform = `translate(${x.toFixed(2)}px,${(center + d * 97).toFixed(2)}px) rotate(${(-d * 0.125).toFixed(4)}rad) scale(${scale.toFixed(3)})`;
-      button.style.opacity = Math.max(0.22, 1 - Math.abs(d) * 0.16).toFixed(3);
-      button.style.visibility = Math.abs(d) > 4 ? "hidden" : "visible";
-      button.style.zIndex = String(100 - Math.round(Math.abs(d) * 10));
+  function city(t) {
+    const { ctx, w, h } = fit($("#city-canvas"));
+    if (!w) return;
+    if (state.view === "blacksite") {
+      radar(ctx, w, h, t);
+      return;
     }
-  }
-  function drawWheel(t) {
-    if (matchMedia("(max-width:640px)").matches) return;
-    const { ctx, w, h } = fit(wheel),
-      center = h / 2;
-    const spine = (y) =>
-      78 +
-      Math.pow((y - center) / 100, 2) * 6 +
-      Math.sin(y * 0.013 + t * 0.0003) * 2;
-    ctx.strokeStyle = colors.fg;
-    ctx.globalAlpha = 0.72;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    for (let y = 8; y < h - 12; y += 3) {
-      const x = spine(y);
-      if (y === 8) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    for (let branch = 0; branch < 105; branch++) {
-      const y = 14 + seeded(branch + 5) * (h - 40),
-        length = 14 + seeded(branch + 18) * 55;
-      const bustle = Math.sin(y * 0.035 + position * 0.5) * 0.5 + 0.5;
-      if (bustle < 0.58 && branch % 4 !== 0) continue;
-      const x = spine(y),
-        direction = seeded(branch + 27) > 0.38 ? -1 : 1;
-      const dx = direction * length * (0.6 + bustle),
-        dy = (seeded(branch + 89) - 0.55) * 65;
-      ctx.globalAlpha = 0.12 + seeded(branch + 71) * 0.55;
-      ctx.lineWidth = seeded(branch + 34) > 0.8 ? 1 : 0.5;
+    const small = w < 650,
+      origin = {
+        x: w * (small ? 0.74 : 0.76) + (pointer.x / innerWidth - 0.5) * 8,
+        y: h * (small ? 0.83 : 0.83),
+      };
+    const scale = small ? 0.65 : 1;
+    const project = (x, z, y = 0) => ({
+      x: origin.x + (x - z) * 0.78 * scale,
+      y: origin.y + (x + z) * 0.31 * scale - y * scale,
+    });
+    ctx.lineWidth = 0.7;
+    ctx.strokeStyle = colors.accent;
+    ctx.globalAlpha = 0.13;
+    for (let i = -6; i <= 6; i++) {
+      const a = project(i * 50, -300),
+        b = project(i * 50, 300),
+        c = project(-300, i * 50),
+        d = project(300, i * 50);
       ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.bezierCurveTo(
-        x + dx * 0.2,
-        y + dy * 0.8,
-        x + dx * 0.8,
-        y + dy * 0.15,
-        x + dx,
-        y + dy,
-      );
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.moveTo(c.x, c.y);
+      ctx.lineTo(d.x, d.y);
       ctx.stroke();
-      const endX = x + dx,
-        endY = y + dy;
-      if (branch % 2 === 0) {
-        ctx.beginPath();
-        ctx.moveTo(x + dx * 0.6, y + dy * 0.6);
-        ctx.lineTo(endX - 8, endY - 12);
-        ctx.lineTo(endX + 4, endY - 19);
-        ctx.stroke();
-      }
-      if (branch % 3 === 0) {
-        ctx.fillStyle = colors.fg;
-        ctx.fillRect(endX, endY, 1.2, 1.2);
-      }
-    }
-    // Fine dendrite fans grow around the curved spine, independent of project data.
-    for (let cluster = 0; cluster < 8; cluster++) {
-      const baseY = 22 + (cluster / 7) * (h - 55);
-      const baseX = spine(baseY);
-      for (let tip = 0; tip < 25; tip++) {
-        const seed = cluster * 41 + tip;
-        const dx = -(12 + seeded(seed + 400) * 48);
-        const dy = (seeded(seed + 600) - 0.6) * 75;
-        ctx.lineWidth = 0.45;
-        ctx.globalAlpha = 0.17 + seeded(seed + 700) * 0.6;
-        ctx.beginPath();
-        ctx.moveTo(baseX, baseY);
-        ctx.bezierCurveTo(
-          baseX + dx * 0.25,
-          baseY + dy * 0.9,
-          baseX + dx * 0.6,
-          baseY + dy * 0.2,
-          baseX + dx,
-          baseY + dy,
-        );
-        ctx.stroke();
-        ctx.fillStyle = colors.fg;
-        ctx.fillRect(baseX + dx, baseY + dy, 0.9, 0.9);
-      }
     }
     ctx.globalAlpha = 1;
-    for (let i = 0; i < 8; i++) {
-      const y = wrap(t * 0.025 + (i * h) / 8, h - 20) + 10;
-      ctx.fillStyle = i % 3 === 0 ? colors.accent : colors.fg;
-      ctx.fillRect(spine(y) - 1, y - 1, 2, 2);
+    const glow = ctx.createRadialGradient(
+      origin.x,
+      origin.y - 120 * scale,
+      10,
+      origin.x,
+      origin.y - 120 * scale,
+      250 * scale,
+    );
+    glow.addColorStop(0, "#ff4bb814");
+    glow.addColorStop(1, "#ff4bb800");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+    const buildings = [
+      [-140, -135, 45, 115],
+      [-80, -165, 42, 170],
+      [5, -145, 52, 110],
+      [80, -100, 40, 190],
+      [145, -55, 45, 105],
+      [-150, -35, 40, 80],
+      [-60, -45, 54, 245],
+      [15, 15, 52, 300],
+      [95, 35, 40, 125],
+      [-125, 65, 44, 95],
+      [-25, 100, 49, 140],
+      [110, 120, 48, 75],
+    ];
+    buildings
+      .sort((a, b) => a[0] + a[1] - (b[0] + b[1]))
+      .forEach(([x, z, size, height], index) => {
+        const base = [
+            project(x, z),
+            project(x + size, z),
+            project(x + size, z + size),
+            project(x, z + size),
+          ],
+          top = [
+            project(x, z, height),
+            project(x + size, z, height),
+            project(x + size, z + size, height),
+            project(x, z + size, height),
+          ];
+        const color = index % 3 === 0 ? colors.secondary : colors.accent;
+        const polygon = (points, fill, alpha = 1) => {
+          ctx.globalAlpha = alpha;
+          ctx.beginPath();
+          points.forEach((p, i) =>
+            i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y),
+          );
+          ctx.closePath();
+          ctx.fillStyle = fill;
+          ctx.fill();
+          ctx.strokeStyle = color;
+          ctx.stroke();
+        };
+        polygon([base[1], base[2], top[2], top[1]], "#0b1b2f");
+        polygon([base[2], base[3], top[3], top[2]], "#081423");
+        polygon(top, "#10263a", 0.9);
+        for (let level = 1; level < height / 15; level++) {
+          const y = level * 15,
+            p1 = project(x + size, z, y),
+            p2 = project(x + size, z + size, y),
+            p3 = project(x, z + size, y);
+          ctx.globalAlpha = 0.23;
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.lineTo(p3.x, p3.y);
+          ctx.stroke();
+        }
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 4;
+        for (let floor = 1; floor < height / 17 - 1; floor++)
+          for (let col = 1; col < 5; col++) {
+            if (seeded(floor * 17 + col + index * 29) < 0.42) continue;
+            const p = project(x + size * 0.2 * col, z + size, floor * 17);
+            ctx.globalAlpha = 0.25 + seeded(floor + col * 8) * 0.55;
+            ctx.fillRect(p.x - 1, p.y - 1, 2, 3);
+          }
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 0.8;
+        if (height > 200) {
+          const p = project(x + size / 2, z + size / 2, height),
+            q = project(x + size / 2, z + size / 2, height + 35);
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+          ctx.fillStyle = colors.secondary;
+          ctx.fillRect(q.x - 2, q.y - 2, 4, 4);
+        }
+      });
+    for (let i = 0; i < 7; i++) {
+      const u = wrap(t * 0.025 + i * 81, 600) - 300,
+        a = project(u, i * 55 - 160),
+        b = project(u - 16, i * 55 - 160);
+      ctx.globalAlpha = 0.8;
+      ctx.strokeStyle = i % 2 ? colors.secondary : colors.accent;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
     }
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 0.7;
+  }
+  function radar(ctx, w, h, t) {
+    const cx = w * 0.79,
+      cy = h * 0.54,
+      r = Math.min(h * 0.38, w * 0.19);
+    ctx.strokeStyle = colors.line;
+    ctx.lineWidth = 0.7;
+    for (let x = w * 0.55; x < w; x += 24) {
+      ctx.beginPath();
+      ctx.moveTo(x, 12);
+      ctx.lineTo(x, h - 12);
+      ctx.stroke();
+    }
+    for (let y = 12; y < h; y += 24) {
+      ctx.beginPath();
+      ctx.moveTo(w * 0.55, y);
+      ctx.lineTo(w - 12, y);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = colors.accent;
+    ctx.globalAlpha = 0.4;
+    for (let i = 1; i <= 3; i++) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, (r * i) / 3, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.moveTo(cx - r - 12, cy);
+    ctx.lineTo(cx + r + 12, cy);
+    ctx.moveTo(cx, cy - r - 12);
+    ctx.lineTo(cx, cy + r + 12);
+    ctx.stroke();
+    const angle = t * 0.0004;
+    ctx.fillStyle = colors.accent + "12";
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, angle - 0.55, angle);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 0.75;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+    ctx.stroke();
+    for (let i = 0; i < 7; i++) {
+      const a = i * 2.399,
+        rr = r * (0.3 + seeded(i + 9) * 0.6),
+        x = cx + Math.cos(a) * rr,
+        y = cy + Math.sin(a) * rr;
+      ctx.globalAlpha = 0.4 + Math.sin(t * 0.001 + i) * 0.2;
+      ctx.strokeRect(x - 3, y - 3, 6, 6);
+      ctx.fillStyle = colors.fg;
+      ctx.font = "7px Consolas,monospace";
+      ctx.fillText("0" + (i + 1), x + 7, y + 3);
+    }
+    ctx.globalAlpha = 1;
   }
   function blueprint(t) {
     const canvas = $("#blueprint-canvas");
     if (!canvas) return;
     const { ctx, w, h } = fit(canvas);
     if (!w) return;
-    ctx.strokeStyle = colors.fg;
-    ctx.lineWidth = 0.6;
-    const rootX = w * 0.17,
-      rootY = h * 0.85;
-    for (let i = 0; i < 74; i++) {
-      const s = seeded(i + 4),
-        endX = w * (0.2 + s * 0.58),
-        endY = h * (0.2 + seeded(i + 201) * 0.48);
-      const sway = Math.sin(t * 0.0004 + i * 0.4) * 2;
-      ctx.globalAlpha = 0.18 + seeded(i + 91) * 0.62;
+    const angle = t * 0.00025,
+      tilt = 0.35,
+      scale = Math.min(w * 0.22, h * 0.28);
+    const project = (x, y, z) => {
+      const xx = x * Math.cos(angle) - z * Math.sin(angle),
+        zz = x * Math.sin(angle) + z * Math.cos(angle);
+      return {
+        x: w * 0.5 + xx * scale,
+        y: h * 0.52 + (y * Math.cos(tilt) - zz * Math.sin(tilt)) * scale,
+      };
+    };
+    const vertices = [
+      [-1, -1, -1],
+      [1, -1, -1],
+      [1, 1, -1],
+      [-1, 1, -1],
+      [-1, -1, 1],
+      [1, -1, 1],
+      [1, 1, 1],
+      [-1, 1, 1],
+    ];
+    const points = vertices.map((v) => project(...v));
+    ctx.strokeStyle = colors.accent;
+    ctx.lineWidth = 0.7;
+    ctx.globalAlpha = 0.6;
+    for (const [a, b] of [
+      [0, 1],
+      [1, 2],
+      [2, 3],
+      [3, 0],
+      [4, 5],
+      [5, 6],
+      [6, 7],
+      [7, 4],
+      [0, 4],
+      [1, 5],
+      [2, 6],
+      [3, 7],
+    ]) {
       ctx.beginPath();
-      ctx.moveTo(rootX, rootY);
-      ctx.bezierCurveTo(
-        rootX + w * 0.07,
-        rootY - h * 0.2,
-        rootX + w * 0.08,
-        h * 0.22,
-        rootX + w * 0.25 + sway,
-        h * 0.4,
-      );
-      ctx.bezierCurveTo(
-        rootX + w * 0.38,
-        h * 0.1,
-        rootX + w * 0.28,
-        endY,
-        endX,
-        endY,
+      ctx.moveTo(points[a].x, points[a].y);
+      ctx.lineTo(points[b].x, points[b].y);
+      ctx.stroke();
+    }
+    for (let i = 0; i < 3; i++) {
+      ctx.strokeStyle = i === 1 ? colors.secondary : colors.faint;
+      ctx.beginPath();
+      ctx.ellipse(
+        w * 0.5,
+        h * 0.52,
+        scale * (1.5 + i * 0.1),
+        scale * 0.5,
+        angle + i,
+        0,
+        Math.PI * 2,
       );
       ctx.stroke();
-      if (i % 3 === 0) {
-        ctx.beginPath();
-        ctx.moveTo(endX, endY);
-        ctx.lineTo(endX + 7, endY - 6);
-        ctx.lineTo(endX + 13, endY - 5);
-        ctx.stroke();
-        ctx.fillStyle = colors.fg;
-        ctx.fillRect(endX + 12, endY - 6, 1.5, 1.5);
-      }
     }
-    ctx.globalAlpha = 0.5;
-    ctx.strokeStyle = colors.muted;
-    ctx.setLineDash([2, 4]);
-    ctx.beginPath();
-    ctx.moveTo(14, h * 0.56);
-    ctx.lineTo(w - 12, h * 0.56);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+    points.forEach((p, i) => {
+      ctx.fillStyle = i % 2 ? colors.accent : colors.fg;
+      ctx.fillRect(p.x - 1.5, p.y - 1.5, 3, 3);
+    });
     ctx.fillStyle = colors.muted;
     ctx.font = "8px Consolas,monospace";
-    ctx.fillText("A", 11, h * 0.56 - 7);
-    ctx.fillText("A", w - 18, h * 0.56 - 7);
-    const bx = w * 0.68,
-      by = h * 0.68,
-      bw = w * 0.28,
-      bh = h * 0.15;
-    ctx.strokeStyle = colors.line;
-    ctx.strokeRect(bx, by, bw, bh);
-    ctx.globalAlpha = 0.8;
-    ctx.strokeStyle = colors.fg;
-    ctx.beginPath();
-    for (let n = 0; n < 45; n++) {
-      const x = bx + (n / 44) * bw,
-        y = by + bh - (Math.sin(n * 0.5 + t * 0.0005) * 0.3 + 0.5) * bh * 0.75;
-      if (n === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    ctx.fillStyle = colors.muted;
-    ctx.fillText("signal / curiosity", bx, by - 5);
-    ctx.globalAlpha = 1;
+    ctx.fillText("H / EXPERIMENTAL CORE", 14, h - 16);
+    ctx.fillText("X  /  Y  /  Z", w - 90, h - 16);
   }
   function eye(t) {
+    if (!$("#ascii-eye").parentElement.clientWidth) return;
     const pre = $("#ascii-eye"),
       px = state.motion ? pointer.x / innerWidth : 0.5,
       py = state.motion ? pointer.y / innerHeight : 0.5;
@@ -277,6 +368,7 @@ export function createEffects(state, count) {
         ? "blink"
         : "None";
   }
+
   function companions(t) {
     const pre = $("#ascii-ghost");
     pre.classList.toggle("awake", state.ghost);
@@ -310,96 +402,33 @@ export function createEffects(state, count) {
       ctx.fillRect(p.x - 1, p.y - 1, 2, 2);
     });
   }
-  function sessionGraph(t) {
+
+  function signal(t) {
     const { ctx, w, h } = fit(graph);
-    ctx.fillStyle = colors.muted;
+    ctx.fillStyle = colors.accent;
     for (let i = 0; i < 50; i++) {
-      const height =
+      const v =
         2 + (Math.sin(i * 0.65 + t * 0.0008) * 0.5 + 0.5) * 8 + seeded(i) * 5;
-      ctx.fillRect((i * w) / 50, h - height, 1, height);
+      ctx.fillRect((i * w) / 50, h - v, 1, v);
     }
   }
   function paint(t) {
-    wheelLayout();
-    drawWheel(t);
+    city(t);
     blueprint(t);
-    companions(t);
-    sessionGraph(t);
-    inputSkeleton(t);
+    signal(t);
+    if (state.worm || state.ghost || hadWorm) {
+      companions(t);
+      hadWorm = state.worm;
+    } else $("#ascii-ghost").classList.remove("awake");
     if (t - lastEye > 110 || !state.motion) {
       eye(t);
       lastEye = t;
     }
   }
-  function inputSkeleton(t) {
-    const canvas = $("#input-skeleton");
-    const { ctx, w, h } = fit(canvas);
-    if (!w || matchMedia("(max-width:640px)").matches) return;
-    const px = state.motion ? pointer.x / innerWidth : 0.5;
-    const py = state.motion ? pointer.y / innerHeight : 0.5;
-    ctx.strokeStyle = colors.muted;
-    ctx.fillStyle = colors.fg;
-    ctx.lineWidth = 0.6;
-    const cx = w * 0.28,
-      cy = 82;
-    ctx.strokeRect(cx - 29, 22, 65, 96);
-    for (let finger = 0; finger < 5; finger++) {
-      const base = { x: cx + (finger - 2) * 6, y: cy + 5 };
-      const tip = {
-        x: cx + (finger - 2) * 11 + (px - 0.5) * 9,
-        y:
-          cy - 36 + Math.abs(finger - 2) * 7 + Math.sin(t * 0.001 + finger) * 2,
-      };
-      const joint = {
-        x: base.x + (tip.x - base.x) * 0.6,
-        y: (base.y + tip.y) * 0.5 + py * 7,
-      };
-      ctx.beginPath();
-      ctx.moveTo(cx + 2, cy + 43);
-      ctx.lineTo(base.x, base.y);
-      ctx.lineTo(joint.x, joint.y);
-      ctx.lineTo(tip.x, tip.y);
-      ctx.stroke();
-      for (const p of [base, joint, tip]) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    ctx.beginPath();
-    ctx.moveTo(cx - 13, cy + 6);
-    ctx.lineTo(cx + 14, cy + 6);
-    ctx.stroke();
-    const mx = w * 0.86,
-      my = 75;
-    ctx.strokeRect(mx - 28, 22, 57, 96);
-    ctx.beginPath();
-    ctx.ellipse(mx, my, 18, 34, 0, 0, Math.PI * 2);
-    ctx.moveTo(mx - 18, my - 7);
-    ctx.lineTo(mx + 18, my - 7);
-    ctx.moveTo(mx, my - 34);
-    ctx.lineTo(mx, my + 34);
-    ctx.stroke();
-    for (let i = 0; i < 5; i++) {
-      const y = my - 25 + i * 12;
-      ctx.beginPath();
-      ctx.moveTo(mx - 16, y);
-      ctx.lineTo(mx, y + 9);
-      ctx.lineTo(mx + 16, y);
-      ctx.stroke();
-    }
-    ctx.fillStyle = colors.fg;
-    ctx.fillRect(mx + (px - 0.5) * 20 - 1, my + (py - 0.5) * 35 - 1, 2, 2);
-    ctx.font = "8px Consolas,monospace";
-    ctx.fillText(`['hand:u'] ${px.toFixed(4)}`, cx - 32, 15);
-    ctx.fillText(`['mouse:u'] ${py.toFixed(4)}`, mx - 36, 15);
-  }
   function tick(t) {
     frame = 0;
     if (document.hidden || !state.motion) return;
-    if (t - previous > 30) {
-      position += (state.target - position) * 0.18;
-      if (Math.abs(position - state.target) < 0.001) position = state.target;
+    if (t - previous > 32) {
       paint(t);
       previous = t;
     }
@@ -407,7 +436,6 @@ export function createEffects(state, count) {
   }
   function refresh() {
     palette();
-    if (!state.motion) position = state.target;
     paint(state.motion ? performance.now() : 0);
     if (frame) cancelAnimationFrame(frame);
     frame = 0;
@@ -415,9 +443,9 @@ export function createEffects(state, count) {
   }
   window.addEventListener(
     "pointermove",
-    (e) => {
-      pointer.x = e.clientX;
-      pointer.y = e.clientY;
+    (event) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
     },
     { passive: true },
   );

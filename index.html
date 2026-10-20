@@ -1,9 +1,23 @@
 <!doctype html>
-<html lang="en" data-theme="bone">
+<html lang="en" data-view="neon">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0b0c0a" />
+    <meta name="theme-color" content="#07101c" />
+    <script>
+      try {
+        const requested = new URLSearchParams(location.search).get("view");
+        const saved = localStorage.getItem("hirsu-view");
+        const valid = (value) => value === "neon" || value === "blacksite";
+        document.documentElement.dataset.view = valid(requested)
+          ? requested
+          : valid(saved)
+            ? saved
+            : "neon";
+      } catch {
+        /* The default interface also works without browser storage. */
+      }
+    </script>
     <meta
       name="description"
       content="Hrushi's corner of the internet. Software, a robotic telescope, Raspberry Pi experiments, personal AI, custom electronics, and Linux."
@@ -20,25 +34,77 @@
     <meta property="og:url" content="https://hrushikbarani-hub.github.io/" />
     <title>hirsu — projects, experiments & the workbench</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=2.0.1" />
-    <script type="module" src="app.js?v=2.0.1"></script>
+    <link rel="stylesheet" href="styles.css?v=3" />
+    <link rel="stylesheet" href="cyberpunk.css?v=3" />
+    <script type="module" src="app.js?v=3"></script>
   </head>
   <body>
     <a class="skip-link" href="#terminal">Skip to content</a>
     <div class="site-shell">
       <header class="site-header">
         <a class="wordmark" href="#about" aria-label="hirsu home"
-          ><span class="monogram" aria-hidden="true">h⌁</span> hirsu<span
+          ><span class="monogram" aria-hidden="true">H/</span> HIRSU<span
             class="dim"
-            > / workshop</span
+          >
+            / independent builder</span
           ></a
-        ><a
-          href="https://github.com/hrushikbarani-hub"
-          target="_blank"
-          rel="noopener noreferrer"
-          >github ↗</a
         >
+        <nav class="header-nav" aria-label="Main navigation">
+          <a href="#about">Overview</a><a href="#robo-telescope">Projects</a
+          ><a href="#stack">Stack</a><a href="#log">Workbench</a>
+        </nav>
+        <div class="header-end">
+          <button
+            id="interface-toggle"
+            type="button"
+            title="Interface menu — switch website version"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-controls="interface-menu"
+          >
+            <span class="menu-icon" aria-hidden="true">☷</span
+            ><span id="interface-label">Neon District</span
+            ><span aria-hidden="true">⌄</span></button
+          ><a
+            href="https://github.com/hrushikbarani-hub"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub ↗</a
+          >
+        </div>
       </header>
+      <section class="cyber-hero" aria-labelledby="cyber-title">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <canvas id="city-canvas" aria-hidden="true"></canvas>
+        <div class="hero-copy">
+          <p class="kicker">
+            <span class="signal-dot" aria-hidden="true"></span> HRUSHI'S
+            PERSONAL PROJECT ARCHIVE <span class="hero-year">/ 2026</span>
+          </p>
+          <h2 id="cyber-title">
+            HUMAN IDEAS.<br /><span>MACHINE WORLDS.</span>
+          </h2>
+          <p class="hero-description">
+            Software that solves something. Hardware that moves something.<br />And
+            a home lab that keeps the experiments running.
+          </p>
+          <div class="hero-actions">
+            <a class="cyber-button primary" href="#robo-telescope"
+              >Explore projects <span>↗</span></a
+            ><a class="cyber-button secondary" href="#log"
+              >On the workbench <span>+</span></a
+            >
+          </div>
+        </div>
+        <div class="hero-coordinate" aria-hidden="true">
+          <span id="hero-render-label">PROCEDURAL SKYLINE / CANVAS 2D</span
+          ><span>NO STOCK FUTURES. JUST THINGS I'M BUILDING.</span>
+        </div>
+        <div class="hero-index" aria-hidden="true">
+          <span>INTERFACE</span><b id="hero-interface-number">01</b
+          ><span id="hero-interface-name">NEON DISTRICT</span>
+        </div>
+      </section>
       <h1 class="sr-only">
         hirsu — Hrushi's projects, experiments & workbench
       </h1>
@@ -46,7 +112,7 @@
         <nav class="wheel" id="wheel" aria-label="Projects and pages">
           <canvas id="wheel-ink" aria-hidden="true"></canvas>
           <div class="wheel-guide">
-            <span>~/workshop</span><span id="position">01 / 11</span>
+            <span>PROJECT DIRECTORY</span><span id="position">01 / 11</span>
           </div>
           <div
             class="wheel-track"
@@ -57,7 +123,7 @@
           ></div>
           <div class="wheel-bottom">
             <span>2026-10-20</span
-            ><span id="wheel-help">scroll · drag the wheel</span>
+            ><span id="wheel-help">↑↓ navigate · enter to open</span>
             <div class="mobile-step">
               <button type="button" id="previous" aria-label="Previous project">
                 ↑</button
@@ -75,7 +141,7 @@
         >
           <div class="terminal-title">
             <span class="terminal-dots" aria-hidden="true">· · ·</span
-            ><span id="terminal-title">fish — ~ · whoami</span
+            ><span id="terminal-title">ARCHIVE / OVERVIEW</span
             ><button
               id="help-button"
               type="button"
@@ -85,6 +151,7 @@
             </button>
           </div>
           <aside class="eye-module" aria-hidden="true">
+            <div class="optic-label">OPTIC / LOCAL POINTER</div>
             <pre id="ascii-eye"></pre>
             <div class="eye-readout">
               <span>['pupil:u'] <b id="eye-x">0.500000</b></span
@@ -114,7 +181,7 @@
                   maxlength="200"
                   spellcheck="false"
                   autocapitalize="off"
-                  placeholder="type help, or explore the wheel"
+                  placeholder="type help, or choose a project"
                 /><span class="cursor" aria-hidden="true"></span>
               </div>
             </form>
@@ -164,7 +231,7 @@
       </footer>
       <div class="underbar">
         <span>software, circuits, and a healthy amount of curiosity.</span
-        ><a href="#themes" id="current-theme">palette: bone</a
+        ><a href="#themes" id="current-theme">interface: Neon District</a
         ><a
           href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io"
           target="_blank"
@@ -188,6 +255,32 @@
 | O |
 '~~~'</pre>
     <canvas id="worm-canvas" aria-hidden="true"></canvas>
+    <dialog
+      id="interface-menu"
+      class="interface-menu"
+      aria-labelledby="interface-menu-title"
+    >
+      <div class="menu-top">
+        <span>PERSONALIZE / 2 INTERFACES</span
+        ><button
+          id="close-interface"
+          type="button"
+          aria-label="Close interface menu"
+        >
+          ×
+        </button>
+      </div>
+      <h2 id="interface-menu-title">Choose your reality.</h2>
+      <p>Same projects. Two different frequencies.</p>
+      <div id="interface-choices"></div>
+      <button id="menu-motion" type="button" aria-pressed="true">
+        Animations <span>On</span>
+      </button>
+      <p class="menu-footnote">
+        Your choice stays on this browser. Switch anytime without losing your
+        place.
+      </p>
+    </dialog>
     <dialog id="image-dialog" aria-label="Project preview">
       <button type="button" id="close-image" aria-label="Close image preview">
         close [esc] ×</button
@@ -204,8 +297,8 @@
       </button>
       <h2 id="help-title">the controls</h2>
       <dl>
-        <dt>scroll / drag</dt>
-        <dd>Rotate the project wheel</dd>
+        <dt>Menu</dt>
+        <dd>Switch between Neon District and Blacksite</dd>
         <dt>↑ / ↓</dt>
         <dd>Previous / next project</dd>
         <dt>Home / End</dt>

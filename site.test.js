@@ -2,6 +2,30 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { calendarDays, languageCounts, snapshot } from "./stack-data.js";
 import { wrap } from "./motion.js";
+import {
+  interfaces,
+  interfaceFromSearch,
+  interfaceURL,
+  validInterface,
+} from "./interfaces.js";
+
+test("exactly two valid interfaces; explicit links override saved choice", () => {
+  assert.deepEqual(Object.keys(interfaces), ["neon", "blacksite"]);
+  assert.equal(interfaceFromSearch("?view=neon", "blacksite"), "neon");
+  assert.equal(interfaceFromSearch("", "blacksite"), "blacksite");
+  assert.equal(interfaceFromSearch("?view=unknown", "bad-value"), "neon");
+  assert.equal(validInterface("__proto__"), false);
+});
+test("switching interfaces preserves the selected project and other query state", () => {
+  const url = interfaceURL(
+    "https://example.test/?q=python&view=neon#maintaineros",
+    "blacksite",
+  );
+  assert.equal(url.searchParams.get("q"), "python");
+  assert.equal(url.searchParams.get("view"), "blacksite");
+  assert.equal(url.hash, "#maintaineros");
+  assert.throws(() => interfaceURL(url, "__proto__"));
+});
 
 test("wheel wraps in both directions, including multi-turn drags", () => {
   assert.equal(wrap(-1, 11), 10);
