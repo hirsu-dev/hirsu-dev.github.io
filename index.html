@@ -1,14 +1,17 @@
 <!doctype html>
-<html lang="en" data-view="neon" data-motion="on">
+<html lang="en" data-view="neon" data-motion="on" data-page="index">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#08090b" />
+    <meta name="theme-color" content="#fcee0a" />
     <meta
       name="description"
       content="Hrushi's personal project network: useful software, a robotic telescope, Raspberry Pi home lab, local AI interfaces, electronics, and Linux."
     />
-    <meta property="og:title" content="hirsu // personal project network" />
+    <meta
+      property="og:title"
+      content="hirsu // software, hardware & the real world"
+    />
     <meta
       property="og:description"
       content="Code, circuits, and curiosity. Explore Hrushi's software and hardware workbench."
@@ -21,7 +24,7 @@
       try {
         const view =
           new URLSearchParams(location.search).get("view") ||
-          localStorage.getItem("hirsu-console-view");
+          localStorage.getItem("hirsu-city-view");
         document.documentElement.dataset.view =
           view === "blacksite" ? "blacksite" : "neon";
         const motion = localStorage.getItem("hirsu-console-motion");
@@ -35,10 +38,41 @@
       }
     </script>
     <link rel="stylesheet" href="console.css?v=5" />
-    <script type="module" src="console.js?v=5"></script>
+    <link rel="stylesheet" href="city.css?v=6" />
+    <script type="module" src="console.js?v=6"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
+    <header class="city-header" id="city-header">
+      <a class="city-wordmark" href="#index" aria-label="hirsu home"
+        >hirsu<span>_</span><small>CODE / CIRCUITS / CURIOSITY</small></a
+      >
+      <nav class="city-nav" aria-label="Portfolio navigation">
+        <a href="#projects" data-nav="projects">PROJECTS</a
+        ><a href="#stack" data-nav="stack">STACK</a
+        ><a href="#network" data-nav="network">NETWORK</a
+        ><a href="#log" data-nav="log">WORKBENCH</a
+        ><button
+          id="city-motion"
+          aria-pressed="true"
+          aria-label="Toggle animations"
+        >
+          FX: ON</button
+        ><button
+          id="city-menu"
+          aria-haspopup="dialog"
+          aria-label="Open navigation and interface menu"
+        >
+          MENU <span>+</span></button
+        ><a
+          class="city-github"
+          href="https://github.com/hrushikbarani-hub"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GITHUB ↗</a
+        >
+      </nav>
+    </header>
     <aside class="rail" aria-label="Navigation sidebar">
       <a class="rail-brand" href="#index" aria-label="hirsu home"
         ><span aria-hidden="true">h/</span><b>HIRSU<span>.SYS</span></b></a
@@ -99,7 +133,7 @@
         >
       </nav>
       <div class="rail-bottom">
-        <span class="rail-version" aria-hidden="true">v5.0</span>
+        <span class="rail-version" aria-hidden="true">v6.0</span>
         <button
           class="rail-item"
           id="theme-button"
@@ -140,7 +174,7 @@
             aria-label="Switch interface"
             aria-haspopup="dialog"
           >
-            Cyberspace <span aria-hidden="true">⌄</span>
+            Night City <span aria-hidden="true">⌄</span>
           </button>
         </div>
       </header>
@@ -185,7 +219,7 @@
           <div class="theme-strip">
             <span class="muted">INTERFACE:</span
             ><button data-view-choice="neon" aria-pressed="true">
-              Cyberspace</button
+              Night City</button
             ><span>/</span
             ><button data-view-choice="blacksite" aria-pressed="false">
               Overdrive</button
@@ -236,6 +270,24 @@
           <a href="#about">Colophon / sources</a>
         </footer>
       </main>
+      <footer class="city-footer">
+        <a class="city-wordmark" href="#index">hirsu<span>_</span></a>
+        <p>
+          INDEPENDENT PROJECTS. REAL WORK IN PROGRESS.<br /><small
+            >Original portfolio · no franchise affiliation · no tracking.</small
+          >
+        </p>
+        <nav aria-label="Footer navigation">
+          <a href="#about">ABOUT / SOURCES</a
+          ><button id="city-footer-theme">SWITCH INTERFACE</button
+          ><a
+            href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            >SITE SOURCE ↗</a
+          >
+        </nav>
+      </footer>
       <footer class="systembar">
         <button id="footer-commands"><kbd>Ctrl K</kbd> Commands</button
         ><span class="keyboard-hint"
@@ -250,14 +302,22 @@
         <span>INTERFACE / PERSONALIZE</span
         ><button data-close aria-label="Close interface menu">[×]</button>
       </div>
+      <nav class="menu-pages" aria-label="Menu navigation">
+        <a href="#index">HOME</a><a href="#projects">ALL PROJECTS</a
+        ><a href="#network">NETWORK</a><a href="#stack">STACK</a
+        ><a href="#log">WORKBENCH</a><a href="#saved">SAVED</a
+        ><a href="#about">ABOUT / SOURCES</a
+        ><button id="city-commands">COMMANDS / CTRL K</button>
+      </nav>
       <h2 id="theme-title">Choose a frequency.</h2>
       <p class="muted">Same projects. Two different signals.</p>
       <div class="theme-options">
         <button data-view-choice="neon">
           <span class="swatches"><i></i><i></i><i></i></span
-          ><b>01 / Cyberspace</b
+          ><b>01 / Night City</b
           ><span
-            >Quiet terminal. Warm phosphor. Red/cyan HUD details.</span
+            >Cinematic yellow/black landing page, original key art, clipped
+            panels and game-inspired motion.</span
           ></button
         ><button data-view-choice="blacksite">
           <span class="swatches overdrive"><i></i><i></i><i></i></span

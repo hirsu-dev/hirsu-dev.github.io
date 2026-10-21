@@ -1,4 +1,6 @@
-# Cyberspace / Overdrive v5 art direction
+# Historical art direction / v4–v5
+
+Current v6 art and motion direction, saved asset and exact generation prompt: [ART-DIRECTION-V6.md](ART-DIRECTION-V6.md).
 
 Current main reference: https://cyberspace.online/. Inspected the default feed, GRiD theme, sidebar, and globe. Reimplemented a compact feed, original bracket actions, navigation rail, local bookmarks, command palette, and conceptual project sphere. No reference source, assets, community posts, or member identities are reused.
 

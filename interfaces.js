@@ -1,11 +1,11 @@
 export const interfaces = {
   neon: {
-    name: "Cyberspace",
+    name: "Night City",
     number: "01",
-    tagline: "Code. Circuits. Curiosity.",
+    tagline: "From code to the real world.",
     description:
-      "Cyberspace-inspired project feed, warm phosphor type and restrained red/cyan HUD details.",
-    color: "#08090b",
+      "Official-site-inspired yellow/black cinematic landing page, original key art, clipped panels and game-inspired transitions.",
+    color: "#fcee0a",
   },
   blacksite: {
     name: "Overdrive",

@@ -39,7 +39,7 @@ export function resolveRoute(hash) {
     return "index";
   }
   const aliases = {
-    work: "index",
+    work: "projects",
     bench: "log",
     whoami: "about",
     themes: "themes",
@@ -47,9 +47,16 @@ export function resolveRoute(hash) {
   if (Object.hasOwn(aliases, route)) return aliases[route];
   if (route.startsWith("project-")) route = route.slice(8);
   return projectIds.has(route) ||
-    ["index", "network", "stack", "log", "about", "saved", "themes"].includes(
-      route,
-    )
+    [
+      "index",
+      "projects",
+      "network",
+      "stack",
+      "log",
+      "about",
+      "saved",
+      "themes",
+    ].includes(route)
     ? route
     : "index";
 }

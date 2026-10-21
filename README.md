@@ -1,38 +1,38 @@
-# hirsu // personal project network
+# hirsu // from code to the real world
 
-Hrushi's portfolio: https://hrushikbarani-hub.github.io/. Free GitHub Pages; no Raspberry Pi, server, account, paid domain, tracking, third-party fonts, or build dependencies.
+Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Pages. No Raspberry Pi hosting, backend, paid domain, tracking, accounts, external fonts, or build dependencies.
 
-## The two interfaces
+## Two interfaces
 
-- **Cyberspace** (default): a compact text-first feed, slim expandable navigation rail, warm phosphor colors, red/cyan HUD framing, and bracketed actions. https://hrushikbarani-hub.github.io/?view=neon
-- **Overdrive**: chartreuse / violet, sharp typography, cel-like contrast, and a sticky identity dock beside the content on wide desktops. It stacks responsively on smaller screens. https://hrushikbarani-hub.github.io/?view=blacksite
+- **Night City** (default): a cinematic acid-yellow / black landing page inspired by the official Cyberpunk 2077 website. Original fictional key art, condensed display type, clipped navigation, project callouts, image-led selected work, alternating sections, and a matching project archive / detail UI. https://hrushikbarani-hub.github.io/?view=neon
+- **Overdrive**: the compact alternate explorer, with chartreuse / violet, the expandable rail, text-first feed and wide-desktop identity dock. https://hrushikbarani-hub.github.io/?view=blacksite
 
-Switch with the top-right menu, sidebar, or identity-panel controls. Project, gallery position, search, expanded cards, bookmarks, and animation setting survive theme changes. Back/forward preserves theme changes, including the first URL without a view query. Existing project hashes, #project- aliases, #stack, #bench, #whoami, and #themes links are supported.
+Switch in MENU or the footer; the alternate interface also has a sidebar/top-right menu. Mode changes preserve project, gallery shot, bookmarks, search, expansions and motion. History restores modes, including the original bare URL. A new v6 view preference starts returning visitors on the cinematic default unless they use an explicit theme link. Bookmarks and the explicit motion preference are retained locally.
 
-The new v5 preference key starts existing visitors on the new default unless an explicit theme link was used. Preferences and project IDs are browser-local; blocked storage falls back to session-only behavior.
+Home is #index. The complete searchable archive is #projects. Old #project- project links, #stack, #bench, #whoami and #themes links remain supported; #work opens the archive.
 
-## Explore
+## Motion direction and references
 
-- **Index:** search across project titles, descriptions, statuses, categories, and tags; combine search words with Software / Hardware / Home lab filters.
-- **Open / Save / Expand:** open the project, keep a local bookmark, or progressively reveal features and current status.
-- **Network:** an original Canvas 2D project sphere inspired by the reference site's globe. Drag to rotate, wheel to zoom, or focus the canvas and use arrows / + / -. Click a project label to open it. Low / mid / high wireframe detail, reset, and rotation controls are provided. Labels spread apart on narrow screens. A normal project-link list remains available below.
-- **Stack:** dated public repository language counts and commit snapshot, not skill ratings or live activity.
-- **Workbench:** factual unfinished work, not invented chronological updates.
-- **About:** content provenance, reference credits, and privacy details.
+Primary reference: https://www.cyberpunk.net/us/en/. The supplied clips were inspected through visible playback frames:
 
-Keyboard: Ctrl / Command K opens the searchable command menu. Arrow keys navigate commands; Enter chooses. On the feed, arrows or J/K move between cards, Enter opens, S saves, E expands, / focuses search, and ? opens help. Normal input fields and native button/link keys retain their behavior. Project image buttons and left/right keys change available screenshots. Native dialogs close with Escape and return focus.
+- Project E3: UI | New Animations | Cyberpunk 2077 Mod, Virtuoso: https://www.youtube.com/watch?v=60MpEkIcm3g
+- Cyberpunk 2077 - Concept UI, Bad Art Studio: https://www.youtube.com/watch?v=ilYgQdyBFf4
 
-Motion is optional. The system reduced-motion setting is honored by default; an explicit preference overrides it. Sphere animation pauses in hidden tabs, with motion disabled, when rotation is paused, or while keyboard focus is inside the map. Drag and keyboard manipulation remain possible with animation disabled. No flashing glitch loop or autoplay sound.
+Original code implements sliding HUD panels, one-off clipped menu reveals, staggered scroll reveals, callout entrances and restrained pointer parallax. No autoplay audio, rapid flashing glitch loop, blocking intro, or navigation delay. Toggle FX in the header or animations in the menu. System reduced motion is respected by default; an explicit preference overrides it. Pointer parallax only runs for a fine pointer. Background-tab animation is stopped or finished.
 
-## Sources and visual direction
+The original hero is a fictional anonymous engineer, not Hrushi or his hardware. No franchise character art, trademarks or reference source code is bundled. Asset provenance and the complete built-in generation prompt: [ART-DIRECTION-V6.md](ART-DIRECTION-V6.md). Earlier original artwork is retained but not loaded.
 
-Main reference: https://cyberspace.online/ — text-first panels, sidebar navigation, bracket actions, command menu, and globe exploration. This is an original implementation, not copied source, community posts, member identities, or site assets.
+Sites guidance informed the responsive presentation structure, meaningful project sections, accessibility, and clear distinction between real evidence and illustration.
 
-The provided video, https://www.youtube.com/watch?v=yLdJh2_-o8U (The ONLY Guide to Cyberpunk UI Design), was reviewed through its accessible English captions. Useful principles: modular sections, contrasting dark palettes, monospace type, geometric framing, vertical navigation, focus/hover states, and progressive disclosure.
+## Functional controls
 
-Official Cyberpunk 2077 game HUD screenshots in https://www.cyberpunk.net/en/news/49591/update-2-1-accessibility-features informed restrained red/cyan framing and readable controls. Official https://www.cyberpunk.net/en/edgerunners art informed Overdrive's chartreuse / violet contrast. No claim of watching the full anime, hearing inaccessible audio, or playing the game. No franchise logos, artwork, or source are bundled in v5.
+Search across project titles, descriptions, status, categories and tags. Multi-word search combines with Software / Hardware / Home lab / Saved filters. Open shows the actual project; Save keeps a browser-local bookmark; Expand reveals features and current state. Images have explicit CAD / illustration / fictional demo captions. Galleries can be enlarged in a native dialog.
 
-ART-DIRECTION.md retains the provenance and complete prompt for the previous original generated illustration. That fictional artwork and older source files are retained but are not loaded by the current interface.
+Ctrl / Command K opens the searchable command menu; arrows and Enter navigate. On project cards, arrows or J/K move, Enter opens, S saves, E expands, / focuses search and ? opens help. Escape closes dialogs and returns focus. Input fields and native buttons/links retain their standard keys.
+
+The original project-network sphere remains on #network: drag / arrows to rotate, wheel / + / - to zoom, pause / reset and low / mid / high detail. A regular list of project links is also available. Labels separate on narrow displays. The sphere is a conceptual relationship map, not live telemetry or actual device locations.
+
+#stack contains dated public data, not skill ratings. #log contains factual open work, not invented dated activity. #about includes reference credits and privacy notes. Storage failures fall back to session-only bookmarks with an explicit message.
 
 ## Grounded content & data
 
@@ -48,15 +48,14 @@ The sphere is a conceptual map of related projects, not a map of actual location
 
 ## Edit / verify / deploy
 
-Current entry points:
-
-- index.html: accessible shell, preference bootstrap, native dialogs, no-JavaScript fallback.
-- console.js: rendering, navigation, galleries, bookmarks, keyboard commands, theme / motion controls.
-- console-model.js: pure route, search, bookmark-validation, and escaping helpers.
-- console.css: both interfaces and responsive layouts.
-- project-network.js: original sphere renderer and animation lifecycle.
-- projects.js: verified project facts, status, source, gallery metadata.
-- stack-data.js: dated public data snapshot.
+- index.html: shell, cinematic header, preference bootstrap, menu, native dialogs, no-JavaScript fallback.
+- city-content.js: original cinematic homepage composition and factual featured projects.
+- city.css: cinematic interface and responsive rules, layered over console.css (alternate explorer / shared controls).
+- city-motion.js: optional original panel, menu, reveal and pointer effects.
+- console.js: routes, project rendering, search, bookmarks, galleries, keyboard commands, theme / motion state.
+- console-model.js: pure route/search/storage/escaping helpers.
+- project-network.js: original sphere renderer and lifecycle.
+- projects.js / stack-data.js: factual project metadata and dated snapshot.
 - interfaces.js: two-mode registry and validated URL helpers.
 
 No npm install needed:
@@ -64,6 +63,6 @@ No npm install needed:
     npm run check
     python -m http.server 8130 --bind 127.0.0.1
 
-Open http://127.0.0.1:8130/. ES modules need HTTP. Eleven Node tests cover interfaces, URL preservation, filters/search, corrupted storage, escaping, route aliases, project geometry, label spacing, language aggregation, UTC calendar boundaries, and a retained legacy wrap helper.
+Open http://127.0.0.1:8130/. ES modules need HTTP. Fourteen dependency-free tests cover modes, URLs, routes, search/filtering, malformed storage, escaping, original landing content, all referenced image assets, panel frames, geometry, narrow label spacing, language aggregation, UTC dates and the retained legacy wrap helper.
 
-Push main to deploy GitHub Pages from main / root, with .nojekyll and HTTPS. Source is MIT licensed. Free hosting is independent of the local preview server.
+Push main. GitHub Pages deploys main / root with .nojekyll and HTTPS. No paid service, backend, Pi, or custom domain is required. The preview server may be stopped without affecting the live site.

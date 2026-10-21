@@ -3,6 +3,9 @@ import assert from "node:assert/strict";
 import { calendarDays, languageCounts, snapshot } from "./stack-data.js";
 import { wrap } from "./motion.js";
 import { projects } from "./projects.js";
+import { cityHome, featuredIds } from "./city-content.js";
+import { panelFrames } from "./city-motion.js";
+import { existsSync } from "node:fs";
 import {
   savedIds,
   findProjects,
@@ -84,9 +87,41 @@ test("routes support legacy project links and reject malformed/unknown input", (
   assert.equal(resolveRoute("#project-maintaineros"), "maintaineros");
   assert.equal(resolveRoute("#network"), "network");
   assert.equal(resolveRoute("#bench"), "log");
+  assert.equal(resolveRoute("#projects"), "projects");
+  assert.equal(resolveRoute("#work"), "projects");
   assert.equal(resolveRoute("#%E0%A4%A"), "index");
   assert.equal(resolveRoute("#__proto__"), "index");
   assert.equal(resolveRoute("#unknown"), "index");
+});
+
+test("cinematic landing uses real projects, labeled media and working archive routes", () => {
+  const html = cityHome();
+  assert.equal(new Set(featuredIds).size, 3);
+  for (const id of featuredIds) {
+    const p = projects.find((p) => p.id === id);
+    assert.ok(p);
+    assert.ok(html.includes('href="#' + id + '"'));
+    assert.ok(html.includes(escapeHTML(p.caption)));
+  }
+  assert.match(html, /href="#projects"/);
+  assert.match(html, /ORIGINAL FICTIONAL KEY ART \/ NOT A PORTRAIT/);
+  assert.match(html, /currently broken/);
+  assert.doesNotMatch(html, /PUSH SQUARE|GAMESPOT|EUROGAMER|BUY NOW/);
+});
+test("all project and cinematic image assets exist in the static checkout", () => {
+  const assets = projects.flatMap((p) => [
+    p.image,
+    ...(p.gallery || []).map((s) => s.image),
+  ]);
+  assets.push("assets/night-city-engineer-v6.png");
+  for (const path of assets)
+    assert.ok(existsSync(new URL(path, import.meta.url)), path);
+});
+test("panel transition restores visibility with a single non-flashing entrance", () => {
+  assert.equal(panelFrames.length, 2);
+  assert.equal(panelFrames[0].opacity, 0);
+  assert.equal(panelFrames[1].opacity, 1);
+  assert.equal(panelFrames[1].transform, "translateX(0)");
 });
 test("HTML escaping covers user-supplied query attribute delimiters", () => {
   assert.equal(escapeHTML('<a x="&">\''), "&lt;a x=&quot;&amp;&quot;&gt;&#39;");
