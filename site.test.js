@@ -4,8 +4,14 @@ import { calendarDays, languageCounts, snapshot } from "./stack-data.js";
 import { wrap } from "./motion.js";
 import { projects } from "./projects.js";
 import { cityHome, featuredIds } from "./city-content.js";
-import { panelFrames } from "./city-motion.js";
-import { existsSync } from "node:fs";
+import {
+  panelFrames,
+  bootPhases,
+  bootDuration,
+  bootPhaseAt,
+} from "./city-motion.js";
+import { existsSync, readFileSync } from "node:fs";
+import { runInNewContext } from "node:vm";
 import {
   savedIds,
   findProjects,
@@ -122,6 +128,55 @@ test("panel transition restores visibility with a single non-flashing entrance",
   assert.equal(panelFrames[0].opacity, 0);
   assert.equal(panelFrames[1].opacity, 1);
   assert.equal(panelFrames[1].transform, "translateX(0)");
+});
+test("opening timeline is ordered, bounded and has one release stage", () => {
+  assert.ok(bootDuration > 2000 && bootDuration <= 3000);
+  assert.equal(bootPhaseAt(-1), "init");
+  assert.equal(bootPhaseAt(0), "init");
+  assert.equal(bootPhaseAt(bootDuration), "complete");
+  assert.equal(bootPhaseAt(Infinity), "complete");
+  assert.equal(bootPhases.filter((p) => p.name === "release").length, 1);
+  for (let i = 0; i < bootPhases.length; i++) {
+    const phase = bootPhases[i];
+    assert.equal(bootPhaseAt(phase.at), phase.name);
+    assert.ok(phase.at < bootDuration);
+    if (i) assert.ok(phase.at > bootPhases[i - 1].at);
+  }
+});
+test("system reduced motion bypasses boot by default, even with blocked storage", () => {
+  const source = readFileSync(
+    new URL("index.html", import.meta.url),
+    "utf8",
+  ).match(/<script>([\s\S]*?)<\/script>/)[1];
+  for (const [reduce, stored, blocked, expected] of [
+    [true, null, false, "off"],
+    [false, null, false, "on"],
+    [true, null, true, "off"],
+    [false, "off", false, "off"],
+    [true, "on", false, "on"],
+  ]) {
+    const document = { documentElement: { dataset: {} } };
+    runInNewContext(source, {
+      document,
+      matchMedia: () => ({ matches: reduce }),
+      URLSearchParams,
+      location: { search: "" },
+      localStorage: {
+        getItem(key) {
+          if (blocked) throw new Error("storage blocked");
+          return key === "hirsu-console-motion" ? stored : null;
+        },
+      },
+    });
+    assert.equal(document.documentElement.dataset.motion, expected);
+  }
+});
+test("boot is closed without JavaScript; real content is not made inert or hidden", () => {
+  const html = readFileSync(new URL("index.html", import.meta.url), "utf8");
+  const boot = html.match(/<dialog\s+id="boot-dialog"[^>]*>/)[0];
+  assert.doesNotMatch(boot, /\bopen\b/);
+  assert.doesNotMatch(html.match(/<main[^>]*>/)[0], /inert|hidden/);
+  assert.match(html, /<noscript/);
 });
 test("HTML escaping covers user-supplied query attribute delimiters", () => {
   assert.equal(escapeHTML('<a x="&">\''), "&lt;a x=&quot;&amp;&quot;&gt;&#39;");

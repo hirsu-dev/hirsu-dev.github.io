@@ -12,8 +12,8 @@ import {
   escapeHTML as esc,
 } from "./console-model.js?v=6";
 import { createProjectNetwork } from "./project-network.js";
-import { cityHome } from "./city-content.js?v=6";
-import { createCityMotion } from "./city-motion.js?v=6";
+import { cityHome } from "./city-content.js?v=7";
+import { createCityMotion } from "./city-motion.js?v=7";
 
 const $ = (s) => document.querySelector(s);
 const root = document.documentElement,
@@ -119,6 +119,7 @@ function setMotion(on, persist = true) {
   $("#dialog-motion").textContent = on
     ? "[ Pause animations ]"
     : "[ Enable animations ]";
+  $("#replay-intro").disabled = !on;
   document.dispatchEvent(new Event("appearancechange"));
 }
 const mediaQuery = matchMedia("(prefers-reduced-motion: reduce)");
@@ -168,6 +169,11 @@ document.querySelector(".skip").addEventListener("click", (e) => {
 $("#city-menu").onclick = $("#city-footer-theme").onclick = () =>
   openDialog("#theme-dialog");
 $("#city-motion").onclick = () => setMotion(root.dataset.motion !== "on");
+function replayIntro() {
+  document.querySelectorAll("dialog[open]").forEach((d) => d.close());
+  cityMotion.opening({ replay: true });
+}
+$("#replay-intro").onclick = replayIntro;
 $("#theme-dialog .menu-pages").addEventListener("click", (e) => {
   if (e.target.closest("a")) $("#theme-dialog").close();
 });
@@ -411,6 +417,7 @@ function renderAbout() {
     ) +
     `<section class="panel"><h2>A small, useful corner of the internet.</h2><p>This is my project archive: a telescope that followed sky coordinates, a Pi keeping home services useful, tools for maintainers and civic records, and a few experiments that are still taking shape.</p><p>Not everything here is finished. Each project includes its actual status, source when public, and a clear distinction between an illustration, CAD, or a working app screenshot.</p><div class="facts"><span><b>7</b> projects</span><span><b>5</b> public project repos</span><span><b>0</b> trackers</span></div><a class="bracket" href="https://github.com/hrushikbarani-hub" target="_blank" rel="noopener noreferrer">[ Find me on GitHub ↗ ]</a></section>
   <section class="panel"><h2>Colophon / visual references</h2><p>The alternate explorer takes its text-first feed, navigation rail, bracketed actions, and keyboard-first spirit from <a href="https://cyberspace.online/" target="_blank" rel="noopener noreferrer">Cyberspace ↗</a>. Original implementation and portfolio content; no community posts, private data, or reference-site source are bundled.</p><p>The main landing page takes strong composition, acid-yellow/black color blocking, typography and navigation cues from the <a href="https://www.cyberpunk.net/us/en/" target="_blank" rel="noopener noreferrer">official Cyberpunk 2077 website ↗</a>. The supplied <a href="https://www.youtube.com/watch?v=60MpEkIcm3g" target="_blank" rel="noopener noreferrer">Project E3: UI ↗</a> and <a href="https://www.youtube.com/watch?v=ilYgQdyBFf4" target="_blank" rel="noopener noreferrer">Concept UI ↗</a> clips informed sliding panels, callout lines, menu sweeps and restrained red/cyan accents. Hero art is original fictional imagery, not a portrait or franchise asset. Overdrive retains the compact alternate explorer. This is an independent portfolio, not affiliated with those productions.</p><p>The linked <a href="https://www.youtube.com/watch?v=yLdJh2_-o8U" target="_blank" rel="noopener noreferrer">Cyberpunk UI guide ↗</a> informed modular sections, geometric details, hover / focus states, and progressive disclosure. Its captions were reviewed; no full-series viewing is claimed.</p></section>
+  <section class="panel"><h2>A signal from the workbench.</h2><p>The opening takes the idea of an assembling interface from <a href="https://hancore.dev/site/#stack" target="_blank" rel="noopener noreferrer">hancore.dev ↗</a>, reinterpreted as an original short boot sequence with opening shutters, a reticle and chromatic slices. It is a visual introduction, not a download meter or system scan. Skip or Escape dismisses it; replay is in the interface menu. FX off disables motion and the intro. System reduced motion is respected by default.</p></section>
   <section class="panel"><h2>Local by design.</h2><p>Static files on free GitHub Pages. No Raspberry Pi hosting, accounts, analytics, backend, or API keys. Save stores project IDs in this browser. Theme and motion preferences also stay here. The network graphic is a conceptual project map, not home-network telemetry or real locations.</p><p>Project facts: five public GitHub repositories and descriptions supplied by Hrushi. The Pi lab is Pi-hole, VPN, and Tailscale; NEXUS is an experimental client for existing local AI models, not a self-trained foundation model. Images are visibly labeled. Snapshot data and provenance are documented in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io" target="_blank" rel="noopener noreferrer">site source ↗</a>.</p></section>`;
 }
 function renderRoute({ focus = false } = {}) {
@@ -557,6 +564,16 @@ function commands() {
       run: () => setMotion(root.dataset.motion !== "on"),
     },
     {
+      label: "Replay opening sequence",
+      type: "MOTION",
+      run: () =>
+        root.dataset.motion === "on"
+          ? replayIntro()
+          : toast(
+              "Enable animations in the interface menu to replay the opening.",
+            ),
+    },
+    {
       label: "Keyboard shortcuts / help",
       type: "HELP",
       run: () => openDialog("#help-dialog"),
@@ -684,3 +701,4 @@ setView(interfaceFromSearch(location.search, read("hirsu-city-view")), {
 });
 setMotion(root.dataset.motion !== "off", false);
 renderRoute();
+cityMotion.opening();

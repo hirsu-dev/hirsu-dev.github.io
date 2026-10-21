@@ -10,7 +10,7 @@ export function cityHome() {
     <div class="city-hero-content">
       <div class="hero-disciplines"><span>SOFTWARE<br /><b>THAT SOLVES</b></span><span>HARDWARE<br /><b>THAT MOVES</b></span><span>CURIOSITY<br /><b>THAT BUILDS</b></span></div>
       <p class="city-kicker">HRUSHI / INDEPENDENT BUILDER</p>
-      <h1 id="hero-title">FROM CODE<br />TO THE <br /><span>REAL WORLD.</span></h1>
+      <h1 id="hero-title"><span class="hero-line">FROM CODE</span><span class="hero-line">TO THE</span><span class="hero-line">REAL WORLD.</span></h1>
       <p class="city-intro">Useful software. Custom electronics.<br />A telescope, a home lab, and the next experiment.</p>
       <div class="city-actions"><a class="cut-button solid" href="#projects">EXPLORE PROJECTS <span>↗</span></a><a class="cut-button outline" href="#about">MEET THE BUILDER <span>+</span></a></div>
       <div class="hero-tools" aria-label="Selected project tools"><span>PYTHON</span><span>JAVASCRIPT</span><span>SWIFTUI</span><span>RASPBERRY PI</span><span>KiCAD</span></div>

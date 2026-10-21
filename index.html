@@ -21,6 +21,11 @@
     <title>hirsu // personal project network</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <script>
+      document.documentElement.dataset.motion = matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches
+        ? "off"
+        : "on";
       try {
         const view =
           new URLSearchParams(location.search).get("view") ||
@@ -39,7 +44,8 @@
     </script>
     <link rel="stylesheet" href="console.css?v=5" />
     <link rel="stylesheet" href="city.css?v=6" />
-    <script type="module" src="console.js?v=6"></script>
+    <link rel="stylesheet" href="city-effects.css?v=7" />
+    <script type="module" src="console.js?v=7"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -133,7 +139,7 @@
         >
       </nav>
       <div class="rail-bottom">
-        <span class="rail-version" aria-hidden="true">v6.0</span>
+        <span class="rail-version" aria-hidden="true">v7.0</span>
         <button
           class="rail-item"
           id="theme-button"
@@ -329,6 +335,9 @@
         </button>
       </div>
       <button class="bracket" id="dialog-motion">[ Pause animations ]</button>
+      <button class="bracket" id="replay-intro">
+        [ Replay opening sequence ↗ ]
+      </button>
       <p class="fineprint">
         Preferences and bookmarks are stored only in this browser. System
         reduced-motion preference is respected by default.
@@ -389,6 +398,47 @@
         network access, or live telemetry.
       </p>
     </dialog>
+    <dialog
+      id="boot-dialog"
+      aria-labelledby="boot-title"
+      aria-describedby="boot-description"
+    >
+      <div class="boot-shutter boot-shutter-top" aria-hidden="true"></div>
+      <div class="boot-shutter boot-shutter-bottom" aria-hidden="true"></div>
+      <div class="boot-shell">
+        <div class="boot-top">
+          <span>HIRSU / PERSONAL PROJECT NETWORK</span><span>SEQUENCE_01</span>
+        </div>
+        <div class="boot-center">
+          <div class="boot-reticle" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </div>
+          <p class="boot-kicker">CODE / CIRCUITS / CURIOSITY</p>
+          <h2 id="boot-title">
+            hirsu<span>_</span
+            ><span class="boot-echo" aria-hidden="true">hirsu_</span>
+          </h2>
+          <p id="boot-description">A signal from the workbench.</p>
+          <div class="boot-stages" aria-hidden="true">
+            <span>01 <b>FORM THE SIGNAL</b><i>READY</i></span
+            ><span>02 <b>ASSEMBLE THE INTERFACE</b><i>READY</i></span
+            ><span>03 <b>OPEN THE WORKBENCH</b><i>READY</i></span>
+          </div>
+          <div class="boot-track" aria-hidden="true"><i></i></div>
+        </div>
+        <div class="boot-bottom">
+          <span
+            >PORTFOLIO INTRO / NOT A SYSTEM SCAN<br /><small
+              >VISUAL SEQUENCE · NO AUDIO</small
+            ></span
+          ><button id="skip-intro" autofocus>
+            SKIP INTRO <span aria-hidden="true">↗</span><small>ESC</small>
+          </button>
+        </div>
+        <div class="boot-grid" aria-hidden="true"></div>
+      </div>
+    </dialog>
+    <div id="route-signal" aria-hidden="true"><i></i><i></i><i></i></div>
     <div
       id="announcement"
       class="sr-only"

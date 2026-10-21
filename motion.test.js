@@ -1,0 +1,165 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { createCityMotion, bootDuration, bootPhases } from "./city-motion.js";
+
+// Minimal DOM/timer harness exercises the production controller without a browser dependency.
+function harness(
+  t,
+  { motion = "on", hidden = false, modalError = false } = {},
+) {
+  const root = { dataset: { motion, view: "neon" } };
+  const doc = new EventTarget();
+  doc.documentElement = root;
+  doc.hidden = hidden;
+  const focusTarget = {
+    isConnected: true,
+    getClientRects: () => [{}],
+    closest: () => null,
+    focus() {
+      doc.activeElement = this;
+    },
+  };
+  const main = {
+    focus() {
+      doc.activeElement = this;
+    },
+  };
+  doc.activeElement = focusTarget;
+  const skip = new EventTarget(),
+    boot = new EventTarget();
+  boot.dataset = {};
+  boot.open = false;
+  boot.showModal = () => {
+    if (modalError) throw new Error("modal unavailable");
+    boot.open = true;
+    doc.activeElement = skip;
+  };
+  boot.close = () => {
+    boot.open = false;
+    boot.dispatchEvent(new Event("close"));
+  };
+  doc.querySelector = (selector) =>
+    ({ "#boot-dialog": boot, "#skip-intro": skip, "#main": main })[selector] ||
+    null;
+  let now = 0,
+    next = 0;
+  const timers = new Map();
+  const globals = {
+    document: doc,
+    setTimeout: (fn, delay) => {
+      const id = ++next;
+      timers.set(id, { fn, due: now + delay });
+      return id;
+    },
+    clearTimeout: (id) => timers.delete(id),
+    cancelAnimationFrame: () => {},
+  };
+  const originals = new Map(
+    Object.keys(globals).map((key) => [
+      key,
+      Object.getOwnPropertyDescriptor(globalThis, key),
+    ]),
+  );
+  for (const [key, value] of Object.entries(globals))
+    Object.defineProperty(globalThis, key, {
+      value,
+      configurable: true,
+      writable: true,
+    });
+  t.after(() => {
+    for (const [key, descriptor] of originals) {
+      if (descriptor) Object.defineProperty(globalThis, key, descriptor);
+      else delete globalThis[key];
+    }
+  });
+  const tick = (ms) => {
+    now += ms;
+    for (const [id, { fn, due }] of [...timers])
+      if (due <= now && timers.has(id)) {
+        timers.delete(id);
+        fn();
+      }
+  };
+  return {
+    controller: createCityMotion(),
+    root,
+    doc,
+    skip,
+    boot,
+    main,
+    focusTarget,
+    timers,
+    tick,
+  };
+}
+test("opening advances then always releases its modal, timers and scroll lock", (t) => {
+  const h = harness(t);
+  assert.equal(h.controller.opening(), true);
+  assert.equal(h.controller.opening(), false);
+  assert.equal(h.boot.open, true);
+  assert.equal(h.root.dataset.booting, "true");
+  let time = 0;
+  for (const phase of bootPhases) {
+    h.tick(phase.at - time);
+    time = phase.at;
+    assert.equal(h.boot.dataset.phase, phase.name);
+  }
+  h.tick(bootDuration - time);
+  assert.equal(h.boot.open, false);
+  assert.equal(h.root.dataset.booting, undefined);
+  assert.equal(h.timers.size, 0);
+  assert.equal(h.doc.activeElement, h.main);
+});
+test("Skip closes immediately; a replay gets fresh timers and returns focus", (t) => {
+  const h = harness(t);
+  h.controller.opening();
+  h.skip.dispatchEvent(new Event("click"));
+  assert.equal(h.boot.open, false);
+  assert.equal(h.timers.size, 0);
+  h.doc.activeElement = h.focusTarget;
+  assert.equal(h.controller.opening({ replay: true }), true);
+  // A queued close event from the prior sequence must not abort a replay.
+  h.boot.dispatchEvent(new Event("close"));
+  assert.equal(h.root.dataset.booting, "true");
+  h.tick(bootDuration);
+  assert.equal(h.doc.activeElement, h.focusTarget);
+  assert.equal(h.timers.size, 0);
+});
+test("native dismissal clears timers and cannot reopen the overlay later", (t) => {
+  const h = harness(t);
+  h.controller.opening();
+  h.tick(500);
+  h.boot.close();
+  h.tick(10000);
+  assert.equal(h.boot.open, false);
+  assert.equal(h.boot.dataset.phase, undefined);
+  assert.equal(h.root.dataset.booting, undefined);
+  assert.equal(h.timers.size, 0);
+});
+test("motion off skips the intro and cancels one already in progress", (t) => {
+  const h = harness(t, { motion: "off" });
+  assert.equal(h.controller.opening(), false);
+  assert.equal(h.timers.size, 0);
+  h.root.dataset.motion = "on";
+  h.controller.opening();
+  h.root.dataset.motion = "off";
+  h.doc.dispatchEvent(new Event("appearancechange"));
+  assert.equal(h.boot.open, false);
+  assert.equal(h.timers.size, 0);
+});
+test("backgrounding dismisses the intro rather than trapping a returning visitor", (t) => {
+  const h = harness(t);
+  h.controller.opening();
+  h.doc.hidden = true;
+  h.doc.dispatchEvent(new Event("visibilitychange"));
+  assert.equal(h.boot.open, false);
+  assert.equal(h.root.dataset.visibility, "hidden");
+  assert.equal(h.timers.size, 0);
+  assert.equal(h.controller.opening(), false);
+});
+test("unavailable dialog support leaves content accessible without a scroll lock", (t) => {
+  const h = harness(t, { modalError: true });
+  assert.equal(h.controller.opening(), false);
+  assert.equal(h.root.dataset.booting, undefined);
+  assert.equal(h.timers.size, 0);
+});

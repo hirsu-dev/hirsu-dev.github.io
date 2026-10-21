@@ -1,0 +1,766 @@
+/* v7: original signal boot / chromatic displacement. No strobe or audio. */
+html[data-booting="true"] {
+  overflow: hidden;
+}
+html[data-booting="true"] #screen *,
+html[data-booting="true"] #screen *::before,
+html[data-booting="true"] #screen *::after {
+  animation-play-state: paused;
+}
+#boot-dialog {
+  --boot-yellow: #fcee0a;
+  --boot-cyan: #65f8ed;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--boot-yellow);
+  box-shadow: none;
+  overflow: hidden;
+  font:
+    11px Consolas,
+    "Courier New",
+    monospace;
+}
+[data-view="blacksite"] #boot-dialog {
+  --boot-yellow: #d7fc70;
+  --boot-cyan: #bca4ff;
+}
+#boot-dialog::backdrop {
+  background: transparent;
+  backdrop-filter: none;
+}
+.boot-shutter {
+  position: absolute;
+  inset: 0 0 50%;
+  background: #080c10;
+  transition: transform 0.65s cubic-bezier(0.7, 0, 0.15, 1);
+}
+.boot-shutter-bottom {
+  inset: 50% 0 0;
+}
+.boot-shutter-top::after,
+.boot-shutter-bottom::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: var(--boot-yellow);
+  box-shadow: 0 0 20px #fcee0a44;
+}
+.boot-shutter-bottom::after {
+  inset: 0 0 auto;
+  background: var(--boot-cyan);
+}
+.boot-shell {
+  position: absolute;
+  inset: 30px;
+  border: 1px solid #fcee0a33;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 26px 30px;
+  isolation: isolate;
+  transition:
+    opacity 0.25s,
+    clip-path 0.45s;
+}
+.boot-shell::before,
+.boot-shell::after {
+  content: "";
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  border: solid var(--boot-yellow);
+  pointer-events: none;
+}
+.boot-shell::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+.boot-shell::after {
+  right: -1px;
+  bottom: -1px;
+  border-width: 0 2px 2px 0;
+}
+.boot-top,
+.boot-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  letter-spacing: 0.12em;
+  line-height: 1.8;
+}
+.boot-top > span:last-child {
+  color: var(--boot-cyan);
+}
+.boot-bottom {
+  letter-spacing: 0.05em;
+  font-size: 10px;
+}
+.boot-bottom small {
+  color: #9aafb8;
+  font-size: 9px;
+}
+.boot-center {
+  width: min(560px, 80%);
+  align-self: center;
+  position: relative;
+  padding: 55px 50px;
+}
+.boot-reticle {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform: scaleX(0.08);
+  opacity: 0;
+  transition:
+    transform 0.6s cubic-bezier(0.15, 0.8, 0.2, 1),
+    opacity 0.2s;
+}
+.boot-reticle i {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  border: solid var(--boot-cyan);
+}
+.boot-reticle i:nth-child(1) {
+  left: 0;
+  top: 0;
+  border-width: 1px 0 0 1px;
+}
+.boot-reticle i:nth-child(2) {
+  right: 0;
+  top: 0;
+  border-width: 1px 1px 0 0;
+}
+.boot-reticle i:nth-child(3) {
+  left: 0;
+  bottom: 0;
+  border-width: 0 0 1px 1px;
+}
+.boot-reticle i:nth-child(4) {
+  right: 0;
+  bottom: 0;
+  border-width: 0 1px 1px 0;
+}
+.boot-kicker {
+  color: var(--boot-cyan);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+}
+#boot-title {
+  position: relative;
+  font:
+    italic 400 clamp(85px, 13vw, 160px)/1 Impact,
+    "Arial Narrow",
+    sans-serif;
+  letter-spacing: -0.04em;
+  text-transform: none;
+  margin: 10px 0 14px;
+  color: var(--boot-yellow);
+}
+#boot-title > span:first-child {
+  color: var(--boot-cyan);
+}
+#boot-description {
+  color: #b9c6c8;
+  font-size: 12px;
+}
+.boot-echo {
+  position: absolute;
+  inset: 0;
+  color: #ff425e;
+  clip-path: inset(38% 0 44%);
+  opacity: 0;
+  pointer-events: none;
+}
+.boot-stages {
+  display: grid;
+  gap: 11px;
+  margin-top: 38px;
+  color: #687980;
+  font-size: 10px;
+}
+.boot-stages > span {
+  display: flex;
+  gap: 15px;
+  transition:
+    color 0.2s,
+    transform 0.4s;
+}
+.boot-stages b {
+  font-weight: 400;
+}
+.boot-stages i {
+  margin-left: auto;
+  font-style: normal;
+  color: var(--boot-cyan);
+  opacity: 0;
+}
+.boot-track {
+  margin-top: 25px;
+  height: 3px;
+  background: #263239;
+  overflow: hidden;
+}
+.boot-track i {
+  display: block;
+  height: 100%;
+  background: var(--boot-yellow);
+  transform-origin: left;
+  animation: boot-track 2.25s cubic-bezier(0.2, 0.4, 0.4, 1) both;
+}
+.boot-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.18;
+  background:
+    linear-gradient(#253e3b77 1px, transparent 1px),
+    linear-gradient(90deg, #253e3b77 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(
+    90deg,
+    #000,
+    transparent 35%,
+    transparent 65%,
+    #000
+  );
+}
+.boot-grid::after {
+  content: "";
+  position: absolute;
+  inset: -2px 0 auto;
+  height: 1px;
+  background: var(--boot-cyan);
+  box-shadow: 0 0 20px 10px #65f8ed33;
+  animation: boot-scan 2.2s linear both;
+}
+#skip-intro {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  padding: 13px 18px;
+  border: 1px solid var(--boot-yellow);
+  color: var(--boot-yellow);
+  background: #111b20;
+  font:
+    bold 11px Consolas,
+    monospace;
+  cursor: pointer;
+  white-space: nowrap;
+}
+#skip-intro:hover,
+#skip-intro:focus-visible {
+  background: var(--boot-yellow);
+  color: #080c10;
+  outline: 2px solid var(--boot-cyan);
+  outline-offset: 4px;
+}
+#skip-intro small {
+  color: inherit;
+  font-size: 9px;
+  opacity: 0.6;
+}
+#boot-dialog[open] .boot-reticle {
+  animation: boot-reticle 0.75s 0.1s cubic-bezier(0.15, 0.8, 0.2, 1) both;
+}
+#boot-dialog[open] .boot-center {
+  animation: boot-copy 0.5s ease-out both;
+}
+#boot-dialog[open] .boot-echo {
+  animation: boot-displace 0.55s 0.48s steps(1, end) both;
+}
+.boot-stages > span:nth-child(1) {
+  --stage-time: 0.48s;
+}
+.boot-stages > span:nth-child(2) {
+  --stage-time: 1.05s;
+}
+.boot-stages > span:nth-child(3) {
+  --stage-time: 1.7s;
+}
+#boot-dialog[open] .boot-stages > span {
+  animation: boot-stage 0.25s var(--stage-time) both;
+}
+#boot-dialog[open] .boot-stages i {
+  animation: boot-ready 0.1s var(--stage-time) both;
+}
+#boot-dialog[open] .boot-shell {
+  animation: boot-collapse 0.55s 2.25s cubic-bezier(0.7, 0, 0.15, 1) both;
+}
+#boot-dialog[open] .boot-shutter-top {
+  animation: shutter-top 0.65s 2.25s cubic-bezier(0.7, 0, 0.15, 1) both;
+}
+#boot-dialog[open] .boot-shutter-bottom {
+  animation: shutter-bottom 0.65s 2.25s cubic-bezier(0.7, 0, 0.15, 1) both;
+}
+@keyframes boot-reticle {
+  from {
+    opacity: 0;
+    transform: scaleX(0.08);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+@keyframes boot-copy {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes boot-stage {
+  from {
+    color: #687980;
+    transform: none;
+  }
+  to {
+    color: var(--boot-yellow);
+    transform: translateX(4px);
+  }
+}
+@keyframes boot-ready {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes boot-collapse {
+  from {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+  to {
+    opacity: 0;
+    clip-path: inset(49% 0);
+  }
+}
+@keyframes shutter-top {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateY(-102%);
+  }
+}
+@keyframes shutter-bottom {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateY(102%);
+  }
+}
+@keyframes boot-track {
+  0% {
+    transform: scaleX(0);
+  }
+  38% {
+    transform: scaleX(0.36);
+  }
+  72% {
+    transform: scaleX(0.7);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+@keyframes boot-scan {
+  to {
+    top: 100%;
+  }
+}
+@keyframes boot-displace {
+  0%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+  32% {
+    opacity: 0.8;
+    transform: translateX(9px);
+  }
+  65% {
+    opacity: 0.6;
+    transform: translateX(-5px);
+    clip-path: inset(60% 0 25%);
+  }
+}
+
+/* Slow, sliced displacement leaves primary text continuously visible. */
+.signal-title {
+  position: relative;
+  isolation: isolate;
+}
+.signal-echo {
+  position: absolute !important;
+  inset: 0;
+  display: block;
+  white-space: pre-line;
+  pointer-events: none;
+  opacity: 0;
+  color: #ff3155;
+  user-select: none;
+}
+.signal-title > .signal-red {
+  color: #ff3155;
+}
+.signal-title > .signal-cyan {
+  color: #00bbbc;
+}
+.city-hero h1 .hero-line {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+}
+html[data-motion="on"] .signal-red {
+  animation: signal-red 9s steps(1, end) var(--signal-delay, 0s) infinite;
+}
+html[data-motion="on"] .signal-cyan {
+  animation: signal-cyan 9s steps(1, end) var(--signal-delay, 0s) infinite;
+}
+@keyframes signal-red {
+  0%,
+  91%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+  92% {
+    opacity: 0.8;
+    transform: translateX(6px);
+    clip-path: inset(28% 0 53%);
+  }
+  95% {
+    opacity: 0.7;
+    transform: translateX(-4px);
+    clip-path: inset(65% 0 22%);
+  }
+  98% {
+    opacity: 0;
+  }
+}
+@keyframes signal-cyan {
+  0%,
+  91%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+  92% {
+    opacity: 0.85;
+    transform: translateX(-5px);
+    clip-path: inset(62% 0 18%);
+  }
+  95% {
+    opacity: 0.75;
+    transform: translateX(4px);
+    clip-path: inset(20% 0 65%);
+  }
+  98% {
+    opacity: 0;
+  }
+}
+html[data-motion="on"] .signal-title:hover > .signal-echo {
+  animation: signal-interference 0.65s steps(1, end) both;
+}
+@keyframes signal-interference {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+    transform: translateX(7px);
+    clip-path: inset(25% 0 55%);
+  }
+  65% {
+    opacity: 0.7;
+    transform: translateX(-5px);
+    clip-path: inset(60% 0 25%);
+  }
+}
+.hero-lines::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 65%;
+  width: 1px;
+  background: #08a7a166;
+  transform: rotate(12deg);
+}
+.hero-lines::after {
+  content: "";
+  position: absolute;
+  inset: -10% 0 auto;
+  height: 18%;
+  background: linear-gradient(transparent, #1a858522, transparent);
+  transform: translateY(-100%);
+}
+html[data-motion="on"] .hero-lines::after {
+  animation: hero-scan 10s linear infinite;
+}
+@keyframes hero-scan {
+  to {
+    transform: translateY(760%);
+  }
+}
+html[data-motion="on"] .hero-lines::before {
+  animation: hud-line 12s ease-in-out infinite alternate;
+}
+@keyframes hud-line {
+  to {
+    transform: translateX(14vw) rotate(12deg);
+    opacity: 0.25;
+  }
+}
+html[data-motion="on"] .loadout-item i::after {
+  animation: hud-target 4s ease-in-out infinite alternate;
+}
+html[data-motion="on"] .loadout-two i::after {
+  animation-delay: 1.5s;
+}
+@keyframes hud-target {
+  from {
+    box-shadow: 0 0 0 0 currentColor;
+    transform: scale(1);
+  }
+  to {
+    box-shadow: 0 0 0 5px transparent;
+    transform: scale(0.65);
+  }
+}
+html[data-motion="on"] .hero-bottom > a > span {
+  display: inline-block;
+  animation: explore-drift 2.5s ease-in-out infinite;
+}
+@keyframes explore-drift {
+  50% {
+    transform: translateY(5px);
+  }
+}
+.section-label {
+  position: relative;
+}
+.section-label::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 70px;
+  height: 2px;
+  background: currentColor;
+  opacity: 0.5;
+  transform-origin: left;
+}
+html[data-motion="on"] .section-label::after {
+  animation: section-signal 5s ease-in-out infinite alternate;
+}
+@keyframes section-signal {
+  to {
+    transform: scaleX(2.6);
+    opacity: 0.15;
+  }
+}
+.cut-button {
+  overflow: hidden;
+}
+.cut-button span {
+  transition: transform 0.25s;
+}
+.cut-button:is(:hover, :focus-visible) > span {
+  transform: translate(3px, -3px);
+}
+html[data-motion="on"] .cut-button:is(:hover, :focus-visible)::after {
+  animation: button-cut 0.5s ease-out;
+}
+@keyframes button-cut {
+  from {
+    width: 0;
+    left: -5%;
+  }
+  to {
+    width: 105%;
+    left: 105%;
+  }
+}
+.feature-image,
+.card-art {
+  position: relative;
+  overflow: hidden;
+}
+.feature-image::after,
+.card-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid #65f8ed44;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    #65f8ed22 50%,
+    transparent 70%
+  );
+  transform: translateX(-105%);
+}
+html[data-motion="on"]
+  :is(.feature-tile, .project-card):is(:hover, :focus-within)
+  :is(.feature-image, .card-art)::after {
+  animation: image-scan 0.75s ease-out;
+}
+@keyframes image-scan {
+  to {
+    transform: translateX(105%);
+  }
+}
+[data-view="neon"] .project-card {
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s,
+    transform 0.3s;
+}
+[data-view="neon"] .project-card:is(:hover, :focus-within) {
+  border-color: #65f8ed88;
+  box-shadow:
+    -3px 0 #65f8ed55,
+    3px 0 #ff315533;
+}
+html[data-view="blacksite"][data-motion="on"] .motion-ready {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.5s var(--reveal-delay, 0s),
+    transform 0.5s var(--reveal-delay, 0s);
+}
+html[data-view="blacksite"][data-motion="on"] .motion-ready.revealed {
+  opacity: 1;
+  transform: none;
+}
+html[data-motion="on"] .project-card.motion-ready {
+  animation: none;
+}
+#route-signal {
+  position: fixed;
+  inset: 100px 0 auto;
+  height: 130px;
+  pointer-events: none;
+  z-index: 20;
+  opacity: 0;
+  overflow: hidden;
+}
+#route-signal i {
+  position: absolute;
+  inset: 20% 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #65f8ed, transparent 80%);
+}
+#route-signal i:nth-child(2) {
+  top: 45%;
+  left: 20%;
+  background: linear-gradient(90deg, transparent, #ff3155, transparent);
+}
+#route-signal i:nth-child(3) {
+  top: 85%;
+  right: 35%;
+  height: 1px;
+}
+[data-motion="off"] .signal-echo {
+  display: none !important;
+}
+[data-visibility="hidden"] *,
+[data-visibility="hidden"] *::before,
+[data-visibility="hidden"] *::after {
+  animation-play-state: paused !important;
+}
+#replay-intro {
+  margin-top: 12px;
+  margin-left: 10px;
+}
+#replay-intro:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+@media (max-width: 650px) {
+  .boot-shell {
+    inset: 12px;
+    padding: 18px;
+  }
+  .boot-top {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+  .boot-top > span:last-child {
+    display: none;
+  }
+  .boot-center {
+    width: 100%;
+    padding: 36px 18px;
+  }
+  .boot-kicker {
+    font-size: 8px;
+    letter-spacing: 0.09em;
+  }
+  #boot-title {
+    font-size: clamp(85px, 27vw, 140px);
+  }
+  .boot-stages {
+    font-size: 8px;
+    gap: 16px;
+    margin-top: 30px;
+  }
+  .boot-stages > span {
+    gap: 8px;
+  }
+  .boot-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 8px;
+  }
+  .boot-bottom small {
+    font-size: 8px;
+  }
+  #skip-intro {
+    align-self: flex-end;
+  }
+  #replay-intro {
+    margin-left: 0;
+    display: block;
+  }
+}
+@media (max-height: 620px) and (min-width: 651px) {
+  .boot-shell {
+    inset: 12px;
+    padding: 15px 20px;
+  }
+  .boot-center {
+    padding: 20px 40px;
+  }
+  #boot-title {
+    font-size: 85px;
+  }
+  .boot-stages {
+    margin-top: 14px;
+    gap: 7px;
+  }
+  .boot-track {
+    margin-top: 15px;
+  }
+}

@@ -18,7 +18,13 @@ Primary reference: https://www.cyberpunk.net/us/en/. The supplied clips were ins
 - Project E3: UI | New Animations | Cyberpunk 2077 Mod, Virtuoso: https://www.youtube.com/watch?v=60MpEkIcm3g
 - Cyberpunk 2077 - Concept UI, Bad Art Studio: https://www.youtube.com/watch?v=ilYgQdyBFf4
 
-Original code implements sliding HUD panels, one-off clipped menu reveals, staggered scroll reveals, callout entrances and restrained pointer parallax. No autoplay audio, rapid flashing glitch loop, blocking intro, or navigation delay. Toggle FX in the header or animations in the menu. System reduced motion is respected by default; an explicit preference overrides it. Pointer parallax only runs for a fine pointer. Background-tab animation is stopped or finished.
+The v7 opening is inspired by the assembling-interface idea at https://hancore.dev/site/#stack, reinterpreted in original Cyberpunk-style code. A **2.9-second signal boot** draws a reticle, introduces the wordmark, stages three interface labels, then opens two shutters onto the page. It runs once per full page load, never on internal navigation. Skip and Escape dismiss it immediately. MENU → Replay opening sequence (also in Ctrl / Command K) runs it again without changing the current route, scroll position, gallery, or search. Direct #themes links open the menu without an intro on top.
+
+This is explicitly a visual sequence, not a network request, download progress, or device scan. Its completion timer is independent of asset loading. It uses a native modal for keyboard focus, releases its scroll lock and timers on every exit path, and falls back to ordinary content if dialog support fails. The underlying page and no-JavaScript project links are not hidden by a startup class.
+
+Motion throughout: staggered line-by-line hero assembly, a key-art wipe, occasional sliced red/cyan heading displacement (primary text never disappears), hover interference, scanning HUD lines and project images, drifting target markers, animated section strokes, scroll reveals, clipped menu entrances, pointer parallax, and short route streaks. No audio or full-screen flashing. CSS animations handle the visual timeline without a continuous JavaScript loop. Hidden tabs pause CSS motion and cancel active Web Animations; backgrounding also dismisses the intro.
+
+Toggle FX in the header or animations in the menu. FX off disables the intro and all motion; replay is disabled until FX is enabled. System reduced motion is respected by default, including when storage is blocked; an explicit preference overrides it. Pointer parallax only runs for a fine pointer.
 
 The original hero is a fictional anonymous engineer, not Hrushi or his hardware. No franchise character art, trademarks or reference source code is bundled. Asset provenance and the complete built-in generation prompt: [ART-DIRECTION-V6.md](ART-DIRECTION-V6.md). Earlier original artwork is retained but not loaded.
 
@@ -51,7 +57,8 @@ The sphere is a conceptual map of related projects, not a map of actual location
 - index.html: shell, cinematic header, preference bootstrap, menu, native dialogs, no-JavaScript fallback.
 - city-content.js: original cinematic homepage composition and factual featured projects.
 - city.css: cinematic interface and responsive rules, layered over console.css (alternate explorer / shared controls).
-- city-motion.js: optional original panel, menu, reveal and pointer effects.
+- city-motion.js: optional original boot controller, panel / menu / reveal / pointer effects and lifecycle cleanup.
+- city-effects.css: original boot, shutters, chromatic slices, scans, hover and ambient motion; layered over the existing interfaces.
 - console.js: routes, project rendering, search, bookmarks, galleries, keyboard commands, theme / motion state.
 - console-model.js: pure route/search/storage/escaping helpers.
 - project-network.js: original sphere renderer and lifecycle.
@@ -63,6 +70,6 @@ No npm install needed:
     npm run check
     python -m http.server 8130 --bind 127.0.0.1
 
-Open http://127.0.0.1:8130/. ES modules need HTTP. Fourteen dependency-free tests cover modes, URLs, routes, search/filtering, malformed storage, escaping, original landing content, all referenced image assets, panel frames, geometry, narrow label spacing, language aggregation, UTC dates and the retained legacy wrap helper.
+Open http://127.0.0.1:8130/. ES modules need HTTP. Dependency-free tests in site.test.js and motion.test.js cover modes, URLs, routes, search/filtering, malformed storage, escaping, original landing content, all referenced assets, panel frames, the bounded boot timeline, dismissal / replay / focus / timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, background cancellation, unsupported dialogs, geometry, narrow label spacing, language aggregation, UTC dates and the retained legacy wrap helper.
 
 Push main. GitHub Pages deploys main / root with .nojekyll and HTTPS. No paid service, backend, Pi, or custom domain is required. The preview server may be stopped without affecting the live site.
