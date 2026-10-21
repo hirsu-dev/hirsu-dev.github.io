@@ -5,34 +5,35 @@
   viewBox="0 0 800 520"
   fill="none"
 >
-  <g stroke="#263b2b" stroke-linecap="round" stroke-linejoin="round">
+  <rect width="800" height="520" fill="#0b141b" />
+  <g stroke="#79edf0" stroke-linecap="round" stroke-linejoin="round">
     <ellipse
       cx="430"
       cy="465"
       rx="145"
       ry="13"
-      fill="#3a4e2b"
+      fill="#79edf0"
       opacity=".09"
       stroke="none"
     />
     <path
       d="m434 303-79 157h-18l57-174M436 302l75 158h19l-58-174M432 313l-1 157h18l17-163"
-      fill="#c9d0b8"
+      fill="#243943"
       stroke-width="4"
     />
     <path d="m373 424 70-22 63 25M442 402v-52" stroke-width="3" />
-    <path d="M403 282h69v29h-69z" fill="#5c7651" stroke-width="4" />
-    <path d="M420 234h36v52h-36z" fill="#cdd5bd" stroke-width="4" />
+    <path d="M403 282h69v29h-69z" fill="#172b34" stroke-width="4" />
+    <path d="M420 234h36v52h-36z" fill="#243943" stroke-width="4" />
     <rect
       x="400"
       y="246"
       width="36"
       height="28"
       rx="4"
-      fill="#243c2e"
+      fill="#0b141b"
       stroke-width="3"
     />
-    <circle cx="417" cy="260" r="7" fill="#d3e981" stroke-width="2" />
+    <circle cx="417" cy="260" r="7" fill="#fcee0a" stroke-width="2" />
     <g transform="rotate(-32 423 216)">
       <rect
         x="285"
@@ -40,18 +41,18 @@
         width="270"
         height="102"
         rx="14"
-        fill="#cbd3bb"
+        fill="#1b303b"
         stroke-width="4"
       />
       <path d="M302 155v100M322 155v100M512 155v100" stroke-width="3" />
-      <path d="M324 158h183v16H324Z" fill="#e9eddb" stroke="none" />
-      <path d="M326 234h180v17H326Z" fill="#b3c19e" stroke="none" />
+      <path d="M324 158h183v16H324Z" fill="#55717b" stroke="none" />
+      <path d="M326 234h180v17H326Z" fill="#101f29" stroke="none" />
       <ellipse
         cx="555"
         cy="205"
         rx="22"
         ry="50"
-        fill="#466144"
+        fill="#162934"
         stroke-width="4"
       />
       <ellipse
@@ -59,15 +60,15 @@
         cy="205"
         rx="13"
         ry="35"
-        fill="#1e352c"
+        fill="#080c10"
         stroke-width="2"
       />
-      <path d="M555 184c-5 7-6 21-3 31" stroke="#c8e499" stroke-width="3" />
-      <path d="M270 182h17v45h-17z" fill="#556f4d" stroke-width="3" />
-      <path d="M252 188h18v33h-18z" fill="#293e2c" stroke-width="3" />
+      <path d="M555 184c-5 7-6 21-3 31" stroke="#fcee0a" stroke-width="3" />
+      <path d="M270 182h17v45h-17z" fill="#1e3440" stroke-width="3" />
+      <path d="M252 188h18v33h-18z" fill="#0e1c25" stroke-width="3" />
       <path
         d="M382 154v-20h66v20M396 134v-16h37v16"
-        fill="#93a580"
+        fill="#263c46"
         stroke-width="3"
       />
       <rect
@@ -76,11 +77,11 @@
         width="75"
         height="14"
         rx="6"
-        fill="#b6c3a2"
+        fill="#1c303a"
         stroke-width="3"
       />
-      <path d="M390 257v17h51v-17" fill="#748b62" stroke-width="4" />
-      <path d="M375 199h73" stroke="#91a27f" stroke-width="2" />
+      <path d="M390 257v17h51v-17" fill="#172b34" stroke-width="4" />
+      <path d="M375 199h73" stroke="#79edf0" stroke-width="2" />
     </g>
     <path d="m385 293-41-12v-25M344 256v-17" stroke-width="3" />
     <rect
@@ -89,22 +90,26 @@
       width="42"
       height="29"
       rx="5"
-      fill="#d8dfc9"
+      fill="#182e38"
       stroke-width="3"
     />
-    <circle cx="338" cy="231" r="4" fill="#6a8058" stroke-width="2" />
+    <circle cx="338" cy="231" r="4" fill="#fcee0a" stroke-width="2" />
     <path d="M414 274c-49 12-37 39 0 38" stroke-width="3" />
-    <circle cx="456" cy="292" r="4" fill="#d3e981" stroke-width="2" />
+    <circle cx="456" cy="292" r="4" fill="#fcee0a" stroke-width="2" />
     <path
       d="m581 114 28-28m-4 20 15-15M599 133l27-11"
-      stroke="#789263"
+      stroke="#79edf0"
       stroke-width="2"
       stroke-dasharray="4 7"
     />
     <path
       d="M641 68v24m-12-12h24M572 50v13m-7-6h14M291 95v20m-10-10h20"
-      stroke="#789263"
+      stroke="#79edf0"
       stroke-width="2"
     />
+  </g>
+  <g fill="none" stroke="#79edf0" stroke-opacity=".35" stroke-width="1">
+    <path d="M24 66V24h42M734 24h42v42M24 454v42h42M734 496h42v-42" />
+    <path d="M100 24h600M100 496h600" stroke-dasharray="2 12" />
   </g>
 </svg>

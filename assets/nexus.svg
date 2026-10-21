@@ -4,8 +4,8 @@
   height="520"
   viewBox="0 0 800 520"
 >
-  <rect width="800" height="520" fill="#27372e" />
-  <g stroke="#a8ba9877" fill="none">
+  <rect width="800" height="520" fill="#0b141b" />
+  <g stroke="#79edf04d" fill="none">
     <circle cx="400" cy="257" r="196" stroke-dasharray="4 9" />
     <circle cx="400" cy="257" r="144" />
   </g>
@@ -16,19 +16,19 @@
       width="226"
       height="416"
       rx="33"
-      fill="#15251e"
-      stroke="#a8bb96"
+      fill="#080c10"
+      stroke="#79edf0"
       stroke-width="3"
     />
-    <rect x="300" y="73" width="200" height="385" rx="23" fill="#1e3028" />
-    <rect x="366" y="81" width="68" height="14" rx="7" fill="#101d17" />
-    <text x="322" y="135" fill="#cce292" font-size="12" letter-spacing="3">
+    <rect x="300" y="73" width="200" height="385" rx="23" fill="#101f29" />
+    <rect x="366" y="81" width="68" height="14" rx="7" fill="#05090c" />
+    <text x="322" y="135" fill="#fcee0a" font-size="12" letter-spacing="3">
       NEXUS
     </text>
     <text
       x="322"
       y="162"
-      fill="#e8efdd"
+      fill="#e5f5f5"
       font-family="Arial,sans-serif"
       font-size="20"
       font-weight="bold"
@@ -38,36 +38,36 @@
     <text
       x="322"
       y="183"
-      fill="#e8efdd"
+      fill="#e5f5f5"
       font-family="Arial,sans-serif"
       font-size="20"
       font-weight="bold"
     >
       Home connected.
     </text>
-    <rect x="320" y="209" width="158" height="80" rx="10" fill="#34493b" />
-    <text x="332" y="233" fill="#cce292" font-size="10">ASK NEXUS</text>
+    <rect x="320" y="209" width="158" height="80" rx="10" fill="#1c303a" />
+    <text x="332" y="233" fill="#fcee0a" font-size="10">ASK NEXUS</text>
     <path
       d="M332 253h102m-102 13h72"
-      stroke="#8f9f86"
+      stroke="#698c98"
       stroke-width="4"
       stroke-linecap="round"
     />
-    <rect x="320" y="306" width="74" height="59" rx="9" fill="#34493b" />
-    <rect x="404" y="306" width="74" height="59" rx="9" fill="#34493b" />
-    <text x="357" y="342" text-anchor="middle" fill="#dce8cc" font-size="10">
+    <rect x="320" y="306" width="74" height="59" rx="9" fill="#1c303a" />
+    <rect x="404" y="306" width="74" height="59" rx="9" fill="#1c303a" />
+    <text x="357" y="342" text-anchor="middle" fill="#e5f5f5" font-size="10">
       Pi-hole
     </text>
-    <text x="441" y="342" text-anchor="middle" fill="#dce8cc" font-size="10">
+    <text x="441" y="342" text-anchor="middle" fill="#e5f5f5" font-size="10">
       Media
     </text>
-    <rect x="320" y="381" width="158" height="32" rx="6" fill="#cce292" />
-    <text x="399" y="402" text-anchor="middle" fill="#263c27" font-size="10">
+    <rect x="320" y="381" width="158" height="32" rx="6" fill="#fcee0a" />
+    <text x="399" y="402" text-anchor="middle" fill="#080c10" font-size="10">
       PERSONAL COMMAND CENTER
     </text>
     <path
       d="M371 442h59"
-      stroke="#809376"
+      stroke="#79edf0"
       stroke-width="3"
       stroke-linecap="round"
     />
@@ -77,10 +77,10 @@
       width="150"
       height="58"
       rx="8"
-      fill="#34493b"
-      stroke="#78916a"
+      fill="#1c303a"
+      stroke="#456574"
     />
-    <text x="158" y="205" text-anchor="middle" fill="#d5e4c2" font-size="13">
+    <text x="158" y="205" text-anchor="middle" fill="#e5f5f5" font-size="13">
       LOCAL MODELS
     </text>
     <rect
@@ -89,17 +89,21 @@
       width="150"
       height="58"
       rx="8"
-      fill="#34493b"
-      stroke="#78916a"
+      fill="#1c303a"
+      stroke="#456574"
     />
-    <text x="645" y="353" text-anchor="middle" fill="#d5e4c2" font-size="13">
+    <text x="645" y="353" text-anchor="middle" fill="#e5f5f5" font-size="13">
       HOME SERVICES
     </text>
     <path
       d="m233 200 54 35m226 73 57 37"
-      stroke="#9ab47f"
+      stroke="#79edf0"
       stroke-width="2"
       stroke-dasharray="5 6"
     />
+  </g>
+  <g fill="none" stroke="#79edf0" stroke-opacity=".35" stroke-width="1">
+    <path d="M24 66V24h42M734 24h42v42M24 454v42h42M734 496h42v-42" />
+    <path d="M100 24h600M100 496h600" stroke-dasharray="2 12" />
   </g>
 </svg>

@@ -1,6 +1,10 @@
 // Original, optional HUD motion. Boot stages are presentation, not network work.
 export const panelFrames = [
-  { opacity: 0, transform: "translateX(22px)", clipPath: "inset(0 0 0 4%)" },
+  {
+    opacity: 0,
+    transform: "translateX(28px) scale(.985)",
+    clipPath: "inset(0 0 8% 3%)",
+  },
   { opacity: 1, transform: "translateX(0)", clipPath: "inset(0 0 0 0)" },
 ];
 export const bootPhases = Object.freeze([
@@ -18,9 +22,11 @@ export function bootPhaseAt(elapsed) {
 
 export function createCityMotion() {
   const root = document.documentElement;
+  root.dataset.visibility = document.hidden ? "hidden" : "visible";
   const boot = document.querySelector("#boot-dialog");
   const animations = new Set(),
     bootTimers = new Set();
+  const elementAnimations = new WeakMap();
   let observer = null,
     scene = null,
     pointerFrame = 0,
@@ -29,6 +35,7 @@ export function createCityMotion() {
   const enabled = () => root.dataset.motion === "on" && !document.hidden;
   function animate(element, frames = panelFrames, duration = 480, delay = 0) {
     if (!enabled() || !element?.animate || bootActive) return;
+    elementAnimations.get(element)?.cancel();
     const animation = element.animate(frames, {
       duration,
       delay,
@@ -36,6 +43,7 @@ export function createCityMotion() {
       fill: "backwards",
     });
     animations.add(animation);
+    elementAnimations.set(element, animation);
     animation.finished
       .catch(() => {})
       .finally(() => animations.delete(animation));
@@ -74,8 +82,18 @@ export function createCityMotion() {
     observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries)
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && !bootActive) {
             entry.target.classList.add("revealed");
+            entry.target
+              .querySelectorAll(".language-bar i")
+              .forEach((bar, i) =>
+                animate(
+                  bar,
+                  [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }],
+                  850,
+                  i * 80,
+                ),
+              );
             observer.unobserve(entry.target);
           }
       },
@@ -88,6 +106,9 @@ export function createCityMotion() {
     });
   }
   function enter(container, { transition = true } = {}) {
+    resetPointer();
+    animations.forEach((a) => a.cancel());
+    animations.clear();
     scene = container;
     observe(container);
     if (!transition || bootActive) return;
@@ -96,10 +117,14 @@ export function createCityMotion() {
       animate(
         hero.querySelector(".city-keyart"),
         [
-          { opacity: 0, clipPath: "inset(0 0 0 100%)" },
-          { opacity: 1, clipPath: "inset(0 0 0 0)" },
+          {
+            opacity: 0,
+            clipPath: "inset(0 0 0 100%)",
+            transform: "scale(1.08)",
+          },
+          { opacity: 1, clipPath: "inset(0 0 0 0)", transform: "scale(1.015)" },
         ],
-        1000,
+        1250,
       );
       hero
         .querySelectorAll(
@@ -111,7 +136,7 @@ export function createCityMotion() {
             [
               {
                 opacity: 0,
-                transform: "translateY(24px)",
+                transform: "translateY(34px) skewX(-3deg)",
                 clipPath: "inset(0 0 100% 0)",
               },
               {
@@ -120,12 +145,31 @@ export function createCityMotion() {
                 clipPath: "inset(0 0 0 0)",
               },
             ],
-            650,
+            800,
             Math.min(i * 65, 550),
           ),
         );
     } else {
       animate(container);
+      container
+        .querySelectorAll(
+          ".page-head .eyebrow,.page-head h1,.page-head p:not(.eyebrow),.network-shell,.feed-tools",
+        )
+        .forEach((piece, i) =>
+          animate(
+            piece,
+            [
+              {
+                opacity: 0,
+                transform: "translateY(14px)",
+                clipPath: "inset(0 0 100% 0)",
+              },
+              { opacity: 1, transform: "translateY(0)", clipPath: "inset(0)" },
+            ],
+            650,
+            80 + i * 70,
+          ),
+        );
       animate(
         document.querySelector("#route-signal"),
         [
@@ -199,13 +243,30 @@ export function createCityMotion() {
   document
     .querySelector("#skip-intro")
     ?.addEventListener("click", finishOpening);
+  let pointerHero = null,
+    pointerX = 0,
+    pointerY = 0,
+    targetX = 0,
+    targetY = 0;
   function resetPointer() {
     cancelAnimationFrame(pointerFrame);
     pointerFrame = 0;
+    pointerHero = null;
+    pointerX = pointerY = targetX = targetY = 0;
     scene?.querySelectorAll(".city-hero").forEach((e) => {
       e.style.removeProperty("--hero-x");
       e.style.removeProperty("--hero-y");
     });
+  }
+  function easePointer() {
+    pointerFrame = 0;
+    if (!pointerHero?.isConnected || !enabled() || bootActive) return;
+    pointerX += (targetX - pointerX) * 0.12;
+    pointerY += (targetY - pointerY) * 0.12;
+    pointerHero.style.setProperty("--hero-x", pointerX.toFixed(2) + "px");
+    pointerHero.style.setProperty("--hero-y", pointerY.toFixed(2) + "px");
+    if (Math.abs(targetX - pointerX) + Math.abs(targetY - pointerY) > 0.05)
+      pointerFrame = requestAnimationFrame(easePointer);
   }
   document.addEventListener(
     "pointermove",
@@ -220,14 +281,10 @@ export function createCityMotion() {
       const hero = e.target.closest?.(".city-hero");
       if (!hero) return;
       const rect = hero.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 14;
-      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
-      if (!pointerFrame)
-        pointerFrame = requestAnimationFrame(() => {
-          pointerFrame = 0;
-          hero.style.setProperty("--hero-x", x + "px");
-          hero.style.setProperty("--hero-y", y + "px");
-        });
+      pointerHero = hero;
+      targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
+      targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 14;
+      if (!pointerFrame) pointerFrame = requestAnimationFrame(easePointer);
     },
     { passive: true },
   );
@@ -237,8 +294,10 @@ export function createCityMotion() {
       if (
         e.target.closest?.(".city-hero") &&
         !e.relatedTarget?.closest?.(".city-hero")
-      )
-        resetPointer();
+      ) {
+        targetX = targetY = 0;
+        if (!pointerFrame) pointerFrame = requestAnimationFrame(easePointer);
+      }
     },
     { passive: true },
   );

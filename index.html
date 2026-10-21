@@ -44,8 +44,9 @@
     </script>
     <link rel="stylesheet" href="console.css?v=5" />
     <link rel="stylesheet" href="city.css?v=6" />
-    <link rel="stylesheet" href="city-effects.css?v=7" />
-    <script type="module" src="console.js?v=7"></script>
+    <link rel="stylesheet" href="city-effects.css?v=8" />
+    <link rel="stylesheet" href="city-upgrade.css?v=8" />
+    <script type="module" src="console.js?v=8"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -139,7 +140,7 @@
         >
       </nav>
       <div class="rail-bottom">
-        <span class="rail-version" aria-hidden="true">v7.0</span>
+        <span class="rail-version" aria-hidden="true">v8.0</span>
         <button
           class="rail-item"
           id="theme-button"
@@ -410,6 +411,9 @@
           <span>HIRSU / PERSONAL PROJECT NETWORK</span><span>SEQUENCE_01</span>
         </div>
         <div class="boot-center">
+          <div class="boot-orbits" aria-hidden="true">
+            <i></i><i></i><i></i>
+          </div>
           <div class="boot-reticle" aria-hidden="true">
             <i></i><i></i><i></i><i></i>
           </div>
@@ -439,6 +443,8 @@
       </div>
     </dialog>
     <div id="route-signal" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="signal-noise" aria-hidden="true"></div>
+    <div class="signal-tear" aria-hidden="true"></div>
     <div
       id="announcement"
       class="sr-only"

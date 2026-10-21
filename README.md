@@ -11,6 +11,14 @@ Switch in MENU or the footer; the alternate interface also has a sidebar/top-rig
 
 Home is #index. The complete searchable archive is #projects. Old #project- project links, #stack, #bench, #whoami and #themes links remain supported; #work opens the archive.
 
+## Signal upgrade / v8
+
+The current presentation adds original rooftop key art, a depth-layered project globe, animated static grain, low-opacity rolling scans, chromatic text slices and orbital boot rings. Images use one charcoal/cyan/yellow visual system: shared 16:10 contained stages, consistent captions and matching vector illustration palettes. Actual CAD and application screenshot files remain unchanged and are not cropped or color-filtered.
+
+The globe has front/back mesh depth, a point shell, curved project connections with decorative traveling points, orbital rings and stable docking labels. Rotation, drag and zoom ease into position. Keyboard focus and the pause control stop automatic motion. FX off leaves a static, manually operable globe; hidden/offscreen canvases stop rendering. Geometry, theme colors and label measurements are cached. A canvas-unavailable fallback keeps project links usable.
+
+Page and dialog entrances now unfold in layers. Hero parallax eases rather than snapping; galleries transition after image decoding; project expansion, stack bars, cards, navigation, rail and toasts share a coordinated motion cadence. New animations honor the existing FX setting and system reduced-motion default.
+
 ## Motion direction and references
 
 Primary reference: https://www.cyberpunk.net/us/en/. The supplied clips were inspected through visible playback frames:
@@ -26,7 +34,7 @@ Motion throughout: staggered line-by-line hero assembly, a key-art wipe, occasio
 
 Toggle FX in the header or animations in the menu. FX off disables the intro and all motion; replay is disabled until FX is enabled. System reduced motion is respected by default, including when storage is blocked; an explicit preference overrides it. Pointer parallax only runs for a fine pointer.
 
-The original hero is a fictional anonymous engineer, not Hrushi or his hardware. No franchise character art, trademarks or reference source code is bundled. Asset provenance and the complete built-in generation prompt: [ART-DIRECTION-V6.md](ART-DIRECTION-V6.md). Earlier original artwork is retained but not loaded.
+The current hero is an original fictional anonymous engineer, not Hrushi or his hardware. No franchise character art, trademarks or reference source code is bundled. Asset provenance and the complete built-in generation prompt: [ART-DIRECTION-V8.md](ART-DIRECTION-V8.md). Earlier original artwork and its v6 provenance are retained but not loaded.
 
 Sites guidance informed the responsive presentation structure, meaningful project sections, accessibility, and clear distinction between real evidence and illustration.
 
@@ -36,7 +44,7 @@ Search across project titles, descriptions, status, categories and tags. Multi-w
 
 Ctrl / Command K opens the searchable command menu; arrows and Enter navigate. On project cards, arrows or J/K move, Enter opens, S saves, E expands, / focuses search and ? opens help. Escape closes dialogs and returns focus. Input fields and native buttons/links retain their standard keys.
 
-The original project-network sphere remains on #network: drag / arrows to rotate, wheel / + / - to zoom, pause / reset and low / mid / high detail. A regular list of project links is also available. Labels separate on narrow displays. The sphere is a conceptual relationship map, not live telemetry or actual device locations.
+The upgraded project-network sphere is on #network: drag / arrows to rotate, wheel / + / - to zoom, pause / reset and low / mid / high detail. A regular list of project links is also available. Labels dock on alternating vertical positions on narrow displays. The sphere is a conceptual relationship map, not live telemetry or actual device locations.
 
 #stack contains dated public data, not skill ratings. #log contains factual open work, not invented dated activity. #about includes reference credits and privacy notes. Storage failures fall back to session-only bookmarks with an explicit message.
 
@@ -59,6 +67,7 @@ The sphere is a conceptual map of related projects, not a map of actual location
 - city.css: cinematic interface and responsive rules, layered over console.css (alternate explorer / shared controls).
 - city-motion.js: optional original boot controller, panel / menu / reveal / pointer effects and lifecycle cleanup.
 - city-effects.css: original boot, shutters, chromatic slices, scans, hover and ambient motion; layered over the existing interfaces.
+- city-upgrade.css: v8 media system, static grain, orbital boot rings, motion refinements and observatory styling.
 - console.js: routes, project rendering, search, bookmarks, galleries, keyboard commands, theme / motion state.
 - console-model.js: pure route/search/storage/escaping helpers.
 - project-network.js: original sphere renderer and lifecycle.
@@ -70,6 +79,6 @@ No npm install needed:
     npm run check
     python -m http.server 8130 --bind 127.0.0.1
 
-Open http://127.0.0.1:8130/. ES modules need HTTP. Dependency-free tests in site.test.js and motion.test.js cover modes, URLs, routes, search/filtering, malformed storage, escaping, original landing content, all referenced assets, panel frames, the bounded boot timeline, dismissal / replay / focus / timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, background cancellation, unsupported dialogs, geometry, narrow label spacing, language aggregation, UTC dates and the retained legacy wrap helper.
+Open http://127.0.0.1:8130/. ES modules need HTTP. The 29 dependency-free tests in site.test.js, motion.test.js and network.test.js cover modes, URLs, routes, search/filtering, malformed storage, escaping, original landing content, assets, panel frames, boot dismissal/replay/focus/timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, unsupported dialogs, finite spherical arcs, collision-free docking, globe pause/focus/quality/visibility/FX/lifecycle behavior, canvas fallback, language aggregation, UTC dates and the legacy wrap helper. Controller tests use deterministic DOM/canvas/RAF doubles; they do not replace visual browser QA.
 
 Push main. GitHub Pages deploys main / root with .nojekyll and HTTPS. No paid service, backend, Pi, or custom domain is required. The preview server may be stopped without affecting the live site.

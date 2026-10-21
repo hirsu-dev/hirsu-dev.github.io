@@ -4,94 +4,98 @@
   height="520"
   viewBox="0 0 800 520"
 >
-  <rect width="800" height="520" fill="#d8dfed" />
+  <rect width="800" height="520" fill="#0b141b" />
   <g transform="translate(76 89)">
     <rect
       width="648"
       height="344"
       rx="15"
-      fill="#253247"
-      stroke="#52637e"
+      fill="#101f29"
+      stroke="#79edf0"
       stroke-width="2"
     />
-    <rect x="17" y="15" width="614" height="27" rx="8" fill="#374761" />
-    <circle cx="33" cy="28" r="5" fill="#c4d790" />
+    <rect x="17" y="15" width="614" height="27" rx="8" fill="#1c303a" />
+    <circle cx="33" cy="28" r="5" fill="#fcee0a" />
     <text
       x="49"
       y="32"
       font-family="Consolas,monospace"
       font-size="10"
-      fill="#e0e7ed"
+      fill="#e5f5f5"
     >
       FORGE
     </text>
-    <path d="M531 25h9m8 0h9m8 0h9m8 0h24" stroke="#b1c0d0" stroke-width="3" />
-    <rect x="17" y="55" width="375" height="269" rx="9" fill="#e7eaf0" />
-    <rect x="28" y="66" width="351" height="24" rx="5" fill="#d5dbe6" />
-    <circle cx="40" cy="78" r="3" fill="#8a9bb4" />
-    <circle cx="51" cy="78" r="3" fill="#8a9bb4" />
-    <circle cx="62" cy="78" r="3" fill="#8a9bb4" />
+    <path d="M531 25h9m8 0h9m8 0h9m8 0h24" stroke="#79edf0" stroke-width="3" />
+    <rect x="17" y="55" width="375" height="269" rx="9" fill="#080c10" />
+    <rect x="28" y="66" width="351" height="24" rx="5" fill="#1c303a" />
+    <circle cx="40" cy="78" r="3" fill="#456574" />
+    <circle cx="51" cy="78" r="3" fill="#456574" />
+    <circle cx="62" cy="78" r="3" fill="#456574" />
     <text
       x="44"
       y="130"
       font-family="Consolas,monospace"
       font-size="13"
-      fill="#455771"
+      fill="#e5f5f5"
     >
       ~/hyprland-forge
     </text>
     <path
       d="M44 158h130m-130 18h232m-232 18h182m-182 18h212m-212 18h109"
-      stroke="#9ca9ba"
+      stroke="#55717b"
       stroke-width="6"
       stroke-linecap="round"
     />
     <path
       d="M44 254h44"
-      stroke="#72865a"
+      stroke="#fcee0a"
       stroke-width="6"
       stroke-linecap="round"
     />
-    <rect x="405" y="55" width="226" height="133" rx="9" fill="#34465c" />
+    <rect x="405" y="55" width="226" height="133" rx="9" fill="#1c303a" />
     <text
       x="426"
       y="84"
       font-family="Consolas,monospace"
       font-size="10"
-      fill="#b8c9da"
+      fill="#e5f5f5"
     >
       APPEARANCE
     </text>
-    <circle cx="438" cy="113" r="10" fill="#c4d790" />
-    <circle cx="469" cy="113" r="10" fill="#c4b6d8" />
-    <circle cx="500" cy="113" r="10" fill="#dfb5a1" />
-    <circle cx="531" cy="113" r="10" fill="#9ec7ce" />
+    <circle cx="438" cy="113" r="10" fill="#fcee0a" />
+    <circle cx="469" cy="113" r="10" fill="#79edf0" />
+    <circle cx="500" cy="113" r="10" fill="#ff535c" />
+    <circle cx="531" cy="113" r="10" fill="#55717b" />
     <path
       d="M427 151h178"
-      stroke="#6f849b"
+      stroke="#456574"
       stroke-width="5"
       stroke-linecap="round"
     />
-    <circle cx="553" cy="151" r="6" fill="#d3dfc4" />
-    <rect x="405" y="201" width="226" height="123" rx="9" fill="#b5c5a0" />
+    <circle cx="553" cy="151" r="6" fill="#fcee0a" />
+    <rect x="405" y="201" width="226" height="123" rx="9" fill="#1c303a" />
     <text
       x="425"
       y="230"
       font-family="Consolas,monospace"
       font-size="10"
-      fill="#32462d"
+      fill="#e5f5f5"
     >
       ARCH + HYPRLAND
     </text>
-    <path d="m476 292 23-48 24 48-24-10z" fill="#527148" />
+    <path d="m476 292 23-48 24 48-24-10z" fill="#79edf0" />
     <text
       x="548"
       y="294"
       font-family="Consolas,monospace"
       font-size="12"
-      fill="#3e5634"
+      fill="#fcee0a"
     >
       ~
     </text>
+  </g>
+  <g fill="none" stroke="#79edf0" stroke-opacity=".35" stroke-width="1">
+    <path d="M24 66V24h42M734 24h42v42M24 454v42h42M734 496h42v-42" />
+    <path d="M100 24h600M100 496h600" stroke-dasharray="2 12" />
   </g>
 </svg>

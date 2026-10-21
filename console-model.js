@@ -1,4 +1,4 @@
-import { projects } from "./projects.js";
+import { projects } from "./projects.js?v=8";
 
 export const projectIds = new Set(projects.map((p) => p.id));
 export function savedIds(raw) {

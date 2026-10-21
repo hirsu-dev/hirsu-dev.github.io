@@ -1,4 +1,4 @@
-import { projects } from "./projects.js?v=2";
+import { projects } from "./projects.js?v=8";
 import { snapshot, languageCounts, calendarDays } from "./stack-data.js";
 import {
   interfaces,
@@ -10,10 +10,10 @@ import {
   findProjects,
   resolveRoute,
   escapeHTML as esc,
-} from "./console-model.js?v=6";
-import { createProjectNetwork } from "./project-network.js";
-import { cityHome } from "./city-content.js?v=7";
-import { createCityMotion } from "./city-motion.js?v=7";
+} from "./console-model.js?v=8";
+import { createProjectNetwork } from "./project-network.js?v=8";
+import { cityHome } from "./city-content.js?v=8";
+import { createCityMotion } from "./city-motion.js?v=8";
 
 const $ = (s) => document.querySelector(s);
 const root = document.documentElement,
@@ -64,13 +64,28 @@ function openDialog(id) {
     [
       {
         opacity: 0,
-        transform: "translateX(-28px)",
-        clipPath: "inset(0 15% 0 0)",
+        transform: "translateY(24px) scale(.96)",
+        clipPath: "inset(0 0 30% 0)",
       },
       { opacity: 1, transform: "translateX(0)", clipPath: "inset(0 0 0 0)" },
     ],
-    360,
+    500,
   );
+  $(id)
+    .querySelectorAll(
+      ".menu-pages,.theme-options,.dialog-bar,#command-search,#command-results,#large-image",
+    )
+    .forEach((piece, i) =>
+      cityMotion.animate(
+        piece,
+        [
+          { opacity: 0, transform: "translateY(10px)" },
+          { opacity: 1, transform: "translateY(0)" },
+        ],
+        420,
+        80 + i * 55,
+      ),
+    );
 }
 function setView(view, { push = true } = {}) {
   if (!Object.hasOwn(interfaces, view)) return;
@@ -292,6 +307,25 @@ function expandProject(id) {
   if (!content || !button) return;
   expanded.has(id) ? expanded.delete(id) : expanded.add(id);
   content.hidden = !expanded.has(id);
+  if (!content.hidden)
+    cityMotion.animate(
+      content,
+      [
+        {
+          opacity: 0,
+          height: "0px",
+          overflow: "hidden",
+          transform: "translateY(-8px)",
+        },
+        {
+          opacity: 1,
+          height: content.scrollHeight + "px",
+          overflow: "hidden",
+          transform: "translateY(0)",
+        },
+      ],
+      420,
+    );
   button.setAttribute("aria-expanded", String(expanded.has(id)));
   button.setAttribute(
     "aria-label",
@@ -321,6 +355,29 @@ function changeShot(step) {
   shots.set(p.id, at);
   $("#project-image").src = images[at].image;
   $("#project-image").alt = images[at].alt;
+  const image = $("#project-image");
+  image
+    .decode()
+    .catch(() => {})
+    .then(() => {
+      if (!image.isConnected || shots.get(p.id) !== at) return;
+      cityMotion.animate(
+        image,
+        [
+          {
+            opacity: 0,
+            transform: `translateX(${step > 0 ? 18 : -18}px) scale(.98)`,
+            clipPath: "inset(0 0 0 8%)",
+          },
+          {
+            opacity: 1,
+            transform: "translateX(0) scale(1)",
+            clipPath: "inset(0)",
+          },
+        ],
+        500,
+      );
+    });
   $("#project-caption").textContent = images[at].caption;
   if ($("#shot-position"))
     $("#shot-position").textContent = `${at + 1} / ${images.length}`;
@@ -342,7 +399,7 @@ function renderNetwork() {
       "The project network.",
       "Different experiments. Shared tools. Select a node to open its project.",
     ) +
-    `<section class="network-shell" id="network-shell" aria-label="Interactive project network"><div class="network-viewport"><canvas tabindex="0" aria-label="Conceptual project sphere. Drag or use arrow keys to rotate; plus and minus to zoom. Project links follow."></canvas><div class="network-crosshair" aria-hidden="true"></div><span class="network-meta">07 PROJECT NODES<br />CONCEPTUAL MAP<br />NOT LIVE TELEMETRY</span><div class="network-labels">${projects.map((p) => `<a class="network-node" href="#${p.id}" aria-label="Open ${esc(p.title)}">${esc(p.title)}</a>`).join("")}</div></div><div class="network-controls"><button id="spin-button" aria-pressed="true">[ Pause rotation ]</button><button id="network-reset">[ Reset ]</button><span>DRAG rotate / SCROLL zoom</span><div class="quality" aria-label="Wireframe detail">${[
+    `<section class="network-shell" id="network-shell" aria-label="Interactive project network"><div class="network-viewport"><canvas tabindex="0" aria-label="Conceptual project sphere. Drag or use arrow keys to rotate; plus and minus to zoom. Project links follow."></canvas><div class="network-crosshair" aria-hidden="true"></div><span class="network-meta"><span class="network-state">ORBIT / ACTIVE</span>07 PROJECT NODES<br />CONCEPTUAL MAP<br />NOT LIVE TELEMETRY</span><div class="network-labels">${projects.map((p) => `<a class="network-node" href="#${p.id}" aria-label="Open ${esc(p.title)}">${esc(p.title)}</a>`).join("")}</div></div><div class="network-controls"><button id="spin-button" aria-pressed="true">[ Pause rotation ]</button><button id="network-reset">[ Reset ]</button><span>DRAG rotate / SCROLL zoom</span><div class="quality" aria-label="Wireframe detail">${[
       [8, "LOW"],
       [14, "MID"],
       [22, "HIGH"],

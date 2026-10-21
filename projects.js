@@ -8,7 +8,7 @@ export const projects = [
     status: "Under repair",
     statusClass: "repair",
     artwork: "telescope",
-    image: "assets/telescope.svg",
+    image: "assets/telescope.svg?v=8",
     alt: "Illustration of a telescope and motorized mount, not a photograph of the build",
     caption: "Project illustration",
     description:
@@ -36,7 +36,7 @@ export const projects = [
     filters: ["software", "ai"],
     status: "Experimental",
     artwork: "nexus",
-    image: "assets/nexus.svg",
+    image: "assets/nexus.svg?v=8",
     alt: "Illustrated mobile interface connecting a personal AI assistant and home services",
     caption: "Interface illustration · not a live connection",
     description:
@@ -63,7 +63,7 @@ export const projects = [
     filters: ["homelab"],
     status: "Personal setup",
     artwork: "homelab",
-    image: "assets/homelab.svg",
+    image: "assets/homelab.svg?v=8",
     alt: "Illustrated diagram of a Raspberry Pi home lab with Pi-hole, VPN, and Tailscale",
     caption: "Architecture sketch · no live network data",
     description:
@@ -184,7 +184,7 @@ export const projects = [
     filters: ["software"],
     status: "In development",
     artwork: "forge",
-    image: "assets/forge.svg",
+    image: "assets/forge.svg?v=8",
     alt: "Conceptual illustration of a tiled Linux desktop with a shell panel",
     caption: "Desktop illustration · not a hardware screenshot",
     description:

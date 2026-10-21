@@ -21,7 +21,8 @@ import {
 import {
   spherePoints,
   connections,
-  separateLabels,
+  dockLabels,
+  arcPoints,
 } from "./project-network.js";
 import {
   interfaces,
@@ -119,7 +120,7 @@ test("all project and cinematic image assets exist in the static checkout", () =
     p.image,
     ...(p.gallery || []).map((s) => s.image),
   ]);
-  assets.push("assets/night-city-engineer-v6.png");
+  assets.push("assets/night-city-engineer-v8.png");
   for (const path of assets)
     assert.ok(existsSync(new URL(path, import.meta.url)), path);
 });
@@ -191,25 +192,56 @@ test("project sphere is finite, normalized and connected only to real projects",
   assert.deepEqual(spherePoints(0), []);
 });
 
-test("narrow project-map labels remain separated and inside the viewport", () => {
-  const ys = separateLabels(
+test("docked labels stay in bounds and never overlap on mobile or desktop", () => {
+  const sizes = [98, 124, 150, 110, 92, 80, 110];
+  for (const width of [240, 280, 320, 390, 440, 720, 1200]) {
+    const positions = dockLabels(sizes, width, 460);
+    const boxes = positions.map((p, i) => ({
+      left: p.x - sizes[i] / 2,
+      right: p.x + sizes[i] / 2,
+      top: p.y - 18,
+      bottom: p.y + 18,
+    }));
+    for (const box of boxes) {
+      assert.ok(box.left >= 0 && box.right <= width);
+      assert.ok(box.top >= 80 && box.bottom <= 460);
+    }
+    boxes.forEach((a, i) =>
+      boxes.slice(i + 1).forEach((b) => {
+        assert.ok(
+          a.right <= b.left ||
+            b.right <= a.left ||
+            a.bottom <= b.top ||
+            b.bottom <= a.top,
+        );
+      }),
+    );
+  }
+  assert.deepEqual(dockLabels([], 400, 460), []);
+});
+test("curved connections preserve endpoints and stay outside the globe", () => {
+  const points = spherePoints(7);
+  for (const [a, b] of [
+    [points[0], points[4]],
     [
-      { y: 140 },
-      { y: 145 },
-      { y: 149 },
-      { y: 190 },
-      { y: 195 },
-      { y: 198 },
-      { y: 202 },
+      [1, 0, 0],
+      [-1, 0, 0],
     ],
-    400,
-  );
-  const sorted = [...ys].sort((a, b) => a - b);
-  assert.ok(sorted[0] >= 35);
-  assert.ok(sorted.at(-1) <= 375);
-  for (let i = 1; i < sorted.length; i++)
-    assert.ok(sorted[i] - sorted[i - 1] >= 38);
-  assert.deepEqual(separateLabels([], 400), []);
+    [
+      [0, 1, 0],
+      [0, 1, 0],
+    ],
+  ]) {
+    const arc = arcPoints(a, b);
+    assert.equal(arc.length, 49);
+    for (const p of arc) {
+      assert.ok(p.every(Number.isFinite));
+      assert.ok(Math.hypot(...p) >= 1 - 1e-9);
+      assert.ok(Math.hypot(...p) <= 1.13 + 1e-9);
+    }
+    a.forEach((n, i) => assert.ok(Math.abs(n - arc[0][i]) < 1e-9));
+    b.forEach((n, i) => assert.ok(Math.abs(n - arc.at(-1)[i]) < 1e-9));
+  }
 });
 test("language counts are per repository, not duplicated file/language entries", () => {
   assert.deepEqual(
