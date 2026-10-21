@@ -1,0 +1,552 @@
+/* v10: original angular HUD geometry. Glitches are localized, never a screen flash. */
+:root {
+  --hud-red: #ff637e;
+  --hud-cut: polygon(
+    0 18px,
+    18px 0,
+    calc(100% - 46px) 0,
+    calc(100% - 46px) 7px,
+    calc(100% - 20px) 7px,
+    100% 27px,
+    100% calc(100% - 30px),
+    calc(100% - 30px) 100%,
+    58px 100%,
+    48px calc(100% - 8px),
+    0 calc(100% - 8px)
+  );
+}
+/* Paint the cut shell separately: keyboard outlines and content are never clipped. */
+[data-view="blacksite"]
+  :is(
+    .od-build,
+    .od-stack-grid article,
+    .od-transmission,
+    .panel,
+    .project-card,
+    .network-shell
+  ) {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  background: transparent;
+}
+[data-view="blacksite"]
+  :is(
+    .od-build,
+    .od-stack-grid article,
+    .od-transmission,
+    .panel,
+    .project-card,
+    .network-shell
+  )::before,
+[data-view="blacksite"]
+  :is(
+    .od-build,
+    .od-stack-grid article,
+    .od-transmission,
+    .panel,
+    .project-card,
+    .network-shell
+  )::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  clip-path: var(--hud-cut);
+  background: linear-gradient(
+    120deg,
+    var(--hud-red),
+    #65507c 25%,
+    #65507c 70%,
+    var(--accent)
+  );
+}
+[data-view="blacksite"]
+  :is(
+    .od-build,
+    .od-stack-grid article,
+    .od-transmission,
+    .panel,
+    .project-card,
+    .network-shell
+  )::after {
+  inset: 1px;
+  z-index: -1;
+  background: linear-gradient(130deg, #21172e, #14101f 75%);
+}
+.od-build {
+  padding: 13px;
+  gap: 10px;
+}
+.od-build-media {
+  border: 0 !important;
+  clip-path: polygon(
+    0 12px,
+    12px 0,
+    calc(100% - 24px) 0,
+    100% 24px,
+    100% 100%,
+    0 100%
+  );
+}
+.od-build-media:focus-visible {
+  outline-offset: -5px;
+}
+.od-build-copy {
+  border-left: 1px solid #ff637e33;
+}
+.od-build-meta > span:first-child {
+  color: var(--hud-red);
+  letter-spacing: 0.16em;
+}
+.od-status {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 7px) 0,
+    100% 7px,
+    100% 100%,
+    7px 100%,
+    0 calc(100% - 7px)
+  );
+  background: #bda4ff0c;
+}
+.od-status.repair {
+  background: #ff637e16;
+}
+.od-tags span {
+  border: 0;
+  border-left: 2px solid var(--hud-red);
+  background: #bca4ff10;
+  padding-inline: 9px;
+}
+.od-section-head {
+  position: relative;
+  padding-top: 30px;
+}
+.od-section-head::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--hud-red) 0 8%,
+    transparent 8% 9%,
+    var(--accent) 9% 25%,
+    #6e5978 25% 100%
+  );
+  clip-path: polygon(
+    0 0,
+    30% 0,
+    calc(30% + 8px) 5px,
+    100% 5px,
+    100% 6px,
+    calc(30% + 7px) 6px,
+    30% 2px,
+    0 2px
+  );
+}
+.od-section-head > .od-kicker::before {
+  content: "// ";
+  color: var(--hud-red);
+}
+.od-section h2 em {
+  display: inline-block;
+}
+.od-build h3 a {
+  display: inline-block;
+}
+.od-transmission {
+  padding: 28px;
+  min-width: 210px;
+}
+.hud-meter {
+  display: flex;
+  height: 19px;
+  gap: 5px;
+  margin: 18px 0;
+  align-items: end;
+}
+.hud-meter i {
+  width: 13px;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: bottom;
+}
+.hud-meter i:nth-child(3n) {
+  background: var(--hud-red);
+  height: 55%;
+}
+.hud-meter i:nth-child(2n) {
+  height: 75%;
+}
+.hud-frame {
+  position: absolute;
+  inset: 20px;
+  z-index: 3;
+  pointer-events: none;
+  color: var(--hud-red);
+  font: 8px var(--mono);
+  letter-spacing: 0.18em;
+  border-left: 1px solid #ff637e44;
+  border-right: 1px solid #ff637e44;
+}
+.hud-frame > span {
+  position: absolute;
+  top: 0;
+  left: 12px;
+}
+.hud-frame > span:nth-child(2) {
+  left: auto;
+  right: 12px;
+  color: #c1b3d0;
+}
+.hud-frame::before,
+.hud-frame::after {
+  content: "";
+  position: absolute;
+  width: 42px;
+  height: 16px;
+  border-top: 2px solid var(--hud-red);
+  top: 0;
+}
+.hud-frame::before {
+  left: -1px;
+  border-left: 2px solid var(--hud-red);
+}
+.hud-frame::after {
+  right: -1px;
+  border-right: 2px solid var(--hud-red);
+}
+.hud-frame i {
+  position: absolute;
+  left: -3px;
+  top: 90px;
+  bottom: 100px;
+  width: 5px;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 17px,
+    #bca4ff88 17px 18px
+  );
+}
+.hud-frame b {
+  position: absolute;
+  right: 12px;
+  top: 30%;
+  line-height: 65px;
+  font-size: 15px;
+  font-weight: 400;
+}
+.hud-image-slices {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+  clip-path: inset(29% 0 65% 55%);
+}
+.hud-image-slices img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 72% 45%;
+}
+.od-hero-bottom {
+  border-color: var(--hud-red);
+}
+.od-hero-bottom::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 0;
+  width: 85px;
+  height: 6px;
+  background: repeating-linear-gradient(
+    120deg,
+    var(--hud-red) 0 3px,
+    transparent 3px 7px
+  );
+}
+[data-view="blacksite"] .city-header {
+  border-color: #ff637e66;
+}
+[data-view="blacksite"] .city-nav {
+  box-shadow: inset 0 2px var(--hud-red);
+}
+.city-nav > :is(a, button) {
+  position: relative;
+}
+.city-nav > :is(a, button):focus-visible {
+  outline-offset: -5px;
+}
+.od-button {
+  position: relative;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 25px) 0,
+    100% 25px,
+    100% calc(100% - 8px),
+    75% calc(100% - 8px),
+    calc(75% - 8px) 100%,
+    16px 100%,
+    0 calc(100% - 16px)
+  );
+  border-left: 4px solid var(--hud-red);
+  padding-right: 34px;
+}
+.od-button:focus-visible {
+  outline-offset: -7px;
+  outline-color: #100c1b;
+}
+.od-open {
+  clip-path: polygon(0 0, 75% 0, 100% 25%, 100% 100%, 25% 100%, 0 75%);
+}
+.od-bench-list a {
+  padding-left: 18px;
+  border-left: 2px solid #ff637e55;
+}
+.od-bench-list a:hover,
+.od-bench-list a:focus-visible {
+  border-left-color: var(--accent);
+  background: #bda4ff0a;
+}
+.od-jump a {
+  border-bottom: 1px solid #ff637e66;
+  padding: 6px 9px;
+  background: #ff637e09;
+}
+.od-ticker {
+  clip-path: polygon(
+    0 0,
+    33% 0,
+    calc(33% + 9px) 5px,
+    72% 5px,
+    calc(72% + 9px) 0,
+    100% 0,
+    100% 100%,
+    62% 100%,
+    calc(62% - 9px) calc(100% - 5px),
+    18% calc(100% - 5px),
+    calc(18% - 9px) 100%,
+    0 100%
+  );
+}
+.network-shell {
+  padding: 12px;
+}
+.network-controls {
+  border-top: 1px solid var(--hud-red);
+}
+.network-node {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 8px) 0,
+    100% 8px,
+    100% 100%,
+    8px 100%,
+    0 calc(100% - 8px)
+  );
+}
+.network-node:focus-visible {
+  outline-offset: -4px;
+}
+.network-crosshair {
+  border-color: var(--hud-red);
+}
+/* Slice channels stay local; the base heading and actual project images stay readable. */
+html[data-motion="on"] .signal-red {
+  animation: hud-red 4.8s steps(1, end) var(--signal-delay, 0s) infinite;
+}
+html[data-motion="on"] .signal-cyan {
+  animation: hud-cyan 4.8s steps(1, end) var(--signal-delay, 0s) infinite;
+}
+@keyframes hud-red {
+  0%,
+  78%,
+  96%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+  80% {
+    opacity: 0.85;
+    transform: translateX(-10px);
+    clip-path: inset(12% 0 73%);
+  }
+  85% {
+    opacity: 0.65;
+    transform: translateX(8px);
+    clip-path: inset(44% 0 46%);
+  }
+  90% {
+    opacity: 0.7;
+    transform: translateX(-5px);
+    clip-path: inset(76% 0 14%);
+  }
+}
+@keyframes hud-cyan {
+  0%,
+  78%,
+  96%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+  81% {
+    opacity: 0.75;
+    transform: translateX(9px);
+    clip-path: inset(65% 0 20%);
+  }
+  86% {
+    opacity: 0.6;
+    transform: translateX(-7px);
+    clip-path: inset(24% 0 64%);
+  }
+  91% {
+    opacity: 0.7;
+    transform: translateX(5px);
+    clip-path: inset(48% 0 43%);
+  }
+}
+html[data-motion="on"] .hud-image-slices {
+  animation: hud-image-break 8s steps(1, end) infinite;
+}
+@keyframes hud-image-break {
+  0%,
+  80%,
+  94%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+  81% {
+    opacity: 0.65;
+    transform: translateX(-20px);
+    clip-path: inset(29% 0 65% 55%);
+  }
+  85% {
+    opacity: 0.55;
+    transform: translateX(14px);
+    clip-path: inset(61% 0 34% 50%);
+  }
+  89% {
+    opacity: 0.65;
+    transform: translateX(-9px);
+    clip-path: inset(43% 0 53% 60%);
+  }
+}
+.od-build-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 12px, #bca4ff44 12px 13px),
+    linear-gradient(95deg, transparent 30%, #ff637e55 50%, transparent 70%);
+}
+html[data-motion="on"] .od-build-media:is(:hover, :focus-visible)::after {
+  animation: hud-scan 0.8s ease-out both;
+}
+@keyframes hud-scan {
+  0% {
+    opacity: 0;
+    transform: translateX(-80%);
+  }
+  30% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(80%);
+  }
+}
+html[data-motion="on"]
+  :is(.od-button, .city-nav > a, .city-nav > button):is(
+    :hover,
+    :focus-visible
+  ) {
+  animation: hud-control 0.55s steps(1, end) both;
+}
+@keyframes hud-control {
+  0%,
+  100% {
+    text-shadow: none;
+  }
+  20% {
+    text-shadow:
+      -3px 0 #ff637e,
+      3px 0 #79edf0;
+  }
+  65% {
+    text-shadow:
+      2px 0 #ff637e,
+      -2px 0 #79edf0;
+  }
+}
+html[data-motion="on"] .hud-meter i {
+  animation: hud-meter 2.4s ease-in-out infinite alternate;
+}
+html[data-motion="on"] .hud-meter i:nth-child(2n) {
+  animation-delay: -0.8s;
+}
+html[data-motion="on"] .hud-meter i:nth-child(3n) {
+  animation-delay: -1.6s;
+}
+@keyframes hud-meter {
+  from {
+    transform: scaleY(0.35);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+html[data-motion="on"] .signal-tear {
+  animation-duration: 5.6s;
+}
+html[data-motion="off"] :is(.hud-image-slices, .od-build-media::after) {
+  display: none;
+}
+@media (max-width: 760px) {
+  .hud-frame {
+    inset: 12px;
+  }
+  .hud-frame > span:nth-child(2),
+  .hud-frame b {
+    display: none;
+  }
+  .od-build {
+    padding: 10px;
+    gap: 0;
+  }
+  .od-build-copy {
+    border-left: 0;
+  }
+  .od-build-media {
+    clip-path: polygon(
+      0 10px,
+      10px 0,
+      calc(100% - 20px) 0,
+      100% 20px,
+      100% 100%,
+      0 100%
+    );
+  }
+  .od-jump {
+    gap: 8px;
+  }
+  .od-jump a {
+    padding: 5px;
+  }
+  .network-shell {
+    padding: 7px;
+  }
+  .hud-image-slices img {
+    object-position: 72% center;
+  }
+}

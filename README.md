@@ -11,6 +11,10 @@ Switch in MENU or the footer. Mode changes preserve project, gallery shot, bookm
 
 Home is #index. The complete searchable archive is #projects. Old #project- project links, #stack, #bench, #whoami and #themes links remain supported; #work opens the archive.
 
+## Angular HUD / v10
+
+Adds notched panel shells, stepped borders, warning-red accents, clipped controls, targeting-frame marks, a decorative animated meter, localized image-slice interference, stronger chromatic heading glitches and hover/focus scans. The visual HUD is labeled as non-telemetry. No new assets or dependencies; actual project images remain unchanged. FX-off and hidden-tab rules cover the new effects. The existing 100%-to-glitch intro is retained.
+
 ## Overdrive scroll / v9
 
 Overdrive is now a continuous, native-scrolling page. Section jumps use smooth scrolling when FX is enabled and move keyboard focus to the destination heading. The embedded globe deliberately does not capture wheel scrolling; drag, arrow keys, +/−, pause, reset and detail controls remain available. The separate network page retains wheel zoom. All seven project images use the same contained 16:10 presentation and factual captions.

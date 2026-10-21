@@ -21,13 +21,15 @@ export function overdriveHome(network) {
     <section class="od-hero" aria-labelledby="od-title">
       <div class="od-hero-art" aria-hidden="true"><img src="assets/night-city-engineer-v8.png" alt="" width="1672" height="941" fetchpriority="high" /></div>
       <div class="od-grid" aria-hidden="true"></div>
+      <div class="hud-image-slices" aria-hidden="true"><img src="assets/night-city-engineer-v8.png" alt="" width="1672" height="941" /></div>
+      <div class="hud-frame" aria-hidden="true"><span>OVR_DRIVE // 010</span><span>VISUAL INTERFACE / NOT TELEMETRY</span><i></i><b>+<br />+<br />+<br />+</b></div>
       <div class="od-hero-copy">
         <p class="od-kicker od-enter"><i></i> HIRSU / INDEPENDENT BUILDER / 001</p>
         <h1 id="od-title"><span class="od-title-line">KEEP</span><span class="od-title-line od-outline">BUILDING.</span><span class="od-title-line od-lime">NO BRAKES<span class="od-dot">.</span></span></h1>
         <p class="od-intro od-enter">Software that does something. Hardware that moves.<br />I'm Hrushi. This is my workbench.</p>
         <div class="od-actions od-enter"><a href="#od-projects" data-home-section="od-projects" class="od-button">EXPLORE THE BUILDS <span>↓</span></a><a href="https://github.com/hrushikbarani-hub" target="_blank" rel="noopener noreferrer">GITHUB ↗</a></div>
       </div>
-      <aside class="od-transmission od-enter"><span>TRANSMISSION / 09</span><strong>CODE.<br />CIRCUITS.<br />CURIOSITY.</strong><p>Original fictional key art.<br />Not a portrait.</p></aside>
+      <aside class="od-transmission od-enter"><span>TRANSMISSION / 10</span><strong>CODE.<br />CIRCUITS.<br />CURIOSITY.</strong><div class="hud-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>Original fictional key art.<br />Not a portrait.</p></aside>
       <div class="od-hero-bottom od-enter"><span>07 PROJECTS / 05 REPOSITORIES</span><a href="#od-projects" data-home-section="od-projects">SCROLL TO EXPLORE <span class="od-scroll-arrow">↓</span></a><span>OVERDRIVE / PERSONAL ARCHIVE</span></div>
     </section>
     <div class="od-ticker" aria-hidden="true"><div>${Array.from({ length: 2 }, () => `<span>PYTHON <b>×</b> JAVASCRIPT <b>×</b> ROBOTICS <b>×</b> LOCAL AI <b>×</b> RASPBERRY PI <b>×</b> OPEN SOURCE <b>×</b> `).join("")}</div></div>

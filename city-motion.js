@@ -57,7 +57,7 @@ export function createCityMotion() {
   function decorate(container) {
     container
       .querySelectorAll(
-        ".hero-line,.city-section h2,.page-head h1,.od-title-line",
+        ".hero-line,.city-section h2,.page-head h1,.od-title-line,.od-section h2 em,.od-build h3 a",
       )
       .forEach((element, i) => {
         if (element.classList.contains("signal-title")) return;
