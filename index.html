@@ -1,352 +1,340 @@
 <!doctype html>
-<html lang="en" data-view="neon">
+<html lang="en" data-view="neon" data-motion="on">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#07101c" />
-    <script>
-      try {
-        const requested = new URLSearchParams(location.search).get("view");
-        const saved = localStorage.getItem("hirsu-view");
-        const valid = (value) => value === "neon" || value === "blacksite";
-        document.documentElement.dataset.view = valid(requested)
-          ? requested
-          : valid(saved)
-            ? saved
-            : "neon";
-      } catch {
-        /* The default interface also works without browser storage. */
-      }
-    </script>
+    <meta name="theme-color" content="#08090b" />
     <meta
       name="description"
-      content="Hrushi's corner of the internet. Software, a robotic telescope, Raspberry Pi experiments, personal AI, custom electronics, and Linux."
+      content="Hrushi's personal project network: useful software, a robotic telescope, Raspberry Pi home lab, local AI interfaces, electronics, and Linux."
     />
-    <meta
-      property="og:title"
-      content="hirsu — projects, experiments & the workbench"
-    />
+    <meta property="og:title" content="hirsu // personal project network" />
     <meta
       property="og:description"
-      content="An interactive terminal for Hrushi's software, hardware, and home lab projects."
+      content="Code, circuits, and curiosity. Explore Hrushi's software and hardware workbench."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hrushikbarani-hub.github.io/" />
-    <title>hirsu — projects, experiments & the workbench</title>
+    <title>hirsu // personal project network</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="styles.css?v=3" />
-    <link rel="stylesheet" href="cyberpunk.css?v=3" />
-    <link rel="stylesheet" href="night-city.css?v=4" />
-    <script type="module" src="app.js?v=4"></script>
+    <script>
+      try {
+        const view =
+          new URLSearchParams(location.search).get("view") ||
+          localStorage.getItem("hirsu-console-view");
+        document.documentElement.dataset.view =
+          view === "blacksite" ? "blacksite" : "neon";
+        const motion = localStorage.getItem("hirsu-console-motion");
+        document.documentElement.dataset.motion =
+          motion === "off" ||
+          (!motion && matchMedia("(prefers-reduced-motion: reduce)").matches)
+            ? "off"
+            : "on";
+      } catch {
+        /* A complete default interface works without storage. */
+      }
+    </script>
+    <link rel="stylesheet" href="console.css?v=5" />
+    <script type="module" src="console.js?v=5"></script>
   </head>
   <body>
-    <a class="skip-link" href="#terminal">Skip to content</a>
-    <div class="site-shell">
-      <header class="site-header">
-        <a class="wordmark" href="#about" aria-label="hirsu home"
-          ><span class="monogram" aria-hidden="true">H/</span> HIRSU<span
-            class="dim"
-          >
-            / independent builder</span
-          ></a
+    <a class="skip" href="#main">Skip to content</a>
+    <aside class="rail" aria-label="Navigation sidebar">
+      <a class="rail-brand" href="#index" aria-label="hirsu home"
+        ><span aria-hidden="true">h/</span><b>HIRSU<span>.SYS</span></b></a
+      >
+      <button
+        id="rail-toggle"
+        class="rail-item"
+        aria-label="Expand navigation"
+        aria-expanded="false"
+      >
+        <span class="rail-icon" aria-hidden="true">»</span
+        ><span class="rail-text">Expand navigation</span>
+      </button>
+      <nav aria-label="Main navigation">
+        <a
+          class="rail-item"
+          href="#index"
+          data-nav="index"
+          aria-label="Project index"
+          ><span class="rail-icon" aria-hidden="true">▤</span
+          ><span class="rail-text">Project index</span></a
         >
-        <nav class="header-nav" aria-label="Main navigation">
-          <a href="#about">Overview</a><a href="#robo-telescope">Projects</a
-          ><a href="#stack">Stack</a><a href="#log">Workbench</a>
-        </nav>
-        <div class="header-end">
-          <button
-            id="interface-toggle"
-            type="button"
-            title="Interface menu — switch website version"
-            aria-haspopup="dialog"
-            aria-expanded="false"
-            aria-controls="interface-menu"
-          >
-            <span class="menu-icon" aria-hidden="true">☷</span
-            ><span id="interface-label">Nightshift</span
-            ><span aria-hidden="true">⌄</span></button
-          ><a
-            href="https://github.com/hrushikbarani-hub"
-            target="_blank"
-            rel="noopener noreferrer"
-            >GitHub ↗</a
-          >
-        </div>
-      </header>
-      <section class="cyber-hero" aria-labelledby="cyber-title">
-        <div class="hero-grid" aria-hidden="true"></div>
-        <canvas id="city-canvas" aria-hidden="true"></canvas>
-        <div class="hero-copy">
-          <p class="kicker">
-            <span class="signal-dot" aria-hidden="true"></span> HRUSHI'S
-            PERSONAL PROJECT ARCHIVE <span class="hero-year">/ 2026</span>
-          </p>
-          <h2 id="cyber-title">BUILT OUTSIDE<br /><span>THE LINES.</span></h2>
-          <p class="hero-description">
-            Software that solves something. Hardware that moves something.<br />And
-            a home lab that keeps the experiments running.
-          </p>
-          <div class="hero-actions">
-            <a class="cyber-button primary" href="#robo-telescope"
-              >Explore projects <span>↗</span></a
-            ><a class="cyber-button secondary" href="#log"
-              >On the workbench <span>+</span></a
-            >
-          </div>
-        </div>
-        <div class="hero-coordinate" aria-hidden="true">
-          <span id="hero-render-label"
-            >ORIGINAL CONCEPT ART / FICTIONAL SCENE</span
-          ><span>CODE / CIRCUITS / CURIOSITY</span>
-        </div>
-        <div class="hero-index" aria-hidden="true">
-          <span>INTERFACE</span><b id="hero-interface-number">01</b
-          ><span id="hero-interface-name">NIGHTSHIFT</span>
-        </div>
-      </section>
-      <h1 class="sr-only">
-        hirsu — Hrushi's projects, experiments & workbench
-      </h1>
-      <main class="editor" aria-label="Project explorer">
-        <nav class="wheel" id="wheel" aria-label="Projects and pages">
-          <canvas id="wheel-ink" aria-hidden="true"></canvas>
-          <div class="wheel-guide">
-            <span>PROJECT DIRECTORY</span><span id="position">01 / 11</span>
-          </div>
-          <div
-            class="wheel-track"
-            id="wheel-track"
-            role="listbox"
-            aria-label="Choose a project or page"
-            aria-describedby="wheel-help"
-          ></div>
-          <div class="wheel-bottom">
-            <span>2026-10-20</span
-            ><span id="wheel-help">↑↓ navigate · enter to open</span>
-            <div class="mobile-step">
-              <button type="button" id="previous" aria-label="Previous project">
-                ↑</button
-              ><button type="button" id="next" aria-label="Next project">
-                ↓
-              </button>
-            </div>
-          </div>
-        </nav>
-        <section
-          class="terminal"
-          id="terminal"
-          tabindex="-1"
-          aria-label="Terminal content"
+        <a
+          class="rail-item"
+          href="#network"
+          data-nav="network"
+          aria-label="Project network"
+          ><span class="rail-icon" aria-hidden="true">◎</span
+          ><span class="rail-text">Project network</span></a
         >
-          <div class="terminal-title">
-            <span class="terminal-dots" aria-hidden="true">· · ·</span
-            ><span id="terminal-title">ARCHIVE / OVERVIEW</span
-            ><button
-              id="help-button"
-              type="button"
-              aria-label="Show keyboard shortcuts"
-            >
-              ?
-            </button>
-          </div>
-          <aside class="eye-module" aria-hidden="true">
-            <div class="optic-label">OPTIC / LOCAL POINTER</div>
-            <pre id="ascii-eye"></pre>
-            <div class="eye-readout">
-              <span>['pupil:u'] <b id="eye-x">0.500000</b></span
-              ><span id="eye-y">0.500000</span><span>tracking / local only</span
-              ><span id="eye-state">None</span>
-            </div>
-          </aside>
-          <div class="terminal-scroll" id="terminal-scroll">
-            <div id="content"></div>
-            <div
-              class="command-output"
-              id="command-output"
-              role="status"
-              aria-live="polite"
-            ></div>
-            <form id="command-form" autocomplete="off">
-              <label for="command-input"
-                ><span class="prompt-user">hirsu</span
-                ><span class="dim">@workshop ~</span></label
-              >
-              <div class="command-line">
-                <span aria-hidden="true">›</span
-                ><input
-                  id="command-input"
-                  name="command"
-                  aria-label="Terminal command"
-                  maxlength="200"
-                  spellcheck="false"
-                  autocapitalize="off"
-                  placeholder="type help, or choose a project"
-                /><span class="cursor" aria-hidden="true"></span>
-              </div>
-            </form>
-          </div>
-        </section>
-      </main>
-      <footer class="statusbar">
-        <div class="footer-identity">
-          <span>HRUSHI <span class="dim">/ hirsu</span></span
-          ><small>↑↓ project · ←→ shot · : command</small>
-        </div>
-        <div class="stat"><span>PROJECTS</span><b>7</b></div>
-        <a class="stat" href="#stack"><span>REPOS</span><b>5</b></a
-        ><button
-          class="stat"
-          id="worm-toggle"
-          type="button"
-          aria-pressed="false"
+        <a
+          class="rail-item"
+          href="#stack"
+          data-nav="stack"
+          aria-label="Technology stack"
+          ><span class="rail-icon" aria-hidden="true">⌘</span
+          ><span class="rail-text">Stack / tools</span></a
         >
-          <span>WORM</span><b>asleep</b></button
-        ><button class="stat" id="eye-toggle" type="button" aria-pressed="true">
-          <span>EYE</span><b>tracking</b></button
-        ><button
-          class="stat"
-          id="ghost-toggle"
-          type="button"
-          aria-pressed="false"
+        <a class="rail-item" href="#log" data-nav="log" aria-label="Workbench"
+          ><span class="rail-icon" aria-hidden="true">⌁</span
+          ><span class="rail-text">Workbench</span></a
         >
-          <span>GHOST</span><b>idle</b></button
-        ><button
-          class="stat"
-          id="motion-toggle"
-          type="button"
-          aria-pressed="true"
+        <a
+          class="rail-item"
+          href="#saved"
+          data-nav="saved"
+          aria-label="Saved projects"
+          ><span class="rail-icon" aria-hidden="true">◇</span
+          ><span class="rail-text">Saved projects</span></a
         >
-          <span>MOTION</span><b>on</b>
+        <a
+          class="rail-item"
+          href="#about"
+          data-nav="about"
+          aria-label="About Hrushi"
+          ><span class="rail-icon" aria-hidden="true">?</span
+          ><span class="rail-text">About / info</span></a
+        >
+      </nav>
+      <div class="rail-bottom">
+        <span class="rail-version" aria-hidden="true">v5.0</span>
+        <button
+          class="rail-item"
+          id="theme-button"
+          aria-label="Open interface menu"
+          aria-haspopup="dialog"
+        >
+          <span class="rail-icon" aria-hidden="true">◐</span
+          ><span class="rail-text">Interface</span>
         </button>
-        <div class="session">
-          <span>LOCAL SESSION <b id="session-time">00:00</b></span
-          ><canvas
-            id="session-graph"
-            width="150"
-            height="18"
-            aria-hidden="true"
-          ></canvas>
-        </div>
-      </footer>
-      <div class="underbar">
-        <span>software, circuits, and a healthy amount of curiosity.</span
-        ><a href="#themes" id="current-theme">interface: Nightshift</a
-        ><a
-          href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io"
+        <button
+          class="rail-item"
+          id="command-button"
+          aria-label="Open commands"
+          aria-haspopup="dialog"
+        >
+          <span class="rail-icon" aria-hidden="true">≡</span
+          ><span class="rail-text">Commands</span>
+        </button>
+        <a
+          class="rail-item"
+          href="https://github.com/hrushikbarani-hub"
           target="_blank"
           rel="noopener noreferrer"
-          >source ↗</a
+          aria-label="Hrushi on GitHub (opens a new tab)"
+          ><span class="rail-icon" aria-hidden="true">↗</span
+          ><span class="rail-text">GitHub</span></a
         >
       </div>
-      <div class="keyboard-echo" aria-hidden="true">
-        <canvas id="input-skeleton"></canvas>
-        <div>esc · 1 2 3 4 5 6 7 8 9 0 − = ←</div>
-        <div>q w e r t y u i o p [ ]</div>
-        <div>a s d f g h j k l ; '</div>
-        <div>↑ z x c v b n m , . / ↑</div>
-        <div>⌃ ⌥ ─────────────── ⌘</div>
-        <span id="key-echo">awaiting input_</span>
-      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <a href="#index">hirsu<span class="muted">://</span>workshop</a
+        ><span class="top-path" id="top-path">/ index</span>
+        <div class="top-actions">
+          <span class="local-label"><i></i> PERSONAL ARCHIVE</span
+          ><button
+            id="top-theme"
+            aria-label="Switch interface"
+            aria-haspopup="dialog"
+          >
+            Cyberspace <span aria-hidden="true">⌄</span>
+          </button>
+        </div>
+      </header>
+      <main id="main" tabindex="-1">
+        <section
+          class="identity"
+          id="identity"
+          aria-labelledby="identity-title"
+        >
+          <div class="identity-copy">
+            <p class="eyebrow">INDEPENDENT BUILDER / HRUSHI</p>
+            <h1 id="identity-title">
+              hirsu<span class="cursor" aria-hidden="true">_</span>
+            </h1>
+            <p class="manifesto">Code. Circuits. Curiosity.</p>
+            <p class="intro-text">
+              A personal corner of the net for useful software,<br
+                class="desktop-break"
+              />
+              things with motors, and a small computer doing big jobs.
+            </p>
+            <div class="identity-links">
+              <a href="#about">About me</a><span>/</span
+              ><a href="#network">Explore the network</a><span>/</span
+              ><a
+                href="https://github.com/hrushikbarani-hub"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub ↗</a
+              >
+            </div>
+          </div>
+          <div class="identity-art" aria-hidden="true">
+            <div class="orbit-emblem">
+              <span></span><span></span><span></span><b>h/</b>
+            </div>
+            <span class="art-label">PERSONAL PROJECT NETWORK</span>
+            <div class="identity-numbers">
+              <span><b>07</b> projects</span><span><b>05</b> public repos</span>
+            </div>
+          </div>
+          <div class="theme-strip">
+            <span class="muted">INTERFACE:</span
+            ><button data-view-choice="neon" aria-pressed="true">
+              Cyberspace</button
+            ><span>/</span
+            ><button data-view-choice="blacksite" aria-pressed="false">
+              Overdrive</button
+            ><button id="motion-button" aria-pressed="true">Motion: on</button>
+          </div>
+        </section>
+        <div id="screen"></div>
+        <noscript
+          ><section class="panel">
+            <h2>Projects, without the interface.</h2>
+            <p>The explorer needs JavaScript, but the repositories don't.</p>
+            <ul>
+              <li>
+                <a href="https://github.com/hrushikbarani-hub/maintaineros"
+                  >MaintainerOS — explainable GitHub triage</a
+                >
+              </li>
+              <li>
+                <a href="https://github.com/hrushikbarani-hub/civiclens"
+                  >CivicLens — source-linked civic records</a
+                >
+              </li>
+              <li>
+                <a href="https://github.com/hrushikbarani-hub/custom-keyboard"
+                  >NEXUS Macro Pad — electronics and CAD</a
+                >
+              </li>
+              <li>
+                <a href="https://github.com/hrushikbarani-hub/nexus-mobile"
+                  >NEXUS Mobile — experimental local AI client</a
+                >
+              </li>
+              <li>
+                <a href="https://github.com/hrushikbarani-hub/hyprland-forge"
+                  >Hyprland Forge — personal Linux desktop</a
+                >
+              </li>
+            </ul>
+            <p>
+              Personal builds: Robo Telescope (currently under repair) and
+              Raspberry Pi Home Lab (Pi-hole, VPN, Tailscale).
+            </p>
+          </section></noscript
+        >
+        <footer class="eof">
+          <span>~ EOF ~</span>
+          <p>No ads. No analytics. Just the work.</p>
+          <a href="#about">Colophon / sources</a>
+        </footer>
+      </main>
+      <footer class="systembar">
+        <button id="footer-commands"><kbd>Ctrl K</kbd> Commands</button
+        ><span class="keyboard-hint"
+          ><kbd>↑ ↓</kbd> Navigate <kbd>↵</kbd> Open <kbd>S</kbd> Save</span
+        ><span class="system-end" id="system-status"
+          >07 projects / static archive</span
+        ><button id="help-button" aria-haspopup="dialog">[?] Help</button>
+      </footer>
     </div>
-    <pre id="ascii-ghost" aria-hidden="true">
- .-.
-|o o|
-| O |
-'~~~'</pre>
-    <canvas id="worm-canvas" aria-hidden="true"></canvas>
-    <dialog
-      id="interface-menu"
-      class="interface-menu"
-      aria-labelledby="interface-menu-title"
-    >
-      <div class="menu-top">
-        <span>PERSONALIZE / 2 INTERFACES</span
-        ><button
-          id="close-interface"
-          type="button"
-          aria-label="Close interface menu"
-        >
-          ×
+    <dialog id="theme-dialog" aria-labelledby="theme-title">
+      <div class="dialog-bar">
+        <span>INTERFACE / PERSONALIZE</span
+        ><button data-close aria-label="Close interface menu">[×]</button>
+      </div>
+      <h2 id="theme-title">Choose a frequency.</h2>
+      <p class="muted">Same projects. Two different signals.</p>
+      <div class="theme-options">
+        <button data-view-choice="neon">
+          <span class="swatches"><i></i><i></i><i></i></span
+          ><b>01 / Cyberspace</b
+          ><span
+            >Quiet terminal. Warm phosphor. Red/cyan HUD details.</span
+          ></button
+        ><button data-view-choice="blacksite">
+          <span class="swatches overdrive"><i></i><i></i><i></i></span
+          ><b>02 / Overdrive</b
+          ><span
+            >Chartreuse, violet, sharp contrast. An Edgerunners-inspired split
+            workspace.</span
+          >
         </button>
       </div>
-      <h2 id="interface-menu-title">Choose your reality.</h2>
-      <p>Same projects. Two different frequencies.</p>
-      <div id="interface-choices"></div>
-      <button id="menu-motion" type="button" aria-pressed="true">
-        Animations <span>On</span>
-      </button>
-      <p class="menu-footnote">
-        Your choice stays on this browser. Switch anytime without losing your
-        place.
+      <button class="bracket" id="dialog-motion">[ Pause animations ]</button>
+      <p class="fineprint">
+        Preferences and bookmarks are stored only in this browser. System
+        reduced-motion preference is respected by default.
       </p>
     </dialog>
-    <dialog id="image-dialog" aria-label="Project preview">
-      <button type="button" id="close-image" aria-label="Close image preview">
-        close [esc] ×</button
-      ><img id="large-image" alt="" />
-      <p id="large-caption"></p>
+    <dialog id="command-dialog" aria-labelledby="command-title">
+      <div class="dialog-bar">
+        <span id="command-title">COMMAND MENU</span
+        ><button data-close aria-label="Close commands">[Esc]</button>
+      </div>
+      <label class="sr-only" for="command-search"
+        >Find a page, project, or action</label
+      ><input
+        id="command-search"
+        type="search"
+        placeholder="Where do you want to go?"
+        autocomplete="off"
+        maxlength="100"
+      />
+      <div id="command-results"></div>
+      <p class="fineprint">
+        ↑ ↓ navigate · Enter choose · Esc close. Browser-local navigation, never
+        a system shell.
+      </p>
+    </dialog>
+    <dialog id="image-dialog" aria-labelledby="image-caption">
+      <div class="dialog-bar">
+        <span>PROJECT PREVIEW</span
+        ><button data-close aria-label="Close image preview">
+          [Esc] Close
+        </button>
+      </div>
+      <img id="large-image" alt="" />
+      <p id="image-caption"></p>
     </dialog>
     <dialog id="help-dialog" aria-labelledby="help-title">
-      <button
-        type="button"
-        id="close-help"
-        aria-label="Close keyboard shortcuts"
-      >
-        close [esc] ×
-      </button>
-      <h2 id="help-title">the controls</h2>
+      <div class="dialog-bar">
+        <span>RTFM / CONTROLS</span
+        ><button data-close aria-label="Close help">[Esc]</button>
+      </div>
+      <h2 id="help-title">Find your way around.</h2>
       <dl>
-        <dt>Menu</dt>
-        <dd>Switch between Nightshift and Overdrive</dd>
-        <dt>↑ / ↓</dt>
-        <dd>Previous / next project</dd>
-        <dt>Home / End</dt>
-        <dd>First / last page</dd>
-        <dt>← / →</dt>
-        <dd>Previous / next project image</dd>
-        <dt>Enter</dt>
-        <dd>Focus the selected page</dd>
-        <dt>:</dt>
-        <dd>Focus the command line</dd>
+        <dt>Ctrl / ⌘ K</dt>
+        <dd>Search pages, projects, and commands</dd>
+        <dt>↑ / ↓ or J / K</dt>
+        <dd>Move between project cards</dd>
+        <dt>Enter · S · E</dt>
+        <dd>Open · save · expand the focused project</dd>
         <dt>Escape</dt>
-        <dd>Close a preview / leave input</dd>
-        <dt>help</dt>
-        <dd>List terminal commands</dd>
+        <dd>Close the current dialog</dd>
+        <dt>Network</dt>
+        <dd>
+          Drag to rotate, scroll to zoom; project buttons work with a keyboard
+        </dd>
       </dl>
-      <p class="dim">
-        A browser-local terminal. Commands never run on your computer. Motion,
-        eye, worm, and ghost controls live in the footer.
+      <p>
+        Save keeps a bookmark on this device, not on GitHub. No sign-in, home
+        network access, or live telemetry.
       </p>
     </dialog>
-    <noscript
-      ><div class="noscript">
-        <h2>Hi, I'm Hrushi.</h2>
-        <p>
-          The interactive portfolio needs JavaScript. My projects include Robo
-          Telescope (under repair), a Raspberry Pi home lab, and these public
-          repositories:
-        </p>
-        <p>
-          <a href="https://github.com/hrushikbarani-hub/maintaineros"
-            >MaintainerOS</a
-          >
-          ·
-          <a href="https://github.com/hrushikbarani-hub/civiclens">CivicLens</a>
-          ·
-          <a href="https://github.com/hrushikbarani-hub/custom-keyboard"
-            >NEXUS Macro Pad</a
-          >
-          ·
-          <a href="https://github.com/hrushikbarani-hub/nexus-mobile"
-            >NEXUS Mobile</a
-          >
-          ·
-          <a href="https://github.com/hrushikbarani-hub/hyprland-forge"
-            >Hyprland Forge</a
-          >
-        </p>
-      </div></noscript
-    >
+    <div
+      id="announcement"
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+    ></div>
+    <div id="toast" role="status"></div>
   </body>
 </html>

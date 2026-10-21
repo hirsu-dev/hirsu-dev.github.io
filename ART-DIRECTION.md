@@ -1,4 +1,12 @@
-# Nightshift / Overdrive art direction
+# Cyberspace / Overdrive v5 art direction
+
+Current main reference: https://cyberspace.online/. Inspected the default feed, GRiD theme, sidebar, and globe. Reimplemented a compact feed, original bracket actions, navigation rail, local bookmarks, command palette, and conceptual project sphere. No reference source, assets, community posts, or member identities are reused.
+
+User-provided guide: https://www.youtube.com/watch?v=yLdJh2_-o8U, “The ONLY Guide to Cyberpunk UI Design.” Its accessible English captions were reviewed, rather than claiming audio playback. Applied modular panels, monospace type, dark high-contrast palettes, geometric framing, focus states, and progressive disclosure.
+
+Official game UI reference: https://www.cyberpunk.net/en/news/49591/update-2-1-accessibility-features. Inspected the official in-game HUD screenshot and accessibility examples. Official Edgerunners page below supplied color / composition reference; no full-series viewing is claimed. No copyrighted franchise assets are loaded in the current interface.
+
+## Previous v4 original artwork (retained, not loaded by v5)
 
 Official references inspected: https://www.cyberpunk.net/us/en/ and https://www.cyberpunk.net/en/edgerunners. The official Edgerunners trailer was age-restricted in the current browser session; no full-series or trailer viewing is claimed.
 

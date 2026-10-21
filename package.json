@@ -1,10 +1,10 @@
 {
   "name": "hirsu-workshop",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "private": true,
   "type": "module",
   "description": "Hrushi's static developer and hardware portfolio",
   "scripts": {
-    "check": "node --check app.js && node --check projects.js && node --check motion.js && node --check stack-data.js && node --check interfaces.js && node --test site.test.js"
+    "check": "node --check console.js && node --check console-model.js && node --check project-network.js && node --check projects.js && node --check stack-data.js && node --check interfaces.js && node --test site.test.js"
   }
 }
