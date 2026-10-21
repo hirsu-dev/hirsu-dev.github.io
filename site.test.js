@@ -4,11 +4,13 @@ import { calendarDays, languageCounts, snapshot } from "./stack-data.js";
 import { wrap } from "./motion.js";
 import { projects } from "./projects.js";
 import { cityHome, featuredIds } from "./city-content.js";
+import { overdriveHome, overdriveSections } from "./overdrive-content.js";
 import {
   panelFrames,
   bootPhases,
   bootDuration,
   bootPhaseAt,
+  bootProgressAt,
 } from "./city-motion.js";
 import { existsSync, readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
@@ -35,7 +37,8 @@ test("exactly two valid interfaces; explicit links override saved choice", () =>
   assert.deepEqual(Object.keys(interfaces), ["neon", "blacksite"]);
   assert.equal(interfaceFromSearch("?view=neon", "blacksite"), "neon");
   assert.equal(interfaceFromSearch("", "blacksite"), "blacksite");
-  assert.equal(interfaceFromSearch("?view=unknown", "bad-value"), "neon");
+  assert.equal(interfaceFromSearch("?view=unknown", "bad-value"), "blacksite");
+  assert.equal(interfaceFromSearch(""), "blacksite");
   assert.equal(validInterface("__proto__"), false);
 });
 test("switching interfaces preserves the selected project and other query state", () => {
@@ -124,6 +127,26 @@ test("all project and cinematic image assets exist in the static checkout", () =
   for (const path of assets)
     assert.ok(existsSync(new URL(path, import.meta.url)), path);
 });
+test("Overdrive has a continuous, accessible home for all seven real builds", () => {
+  const html = overdriveHome('<div id="network-shell"></div>');
+  for (const p of projects) {
+    assert.ok(html.includes(`href="#${p.id}"`));
+    assert.ok(html.includes(escapeHTML(p.caption)));
+    assert.ok(html.includes(escapeHTML(p.description)));
+  }
+  for (const id of overdriveSections) assert.ok(html.includes(`id="${id}"`));
+  const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(new Set(ids).size, ids.length);
+  assert.match(html, /not polished products/i);
+  assert.equal((html.match(/<h1\b/g) || []).length, 1);
+});
+test("visual progress reaches 100 before the glitch release finishes", () => {
+  assert.equal(bootProgressAt(-10), 0);
+  assert.equal(bootProgressAt(0), 0);
+  assert.equal(bootProgressAt(1125), 50);
+  assert.equal(bootProgressAt(2250), 100);
+  assert.equal(bootProgressAt(bootDuration), 100);
+});
 test("panel transition restores visibility with a single non-flashing entrance", () => {
   assert.equal(panelFrames.length, 2);
   assert.equal(panelFrames[0].opacity, 0);
@@ -170,6 +193,7 @@ test("system reduced motion bypasses boot by default, even with blocked storage"
       },
     });
     assert.equal(document.documentElement.dataset.motion, expected);
+    assert.equal(document.documentElement.dataset.view, "blacksite");
   }
 });
 test("boot is closed without JavaScript; real content is not made inert or hidden", () => {

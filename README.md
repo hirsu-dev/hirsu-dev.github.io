@@ -4,14 +4,22 @@ Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Page
 
 ## Two interfaces
 
-- **Night City** (default): a cinematic acid-yellow / black landing page inspired by the official Cyberpunk 2077 website. Original fictional key art, condensed display type, clipped navigation, project callouts, image-led selected work, alternating sections, and a matching project archive / detail UI. https://hrushikbarani-hub.github.io/?view=neon
-- **Overdrive**: the compact alternate explorer, with chartreuse / violet, the expandable rail, text-first feed and wide-desktop identity dock. https://hrushikbarani-hub.github.io/?view=blacksite
+- **Overdrive** (default): a chartreuse / violet scrolling portfolio with cinematic typography, all seven project showcases, an embedded interactive globe, the technology loadout and workbench. https://hrushikbarani-hub.github.io/?view=blacksite
+- **Night City**: the alternate acid-yellow / black landing page inspired by the official Cyberpunk 2077 website, with original fictional key art, clipped navigation and matching archive / detail UI. https://hrushikbarani-hub.github.io/?view=neon
 
-Switch in MENU or the footer; the alternate interface also has a sidebar/top-right menu. Mode changes preserve project, gallery shot, bookmarks, search, expansions and motion. History restores modes, including the original bare URL. A new v6 view preference starts returning visitors on the cinematic default unless they use an explicit theme link. Bookmarks and the explicit motion preference are retained locally.
+Switch in MENU or the footer. Mode changes preserve project, gallery shot, bookmarks, search, expansions and motion. History restores modes, including the original bare URL. The v9 view preference starts returning visitors on Overdrive unless they use an explicit theme link; subsequent choices are remembered. Bookmarks and explicit motion preferences are retained locally. Motion defaults on unless the visitor requests reduced motion or previously paused FX.
 
 Home is #index. The complete searchable archive is #projects. Old #project- project links, #stack, #bench, #whoami and #themes links remain supported; #work opens the archive.
 
-## Signal upgrade / v8
+## Overdrive scroll / v9
+
+Overdrive is now a continuous, native-scrolling page. Section jumps use smooth scrolling when FX is enabled and move keyboard focus to the destination heading. The embedded globe deliberately does not capture wheel scrolling; drag, arrow keys, +/−, pause, reset and detail controls remain available. The separate network page retains wheel zoom. All seven project images use the same contained 16:10 presentation and factual captions.
+
+The intro progresses from 000% to 100% over 2.25 seconds, briefly holds, then fractures into eight alternating horizontal signal bands. The homepage begins assembling underneath the bands so the two motions overlap instead of waiting for a second entrance. The modal closes at 2.9 seconds. Skip, Escape, FX-off, hidden tabs and replay still have deterministic cleanup. The number measures the visual sequence, not network loading.
+
+More visible low-contrast grain, more frequent rolling static, a moving discipline ticker, chromatic title slices, eased scroll reveals and frame-rate-independent pointer damping give the interface a continuous motion cadence. No wheel hijacking, audio, white flashes, or external animation dependencies.
+
+## Signal foundation / v8
 
 The current presentation adds original rooftop key art, a depth-layered project globe, animated static grain, low-opacity rolling scans, chromatic text slices and orbital boot rings. Images use one charcoal/cyan/yellow visual system: shared 16:10 contained stages, consistent captions and matching vector illustration palettes. Actual CAD and application screenshot files remain unchanged and are not cropped or color-filtered.
 
@@ -26,7 +34,7 @@ Primary reference: https://www.cyberpunk.net/us/en/. The supplied clips were ins
 - Project E3: UI | New Animations | Cyberpunk 2077 Mod, Virtuoso: https://www.youtube.com/watch?v=60MpEkIcm3g
 - Cyberpunk 2077 - Concept UI, Bad Art Studio: https://www.youtube.com/watch?v=ilYgQdyBFf4
 
-The v7 opening is inspired by the assembling-interface idea at https://hancore.dev/site/#stack, reinterpreted in original Cyberpunk-style code. A **2.9-second signal boot** draws a reticle, introduces the wordmark, stages three interface labels, then opens two shutters onto the page. It runs once per full page load, never on internal navigation. Skip and Escape dismiss it immediately. MENU → Replay opening sequence (also in Ctrl / Command K) runs it again without changing the current route, scroll position, gallery, or search. Direct #themes links open the menu without an intro on top.
+The opening is inspired by the assembling-interface idea at https://hancore.dev/site/#stack, reinterpreted in original Cyberpunk-style code. The v9 scrolling flow also references https://hancore.dev/. A **2.9-second signal boot** draws a reticle, introduces the wordmark, stages three interface labels, reaches 100%, then glitches into the page. It runs once per full page load, never on internal navigation. Skip and Escape dismiss it immediately. MENU → Replay opening sequence (also in Ctrl / Command K) runs it again without changing the current route, scroll position, gallery, or search. Direct #themes links open the menu without an intro on top.
 
 This is explicitly a visual sequence, not a network request, download progress, or device scan. Its completion timer is independent of asset loading. It uses a native modal for keyboard focus, releases its scroll lock and timers on every exit path, and falls back to ordinary content if dialog support fails. The underlying page and no-JavaScript project links are not hidden by a startup class.
 
@@ -64,6 +72,7 @@ The sphere is a conceptual map of related projects, not a map of actual location
 
 - index.html: shell, cinematic header, preference bootstrap, menu, native dialogs, no-JavaScript fallback.
 - city-content.js: original cinematic homepage composition and factual featured projects.
+- overdrive-content.js / overdrive.css: continuous Overdrive homepage, responsive showcase system, 100%-to-glitch transition and v9 motion refinements.
 - city.css: cinematic interface and responsive rules, layered over console.css (alternate explorer / shared controls).
 - city-motion.js: optional original boot controller, panel / menu / reveal / pointer effects and lifecycle cleanup.
 - city-effects.css: original boot, shutters, chromatic slices, scans, hover and ambient motion; layered over the existing interfaces.
@@ -79,6 +88,6 @@ No npm install needed:
     npm run check
     python -m http.server 8130 --bind 127.0.0.1
 
-Open http://127.0.0.1:8130/. ES modules need HTTP. The 29 dependency-free tests in site.test.js, motion.test.js and network.test.js cover modes, URLs, routes, search/filtering, malformed storage, escaping, original landing content, assets, panel frames, boot dismissal/replay/focus/timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, unsupported dialogs, finite spherical arcs, collision-free docking, globe pause/focus/quality/visibility/FX/lifecycle behavior, canvas fallback, language aggregation, UTC dates and the legacy wrap helper. Controller tests use deterministic DOM/canvas/RAF doubles; they do not replace visual browser QA.
+Open http://127.0.0.1:8130/. ES modules need HTTP. The dependency-free tests in site.test.js, motion.test.js and network.test.js cover default mode, URLs, routes, search/filtering, malformed storage, escaping, both homepages, assets, panel frames, boot percentage/release/dismissal/replay/focus/timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, unsupported dialogs, finite spherical arcs, collision-free docking, embedded globe scroll passthrough, globe pause/focus/quality/visibility/FX/lifecycle behavior, canvas fallback, language aggregation, UTC dates and the legacy wrap helper. Controller tests use deterministic DOM/canvas/RAF doubles; they do not replace visual browser QA.
 
 Push main. GitHub Pages deploys main / root with .nojekyll and HTTPS. No paid service, backend, Pi, or custom domain is required. The preview server may be stopped without affecting the live site.

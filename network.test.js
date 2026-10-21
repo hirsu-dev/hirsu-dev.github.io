@@ -4,7 +4,10 @@ import { createProjectNetwork } from "./project-network.js";
 
 // Exercise the real renderer/controller with deterministic canvas, focus and RAF
 // boundaries. This checks lifecycle behavior; it is not a visual browser test.
-function harness(t, { motion = "on", canvasAvailable = true } = {}) {
+function harness(
+  t,
+  { motion = "on", canvasAvailable = true, scrollZoom = true } = {},
+) {
   class Target {
     listeners = new Map();
     dataset = {};
@@ -138,7 +141,7 @@ function harness(t, { motion = "on", canvasAvailable = true } = {}) {
       writable: true,
     }),
   );
-  const dispose = createProjectNetwork(container);
+  const dispose = createProjectNetwork(container, { scrollZoom });
   const tick = (count = 1) => {
     for (let i = 0; i < count && frames.size; i++) {
       now += 16;
@@ -173,6 +176,17 @@ function harness(t, { motion = "on", canvasAvailable = true } = {}) {
     },
   };
 }
+test("embedded globe never intercepts normal page scrolling", (t) => {
+  const h = harness(t, { scrollZoom: false });
+  let prevented = false;
+  h.canvas.emit("wheel", {
+    deltaY: 100,
+    preventDefault() {
+      prevented = true;
+    },
+  });
+  assert.equal(prevented, false);
+});
 
 test("globe spins while visible, suspends offscreen/background, and resumes", (t) => {
   const h = harness(t);

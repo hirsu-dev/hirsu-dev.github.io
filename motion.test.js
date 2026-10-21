@@ -27,6 +27,7 @@ function harness(
   doc.activeElement = focusTarget;
   const skip = new EventTarget(),
     boot = new EventTarget();
+  const percent = { textContent: "" };
   boot.dataset = {};
   boot.open = false;
   boot.showModal = () => {
@@ -39,8 +40,12 @@ function harness(
     boot.dispatchEvent(new Event("close"));
   };
   doc.querySelector = (selector) =>
-    ({ "#boot-dialog": boot, "#skip-intro": skip, "#main": main })[selector] ||
-    null;
+    ({
+      "#boot-dialog": boot,
+      "#skip-intro": skip,
+      "#main": main,
+      "#boot-percent": percent,
+    })[selector] || null;
   let now = 0,
     next = 0;
   const timers = new Map();
@@ -86,6 +91,7 @@ function harness(
     doc,
     skip,
     boot,
+    percent,
     main,
     focusTarget,
     timers,
@@ -103,6 +109,11 @@ test("opening advances then always releases its modal, timers and scroll lock", 
     h.tick(phase.at - time);
     time = phase.at;
     assert.equal(h.boot.dataset.phase, phase.name);
+    if (phase.name === "release") {
+      assert.equal(h.percent.textContent, "100%");
+      assert.equal(h.root.dataset.booting, "release");
+      assert.equal(h.boot.open, true);
+    }
   }
   h.tick(bootDuration - time);
   assert.equal(h.boot.open, false);
@@ -118,6 +129,7 @@ test("Skip closes immediately; a replay gets fresh timers and returns focus", (t
   assert.equal(h.timers.size, 0);
   h.doc.activeElement = h.focusTarget;
   assert.equal(h.controller.opening({ replay: true }), true);
+  assert.equal(h.percent.textContent, "000%");
   // A queued close event from the prior sequence must not abort a replay.
   h.boot.dispatchEvent(new Event("close"));
   assert.equal(h.root.dataset.booting, "true");
@@ -135,6 +147,20 @@ test("native dismissal clears timers and cannot reopen the overlay later", (t) =
   assert.equal(h.boot.dataset.phase, undefined);
   assert.equal(h.root.dataset.booting, undefined);
   assert.equal(h.timers.size, 0);
+});
+test("disabling FX during the 100% glitch release clears the modal and lock", (t) => {
+  const h = harness(t);
+  h.controller.opening();
+  h.tick(2250);
+  assert.equal(h.percent.textContent, "100%");
+  assert.equal(h.root.dataset.booting, "release");
+  h.root.dataset.motion = "off";
+  h.doc.dispatchEvent(new Event("appearancechange"));
+  assert.equal(h.boot.open, false);
+  assert.equal(h.root.dataset.booting, undefined);
+  assert.equal(h.timers.size, 0);
+  h.tick(10000);
+  assert.equal(h.boot.open, false);
 });
 test("motion off skips the intro and cancels one already in progress", (t) => {
   const h = harness(t, { motion: "off" });

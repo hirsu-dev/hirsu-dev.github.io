@@ -12,20 +12,20 @@ export const interfaces = {
     number: "02",
     tagline: "Keep building. No brakes.",
     description:
-      "Edgerunners-inspired chartreuse and violet, a split workspace, sharp contrast and angular typography.",
+      "Edgerunners-inspired chartreuse and violet, a continuous scrolling workbench, animated project network and signal distortion.",
     color: "#100c1b",
   },
 };
 export function validInterface(value) {
   return Object.hasOwn(interfaces, value);
 }
-export function interfaceFromSearch(search, saved = "neon") {
+export function interfaceFromSearch(search, saved = "blacksite") {
   const requested = new URLSearchParams(search).get("view");
   return validInterface(requested)
     ? requested
     : validInterface(saved)
       ? saved
-      : "neon";
+      : "blacksite";
 }
 export function interfaceURL(href, view) {
   if (!validInterface(view)) throw new Error("Unknown interface");

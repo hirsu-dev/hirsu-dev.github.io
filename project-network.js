@@ -105,7 +105,7 @@ function gridLines(detail) {
   return lines;
 }
 
-export function createProjectNetwork(container) {
+export function createProjectNetwork(container, { scrollZoom = true } = {}) {
   const canvas = container.querySelector("canvas"),
     ctx = canvas.getContext("2d");
   const labels = [...container.querySelectorAll(".network-node")];
@@ -366,6 +366,7 @@ export function createProjectNetwork(container) {
     refresh();
   };
   const wheel = (e) => {
+    if (!scrollZoom) return;
     e.preventDefault();
     targetZoom = Math.max(0.65, Math.min(1.3, targetZoom - e.deltaY * 0.0008));
     refresh();
@@ -476,7 +477,7 @@ export function createProjectNetwork(container) {
   canvas.addEventListener("pointerup", up);
   canvas.addEventListener("pointercancel", up);
   canvas.addEventListener("lostpointercapture", up);
-  canvas.addEventListener("wheel", wheel, { passive: false });
+  canvas.addEventListener("wheel", wheel, { passive: !scrollZoom });
   canvas.addEventListener("keydown", key);
   container.addEventListener("click", click);
   container.addEventListener("focusin", focusIn);

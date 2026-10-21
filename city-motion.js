@@ -15,6 +15,9 @@ export const bootPhases = Object.freeze([
   { at: 2250, name: "release" },
 ]);
 export const bootDuration = 2900;
+export function bootProgressAt(elapsed) {
+  return Math.max(0, Math.min(100, Math.floor((elapsed / 2250) * 100)));
+}
 export function bootPhaseAt(elapsed) {
   if (elapsed >= bootDuration) return "complete";
   return [...bootPhases].reverse().find((p) => elapsed >= p.at)?.name || "init";
@@ -24,22 +27,25 @@ export function createCityMotion() {
   const root = document.documentElement;
   root.dataset.visibility = document.hidden ? "hidden" : "visible";
   const boot = document.querySelector("#boot-dialog");
+  const bootPercent = document.querySelector("#boot-percent");
   const animations = new Set(),
     bootTimers = new Set();
   const elementAnimations = new WeakMap();
   let observer = null,
     scene = null,
     pointerFrame = 0,
-    bootActive = false;
+    bootActive = false,
+    bootReleasing = false;
   let returnFocus = null;
   const enabled = () => root.dataset.motion === "on" && !document.hidden;
   function animate(element, frames = panelFrames, duration = 480, delay = 0) {
-    if (!enabled() || !element?.animate || bootActive) return;
+    if (!enabled() || !element?.animate || (bootActive && !bootReleasing))
+      return;
     elementAnimations.get(element)?.cancel();
     const animation = element.animate(frames, {
       duration,
       delay,
-      easing: "cubic-bezier(.2,.75,.25,1)",
+      easing: "cubic-bezier(.16,1,.3,1)",
       fill: "backwards",
     });
     animations.add(animation);
@@ -50,7 +56,9 @@ export function createCityMotion() {
   }
   function decorate(container) {
     container
-      .querySelectorAll(".hero-line,.city-section h2,.page-head h1")
+      .querySelectorAll(
+        ".hero-line,.city-section h2,.page-head h1,.od-title-line",
+      )
       .forEach((element, i) => {
         if (element.classList.contains("signal-title")) return;
         // Decorative channels leave the real text readable, with no duplicate speech.
@@ -82,7 +90,7 @@ export function createCityMotion() {
     observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries)
-          if (entry.isIntersecting && !bootActive) {
+          if (entry.isIntersecting && (!bootActive || bootReleasing)) {
             entry.target.classList.add("revealed");
             entry.target
               .querySelectorAll(".language-bar i")
@@ -111,24 +119,31 @@ export function createCityMotion() {
     animations.clear();
     scene = container;
     observe(container);
-    if (!transition || bootActive) return;
-    const hero = container.querySelector(".city-hero");
+    if (!transition || (bootActive && !bootReleasing)) return;
+    const hero = container.querySelector(".city-hero,.od-hero");
     if (hero) {
       animate(
-        hero.querySelector(".city-keyart"),
+        hero.querySelector(".city-keyart,.od-hero-art"),
         [
           {
             opacity: 0,
             clipPath: "inset(0 0 0 100%)",
             transform: "scale(1.08)",
           },
-          { opacity: 1, clipPath: "inset(0 0 0 0)", transform: "scale(1.015)" },
+          {
+            opacity: 1,
+            clipPath: "inset(0 0 0 0)",
+            transform:
+              root.dataset.view === "blacksite"
+                ? "scale(1.04)"
+                : "scale(1.015)",
+          },
         ],
         1250,
       );
       hero
         .querySelectorAll(
-          ".hero-disciplines,.city-kicker,.hero-line,.city-intro,.city-actions,.hero-tools,.loadout-item,.hero-bottom",
+          ".hero-disciplines,.city-kicker,.hero-line,.city-intro,.city-actions,.hero-tools,.loadout-item,.hero-bottom,.od-enter,.od-title-line",
         )
         .forEach((piece, i) =>
           animate(
@@ -183,12 +198,14 @@ export function createCityMotion() {
   }
   function settleOpening() {
     if (!bootActive) return;
+    const alreadyEntered = bootReleasing;
     bootActive = false;
+    bootReleasing = false;
     bootTimers.forEach(clearTimeout);
     bootTimers.clear();
     delete root.dataset.booting;
     delete boot.dataset.phase;
-    if (scene) enter(scene);
+    if (scene && !alreadyEntered) enter(scene);
     const fallback = document.querySelector("#main");
     const target =
       returnFocus?.isConnected &&
@@ -214,8 +231,10 @@ export function createCityMotion() {
     animations.clear();
     returnFocus = replay ? document.activeElement : null;
     bootActive = true;
+    bootReleasing = false;
     root.dataset.booting = "true";
     boot.dataset.phase = "init";
+    if (bootPercent) bootPercent.textContent = "000%";
     try {
       boot.showModal();
     } catch {
@@ -226,7 +245,22 @@ export function createCityMotion() {
       bootTimers.add(
         setTimeout(() => {
           boot.dataset.phase = phase.name;
+          if (phase.name === "release") {
+            if (bootPercent) bootPercent.textContent = "100%";
+            bootReleasing = true;
+            root.dataset.booting = "release";
+            if (scene) enter(scene);
+          }
         }, phase.at),
+      );
+    // This measures the visual sequence, not downloads or a real system scan.
+    for (let elapsed = 75; elapsed < 2250; elapsed += 75)
+      bootTimers.add(
+        setTimeout(() => {
+          if (bootPercent && !bootReleasing)
+            bootPercent.textContent =
+              String(bootProgressAt(elapsed)).padStart(3, "0") + "%";
+        }, elapsed),
       );
     // Asset/network loading never holds the page hostage.
     bootTimers.add(setTimeout(finishOpening, bootDuration));
@@ -247,38 +281,39 @@ export function createCityMotion() {
     pointerX = 0,
     pointerY = 0,
     targetX = 0,
-    targetY = 0;
+    targetY = 0,
+    pointerLast = 0;
   function resetPointer() {
     cancelAnimationFrame(pointerFrame);
     pointerFrame = 0;
     pointerHero = null;
     pointerX = pointerY = targetX = targetY = 0;
-    scene?.querySelectorAll(".city-hero").forEach((e) => {
+    pointerLast = 0;
+    scene?.querySelectorAll(".city-hero,.od-hero").forEach((e) => {
       e.style.removeProperty("--hero-x");
       e.style.removeProperty("--hero-y");
     });
   }
-  function easePointer() {
+  function easePointer(now) {
     pointerFrame = 0;
     if (!pointerHero?.isConnected || !enabled() || bootActive) return;
-    pointerX += (targetX - pointerX) * 0.12;
-    pointerY += (targetY - pointerY) * 0.12;
+    const dt = pointerLast ? Math.min(now - pointerLast, 50) : 16.67;
+    const damping = 1 - Math.exp(-dt / 130);
+    pointerLast = now;
+    pointerX += (targetX - pointerX) * damping;
+    pointerY += (targetY - pointerY) * damping;
     pointerHero.style.setProperty("--hero-x", pointerX.toFixed(2) + "px");
     pointerHero.style.setProperty("--hero-y", pointerY.toFixed(2) + "px");
     if (Math.abs(targetX - pointerX) + Math.abs(targetY - pointerY) > 0.05)
       pointerFrame = requestAnimationFrame(easePointer);
+    else pointerLast = 0;
   }
   document.addEventListener(
     "pointermove",
     (e) => {
-      if (
-        !enabled() ||
-        bootActive ||
-        root.dataset.view !== "neon" ||
-        !matchMedia("(pointer:fine)").matches
-      )
+      if (!enabled() || bootActive || !matchMedia("(pointer:fine)").matches)
         return;
-      const hero = e.target.closest?.(".city-hero");
+      const hero = e.target.closest?.(".city-hero,.od-hero");
       if (!hero) return;
       const rect = hero.getBoundingClientRect();
       pointerHero = hero;
@@ -292,8 +327,8 @@ export function createCityMotion() {
     "pointerout",
     (e) => {
       if (
-        e.target.closest?.(".city-hero") &&
-        !e.relatedTarget?.closest?.(".city-hero")
+        e.target.closest?.(".city-hero,.od-hero") &&
+        !e.relatedTarget?.closest?.(".city-hero,.od-hero")
       ) {
         targetX = targetY = 0;
         if (!pointerFrame) pointerFrame = requestAnimationFrame(easePointer);

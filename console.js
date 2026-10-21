@@ -4,16 +4,17 @@ import {
   interfaces,
   interfaceFromSearch,
   interfaceURL,
-} from "./interfaces.js?v=6";
+} from "./interfaces.js?v=9";
 import {
   savedIds,
   findProjects,
   resolveRoute,
   escapeHTML as esc,
 } from "./console-model.js?v=8";
-import { createProjectNetwork } from "./project-network.js?v=8";
+import { createProjectNetwork } from "./project-network.js?v=9";
 import { cityHome } from "./city-content.js?v=8";
-import { createCityMotion } from "./city-motion.js?v=8";
+import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=9";
+import { createCityMotion } from "./city-motion.js?v=9";
 
 const $ = (s) => document.querySelector(s);
 const root = document.documentElement,
@@ -92,7 +93,7 @@ function setView(view, { push = true } = {}) {
   if (push && root.dataset.view === view) return;
   const previous = root.dataset.view;
   root.dataset.view = view;
-  write("hirsu-city-view", view);
+  write("hirsu-city-view-v9", view);
   document.querySelector('meta[name="theme-color"]').content =
     interfaces[view].color;
   $("#top-theme").innerHTML =
@@ -120,7 +121,7 @@ function setView(view, { push = true } = {}) {
     document.title =
       view === "neon"
         ? "hirsu // from code to the real world"
-        : "hirsu // project index";
+        : "hirsu // overdrive";
     cityMotion.enter(screen);
   }
 }
@@ -150,10 +151,7 @@ document.addEventListener("click", (e) => {
     );
     if (choice.closest("#theme-dialog")) {
       $("#theme-dialog").close();
-      (root.dataset.view === "neon"
-        ? $("#city-menu")
-        : $("#top-theme")
-      ).focus();
+      $("#city-menu").focus();
     }
   }
   if (e.target.closest("[data-close]")) e.target.closest("dialog").close();
@@ -214,8 +212,15 @@ document.querySelector(".rail nav").addEventListener("click", () => {
 });
 
 function renderHome() {
+  networkCleanup?.();
+  networkCleanup = null;
   if (root.dataset.view === "neon") screen.innerHTML = cityHome();
-  else renderFeed();
+  else {
+    screen.innerHTML = overdriveHome(networkContent());
+    networkCleanup = createProjectNetwork($("#network-shell"), {
+      scrollZoom: false,
+    });
+  }
 }
 
 function progress(p) {
@@ -398,20 +403,22 @@ function renderNetwork() {
       "02",
       "The project network.",
       "Different experiments. Shared tools. Select a node to open its project.",
-    ) +
-    `<section class="network-shell" id="network-shell" aria-label="Interactive project network"><div class="network-viewport"><canvas tabindex="0" aria-label="Conceptual project sphere. Drag or use arrow keys to rotate; plus and minus to zoom. Project links follow."></canvas><div class="network-crosshair" aria-hidden="true"></div><span class="network-meta"><span class="network-state">ORBIT / ACTIVE</span>07 PROJECT NODES<br />CONCEPTUAL MAP<br />NOT LIVE TELEMETRY</span><div class="network-labels">${projects.map((p) => `<a class="network-node" href="#${p.id}" aria-label="Open ${esc(p.title)}">${esc(p.title)}</a>`).join("")}</div></div><div class="network-controls"><button id="spin-button" aria-pressed="true">[ Pause rotation ]</button><button id="network-reset">[ Reset ]</button><span>DRAG rotate / SCROLL zoom</span><div class="quality" aria-label="Wireframe detail">${[
-      [8, "LOW"],
-      [14, "MID"],
-      [22, "HIGH"],
-    ]
-      .map(
-        ([q, label]) =>
-          `<button data-quality="${q}" aria-pressed="${q === 14}" aria-label="${label.toLowerCase()} wireframe detail">${label}</button>`,
-      )
-      .join(
-        "",
-      )}</div></div></section><p class="network-legend">Lines connect related work: web tooling, personal computing, electronics, and home services. Positions are illustrative—not physical locations. Rotation pauses while keyboard focus is on the map.</p><nav class="network-index" aria-label="Accessible project list">${projects.map((p) => `<a href="#${p.id}">${esc(p.title)}<span>${esc(p.status)} →</span></a>`).join("")}</nav>`;
+    ) + networkContent();
   networkCleanup = createProjectNetwork($("#network-shell"));
+}
+function networkContent() {
+  return `<section class="network-shell" id="network-shell" aria-label="Interactive project network"><div class="network-viewport"><canvas tabindex="0" aria-label="Conceptual project sphere. Drag or use arrow keys to rotate; plus and minus to zoom. Project links follow."></canvas><div class="network-crosshair" aria-hidden="true"></div><span class="network-meta"><span class="network-state">ORBIT / ACTIVE</span>07 PROJECT NODES<br />CONCEPTUAL MAP<br />NOT LIVE TELEMETRY</span><div class="network-labels">${projects.map((p) => `<a class="network-node" href="#${p.id}" aria-label="Open ${esc(p.title)}">${esc(p.title)}</a>`).join("")}</div></div><div class="network-controls"><button id="spin-button" aria-pressed="true">[ Pause rotation ]</button><button id="network-reset">[ Reset ]</button><span>DRAG rotate / + − zoom</span><div class="quality" aria-label="Wireframe detail">${[
+    [8, "LOW"],
+    [14, "MID"],
+    [22, "HIGH"],
+  ]
+    .map(
+      ([q, label]) =>
+        `<button data-quality="${q}" aria-pressed="${q === 14}" aria-label="${label.toLowerCase()} wireframe detail">${label}</button>`,
+    )
+    .join(
+      "",
+    )}</div></div></section><p class="network-legend">Lines connect related work: web tooling, personal computing, electronics, and home services. Positions are illustrative—not physical locations. Rotation pauses while keyboard focus is on the map.</p><nav class="network-index" aria-label="Accessible project list">${projects.map((p) => `<a href="#${p.id}">${esc(p.title)}<span>${esc(p.status)} →</span></a>`).join("")}</nav>`;
 }
 function renderStack() {
   const counts = languageCounts(),
@@ -517,7 +524,7 @@ function renderRoute({ focus = false } = {}) {
       : route === "index"
         ? root.dataset.view === "neon"
           ? "from code to the real world"
-          : "project index"
+          : "overdrive"
         : route === "projects"
           ? "all projects"
           : route);
@@ -533,6 +540,19 @@ function renderRoute({ focus = false } = {}) {
   cityMotion.enter(screen);
 }
 screen.addEventListener("click", (e) => {
+  const jump = e.target.closest("[data-home-section]");
+  if (jump && overdriveSections.includes(jump.dataset.homeSection)) {
+    e.preventDefault();
+    const target = document.getElementById(jump.dataset.homeSection);
+    target?.scrollIntoView({
+      behavior: root.dataset.motion === "on" ? "smooth" : "instant",
+      block: "start",
+    });
+    const heading = target?.querySelector("h2");
+    heading?.setAttribute("tabindex", "-1");
+    heading?.focus({ preventScroll: true });
+    return;
+  }
   const browse = e.target.closest("[data-browse]");
   if (browse) {
     category = browse.dataset.browse;
@@ -573,7 +593,7 @@ window.addEventListener("popstate", (e) => {
   setView(
     interfaceFromSearch(
       location.search,
-      e.state?.hirsuView || read("hirsu-city-view"),
+      e.state?.hirsuView || read("hirsu-city-view-v9"),
     ),
     { push: false },
   );
@@ -582,7 +602,7 @@ window.addEventListener("popstate", (e) => {
   syncIdentity();
 });
 function syncIdentity() {
-  $("#identity").hidden = root.dataset.view === "neon";
+  $("#identity").hidden = true;
 }
 document.addEventListener("appearancechange", syncIdentity);
 
@@ -753,7 +773,7 @@ document.addEventListener("keydown", (e) => {
     changeShot(e.key === "ArrowLeft" ? -1 : 1);
   }
 });
-setView(interfaceFromSearch(location.search, read("hirsu-city-view")), {
+setView(interfaceFromSearch(location.search, read("hirsu-city-view-v9")), {
   push: false,
 });
 setMotion(root.dataset.motion !== "off", false);

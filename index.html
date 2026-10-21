@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-view="neon" data-motion="on" data-page="index">
+<html lang="en" data-view="blacksite" data-motion="on" data-page="index">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#fcee0a" />
+    <meta name="theme-color" content="#100c1b" />
     <meta
       name="description"
       content="Hrushi's personal project network: useful software, a robotic telescope, Raspberry Pi home lab, local AI interfaces, electronics, and Linux."
@@ -21,6 +21,7 @@
     <title>hirsu // personal project network</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <script>
+      document.documentElement.dataset.view = "blacksite";
       document.documentElement.dataset.motion = matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches
@@ -29,9 +30,9 @@
       try {
         const view =
           new URLSearchParams(location.search).get("view") ||
-          localStorage.getItem("hirsu-city-view");
+          localStorage.getItem("hirsu-city-view-v9");
         document.documentElement.dataset.view =
-          view === "blacksite" ? "blacksite" : "neon";
+          view === "neon" ? "neon" : "blacksite";
         const motion = localStorage.getItem("hirsu-console-motion");
         document.documentElement.dataset.motion =
           motion === "off" ||
@@ -46,7 +47,8 @@
     <link rel="stylesheet" href="city.css?v=6" />
     <link rel="stylesheet" href="city-effects.css?v=8" />
     <link rel="stylesheet" href="city-upgrade.css?v=8" />
-    <script type="module" src="console.js?v=8"></script>
+    <link rel="stylesheet" href="overdrive.css?v=9" />
+    <script type="module" src="console.js?v=9"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -330,8 +332,9 @@
           <span class="swatches overdrive"><i></i><i></i><i></i></span
           ><b>02 / Overdrive</b
           ><span
-            >Chartreuse, violet, sharp contrast. An Edgerunners-inspired split
-            workspace.</span
+            >Chartreuse, violet, sharp contrast. A scrolling workbench with a
+            connected project globe and signal distortion. Default
+            interface.</span
           >
         </button>
       </div>
@@ -404,8 +407,10 @@
       aria-labelledby="boot-title"
       aria-describedby="boot-description"
     >
-      <div class="boot-shutter boot-shutter-top" aria-hidden="true"></div>
-      <div class="boot-shutter boot-shutter-bottom" aria-hidden="true"></div>
+      <div class="boot-slices" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="boot-static" aria-hidden="true"></div>
       <div class="boot-shell">
         <div class="boot-top">
           <span>HIRSU / PERSONAL PROJECT NETWORK</span><span>SEQUENCE_01</span>
@@ -427,6 +432,9 @@
             <span>01 <b>FORM THE SIGNAL</b><i>READY</i></span
             ><span>02 <b>ASSEMBLE THE INTERFACE</b><i>READY</i></span
             ><span>03 <b>OPEN THE WORKBENCH</b><i>READY</i></span>
+          </div>
+          <div class="boot-meter" aria-hidden="true">
+            <span>VISUAL SEQUENCE</span><b id="boot-percent">000%</b>
           </div>
           <div class="boot-track" aria-hidden="true"><i></i></div>
         </div>
