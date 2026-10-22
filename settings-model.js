@@ -1,7 +1,7 @@
 // Browser-local preferences only. No account, permission or device changes.
 export const settingsKey = "hirsu-settings-v14";
 export const settingOptions = Object.freeze({
-  layout: ["overdrive", "netrunner", "relic"],
+  layout: ["overdrive", "netrunner", "relic", "switchboard"],
   motion: ["system", "on", "off"],
   skin: ["overdrive", "icewire", "monolith"],
   fx: ["signal", "clean", "crt"],

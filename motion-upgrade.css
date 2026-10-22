@@ -1,4 +1,34 @@
 /* v17: charged gates, longer easing and restrained signal interference. */
+/* One small impact at the cut. The progress/Skip controls never shake. */
+html[data-motion="on"] #boot-dialog[open][data-intro="redline"] .cut-scene {
+  animation: redline-impact-shake 0.34s 2.23s cubic-bezier(0.2, 0.8, 0.2, 1)
+    both;
+}
+@keyframes redline-impact-shake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  12% {
+    transform: translate(-4px, 2px);
+  }
+  28% {
+    transform: translate(3px, -1px);
+  }
+  46% {
+    transform: translate(-2px, 1px);
+  }
+  68% {
+    transform: translate(1px, 0);
+  }
+  86% {
+    transform: translate(-0.5px, 0);
+  }
+}
+html[data-motion="off"] #boot-dialog[data-intro="redline"] .cut-scene,
+html[data-visibility="hidden"] #boot-dialog[data-intro="redline"] .cut-scene {
+  animation: none !important;
+}
 .intro-default {
   margin-left: 8px;
   padding: 3px 5px;

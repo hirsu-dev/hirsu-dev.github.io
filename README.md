@@ -2,6 +2,16 @@
 
 Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Pages. No Raspberry Pi hosting, backend, paid domain, portfolio analytics, accounts, external fonts, or runtime npm dependencies. Optional background radio connects to Spotify only after explicit consent. Tests use Happy DOM as a development-only dependency.
 
+## Switchboard and Redline impact / v18
+
+- **Settings → Customize → Interface layout → Switchboard.** A fourth original layout: oversized stencil-like typography, a spatial circuit map, movable project tiles, SVG wiring, an expandable inspector, and a two-project comparison patch bay. Overdrive remains the default; switching layouts preserves music, preferences and bookmarks.
+- **Interact:** search multiple words, filter by project type, isolate the selected project's real connections, run a bounded 1.8-second visual trace, inspect connected files, or arrange the map with Circuit / Align. Drag a tile's grip; keyboard users can move it with arrows (Shift for larger steps) and Home restores that tile. Escape cancels a drag. No idle JavaScript animation loop.
+- **Patch A / B:** pin the inspected file to a socket or choose either project from native selects. Swapping sockets keeps the pair distinct. Comparisons show documented relationships, exact shared tools, tools unique to each project and actual statuses—not invented ratings or compatibility claims.
+- **Responsive and local:** the small-screen map becomes a touch-friendly file grid; scrolling is not intercepted. Project positions, selected file and comparison pair are validated and stored under `hirsu-switchboard-v18`. Blocked storage degrades to session-only use with a notice. Trace timers, drag captures, frame callbacks and listeners are cleaned up on navigation; hidden pages and motion-off cancel tracing. Large text and high contrast remain supported.
+- **Redline:** one 340ms impact shake at the diagonal split, capped at 4px, with no added flashes. Only the artwork moves—the percentage and Skip button stay still. Reduced-motion and hidden-page states disable it. Redline remains the default; all other startup choices are retained.
+- **Edit:** `switchboard.js`, `switchboard-model.js`, `switchboard.css`, and `switchboard.test.js`; shake keyframes live in `motion-upgrade.css`. No new dependencies or external requests.
+- **Verification:** model, DOM, persistence, pointer/keyboard, motion-lifecycle and full-app route/settings regression tests. Browser control was unavailable, so rendered desktop/mobile layout and animation appearance still require a real-browser check.
+
 ## Night sky and Redline / v17
 
 - **The globe is removed.** The homepage and `#network` now share an original flat night-sky atlas: seven project constellations, a seeded depth-layered starfield, slow twinkling, soft nebula haze, and one brief meteor every twelve seconds. These are fictional star patterns for real projects—not astronomical positions or home-network telemetry.
@@ -40,7 +50,7 @@ SETTINGS opens a compact, keyboard-accessible panel, separate from the navigatio
 
 - **General:** startup autoplay, keyboard shortcuts, smooth section scrolling, local privacy information, and a confirmed reset. Reset restores the default intro and preferences, never saved projects.
 - **Accessibility:** system/on/reduced motion, larger reading text, high contrast, and underlined links. System motion follows OS changes live; reduced motion disables the intro, sky ambience and page animation. Tab, Escape and native control navigation are never disabled.
-- **Customize:** Overdrive, Netrunner and Relic layouts; Overdrive, Icewire and Monolith color palettes; Signal interference, Clean motion and CRT scanline FX packages; pointer parallax; all six independent startup scenes and manual preview. Palettes change color; layouts change structure. The retired Night City interface is not restored. Accessibility overrides win over skins and FX. Clean/CRT affect page FX, not the selected intro's own artwork.
+- **Customize:** Overdrive, Netrunner, Relic and Switchboard layouts; Overdrive, Icewire and Monolith color palettes; Signal interference, Clean motion and CRT scanline FX packages; pointer parallax; all six independent startup scenes and manual preview. Palettes change color; layouts change structure. The retired Night City interface is not restored. Accessibility overrides win over skins and FX. Clean/CRT affect page FX, not the selected intro's own artwork.
 
 Edit `settings.css` for panel presentation, skins and visual overrides; `settings-model.js` for validated defaults; `settings.js` for controls, storage and reset; `index.html` for settings content. Preferences use `hirsu-settings-v14`; existing motion and intro choices are retained. `#settings` and legacy `#themes` open customization. Disable startup autoplay to go straight to the page while keeping manual preview available.
 

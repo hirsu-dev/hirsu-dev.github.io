@@ -555,7 +555,7 @@ test("full app routes new pages, preserves the deck, and retains existing projec
   h.win.localStorage.setItem("hirsu-startup-v12", "fracture");
   h.win.history.replaceState(null, "", "#lab");
   h.win.HTMLCanvasElement.prototype.getContext = () => null;
-  await import("./console.js?integration-v17");
+  await import("./console.js?integration-v18");
   assert.ok(h.$("#signal-controls"));
   assert.equal(h.doc.documentElement.dataset.intro, "redline");
   assert.equal(h.$('input[name="startup"]:checked').value, "redline");
@@ -595,6 +595,17 @@ test("full app routes new pages, preserves the deck, and retains existing projec
   assert.equal(h.$("#music-dock"), deck);
   chooseLayout("relic");
   assert.ok(h.$(".relic-home"));
+  chooseLayout("switchboard");
+  assert.ok(h.$(".switchboard-home"));
+  h.$('[data-sb-select="robo-telescope"]').click();
+  h.$('[data-sb-pin="0"]').click();
+  assert.match(h.$("#sb-comparison").textContent, /Under repair/);
+  assert.equal(h.$("#music-dock"), deck);
+  chooseLayout("netrunner");
+  assert.ok(h.$(".netrunner-home"));
+  chooseLayout("switchboard");
+  assert.match(h.$("#sb-file-title").textContent, /Telescope/);
+  assert.equal(h.$('[data-sb-socket="0"]').value, "robo-telescope");
   go("projects");
   assert.equal(h.doc.querySelectorAll(".project-card").length, 7);
   chooseLayout("overdrive");

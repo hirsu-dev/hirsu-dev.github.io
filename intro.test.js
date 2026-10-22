@@ -65,6 +65,23 @@ test("selector is a native labeled radio group with one selected option", () => 
     assert.equal((html.match(/<label/g) || []).length, 6);
   }
 });
+test("Redline impact is a single small shake, scoped to artwork and disabled without motion", () => {
+  const css = readFileSync(
+    new URL("motion-upgrade.css", import.meta.url),
+    "utf8",
+  );
+  assert.match(
+    css,
+    /html\[data-motion="on"\][^{}]*#boot-dialog\[open\]\[data-intro="redline"\] \.cut-scene/,
+  );
+  assert.match(css, /redline-impact-shake 0\.34s 2\.23s/);
+  assert.match(css, /translate\(-4px,\s*2px\)/);
+  assert.match(
+    css,
+    /html\[data-motion="off"\][^{}]*\.cut-scene[^{}]*\{\s*animation: none !important/,
+  );
+  assert.ok(0.34 + 2.23 < 2.9);
+});
 test("artwork stays local and decorative; every variant has a bounded visual treatment", () => {
   const css = readFileSync(
     new URL("intro-variants.css", import.meta.url),
