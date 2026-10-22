@@ -2,11 +2,21 @@
 
 Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Pages. No Raspberry Pi hosting, backend, paid domain, tracking, accounts, external fonts, or build dependencies.
 
+## Compact settings / v14
+
+SETTINGS opens a compact, keyboard-accessible panel, separate from the navigation-only MENU. Its three tabs have independent scrolling and work on mobile. Preferences save automatically in this browser; blocked storage keeps session-only changes and displays a notice. No accounts, analytics or remote settings service.
+
+- **General:** startup autoplay, keyboard shortcuts, smooth section scrolling, local privacy information, and a confirmed reset. Reset restores the default intro and preferences, never saved projects.
+- **Accessibility:** system/on/reduced motion, larger reading text, high contrast, and underlined links. System motion follows OS changes live; reduced motion disables the intro, automatic globe rotation and page animation. Tab, Escape and native control navigation are never disabled.
+- **Customize:** Overdrive, Icewire and Monolith styles; Signal interference, Clean motion and CRT scanline FX packages; pointer parallax; all six independent startup scenes and manual preview. These are skins of the same Overdrive project interface, not a restoration of Night City. Accessibility overrides win over skins and FX. Clean/CRT affect page FX, not the selected intro's own artwork.
+
+Edit `settings.css` for panel presentation, skins and visual overrides; `settings-model.js` for validated defaults; `settings.js` for controls, storage and reset; `index.html` for settings content. Preferences use `hirsu-settings-v14`; existing motion and intro choices are retained. `#settings` and legacy `#themes` open customization. Disable startup autoplay to go straight to the page while keeping manual preview available.
+
 ## Overdrive
 
 Overdrive is the only interface: an original red/yellow game-menu-style project terminal, a real Shinjuku night photograph, all seven scrolling project showcases, an interactive globe and workbench. https://hrushikbarani-hub.github.io/
 
-MENU and the footer open startup settings. Night City has been removed from the menu, command palette and active renderer. Old `?view=neon` links and saved theme preferences now open Overdrive without losing the project hash. Historical styles/source remain for provenance but the retired homepage module is not loaded. Bookmarks and explicit motion preferences are retained locally. Motion defaults on unless the visitor requests reduced motion or previously paused FX.
+SETTINGS and the footer open preferences; MENU contains page navigation and a settings shortcut. Night City has been removed from the menu, command palette and active renderer. Old `?view=neon` links and saved theme preferences now open Overdrive without losing the project hash. Historical styles/source remain for provenance but the retired homepage module is not loaded. Bookmarks and explicit motion preferences are retained locally. Motion defaults on unless the visitor requests reduced motion or previously paused FX.
 
 Home is #index. The complete searchable archive is #projects. Old #project- project links, #stack, #bench, #whoami and #themes links remain supported; #work opens the archive.
 

@@ -113,6 +113,15 @@ function harness(
     tick,
   };
 }
+test("autoplay off skips arrival but allows intentional preview", (t) => {
+  const h = harness(t);
+  h.root.dataset.autoplay = "off";
+  assert.equal(h.controller.opening(), false);
+  assert.equal(h.timers.size, 0);
+  assert.equal(h.controller.opening({ replay: true }), true);
+  h.tick(bootDuration);
+  assert.equal(h.boot.open, false);
+});
 test("opening advances then always releases its modal, timers and scroll lock", (t) => {
   const h = harness(t);
   assert.equal(h.controller.opening(), true);

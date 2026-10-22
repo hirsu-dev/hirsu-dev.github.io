@@ -43,6 +43,7 @@ export function resolveRoute(hash) {
     bench: "log",
     whoami: "about",
     themes: "themes",
+    settings: "themes",
   };
   if (Object.hasOwn(aliases, route)) return aliases[route];
   if (route.startsWith("project-")) route = route.slice(8);

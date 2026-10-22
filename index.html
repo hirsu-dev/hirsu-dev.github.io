@@ -29,11 +29,38 @@
         : "on";
       try {
         const motion = localStorage.getItem("hirsu-console-motion");
+        let preferences = {},
+          hasPreferences = false;
+        try {
+          const raw = localStorage.getItem("hirsu-settings-v14");
+          if (raw) {
+            preferences = JSON.parse(raw) || {};
+            hasPreferences = true;
+          }
+        } catch {}
+        const mode = ["system", "on", "off"].includes(preferences.motion)
+          ? preferences.motion
+          : hasPreferences
+            ? "system"
+            : motion;
         document.documentElement.dataset.motion =
-          motion === "off" ||
-          (!motion && matchMedia("(prefers-reduced-motion: reduce)").matches)
+          mode === "off" ||
+          (mode !== "on" &&
+            matchMedia("(prefers-reduced-motion: reduce)").matches)
             ? "off"
             : "on";
+        for (const [key, options] of Object.entries({
+          skin: ["overdrive", "icewire", "monolith"],
+          fx: ["signal", "clean", "crt"],
+          textSize: ["standard", "large"],
+        })) {
+          if (options.includes(preferences[key]))
+            document.documentElement.dataset[key] = preferences[key];
+        }
+        if (preferences.contrast === true)
+          document.documentElement.dataset.contrast = "high";
+        if (preferences.underlineLinks === true)
+          document.documentElement.dataset.links = "underlined";
       } catch {
         /* A complete default interface works without storage. */
       }
@@ -47,7 +74,8 @@
     <link rel="stylesheet" href="terminal-ui.css?v=11" />
     <link rel="stylesheet" href="intro-variants.css?v=13" />
     <link rel="stylesheet" href="intro-scenes.css?v=13" />
-    <script type="module" src="console.js?v=13"></script>
+    <link rel="stylesheet" href="settings.css?v=14" />
+    <script type="module" src="console.js?v=14"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -61,15 +89,15 @@
         ><a href="#network" data-nav="network">NETWORK</a
         ><a href="#log" data-nav="log">WORKBENCH</a
         ><button
-          id="city-motion"
-          aria-pressed="true"
-          aria-label="Toggle animations"
+          id="city-settings"
+          aria-haspopup="dialog"
+          aria-label="Open settings"
         >
-          FX: ON</button
+          <span aria-hidden="true">⚙</span> SETTINGS</button
         ><button
           id="city-menu"
           aria-haspopup="dialog"
-          aria-label="Open navigation and startup menu"
+          aria-label="Open navigation menu"
         >
           MENU <span>+</span></button
         ><a
@@ -141,15 +169,15 @@
         >
       </nav>
       <div class="rail-bottom">
-        <span class="rail-version" aria-hidden="true">v11.0</span>
+        <span class="rail-version" aria-hidden="true">v14.0</span>
         <button
           class="rail-item"
           id="theme-button"
-          aria-label="Open startup settings"
+          aria-label="Open settings"
           aria-haspopup="dialog"
         >
           <span class="rail-icon" aria-hidden="true">◐</span
-          ><span class="rail-text">Interface</span>
+          ><span class="rail-text">Settings</span>
         </button>
         <button
           class="rail-item"
@@ -179,10 +207,10 @@
           <span class="local-label"><i></i> PERSONAL ARCHIVE</span
           ><button
             id="top-theme"
-            aria-label="Open startup settings"
+            aria-label="Open settings"
             aria-haspopup="dialog"
           >
-            Startup settings <span aria-hidden="true">⌄</span>
+            Settings <span aria-hidden="true">⌄</span>
           </button>
         </div>
       </header>
@@ -226,7 +254,6 @@
           </div>
           <div class="theme-strip">
             <span class="muted">INTERFACE: OVERDRIVE</span>
-            <button id="motion-button" aria-pressed="true">Motion: on</button>
           </div>
         </section>
         <div id="screen"></div>
@@ -282,7 +309,7 @@
         </p>
         <nav aria-label="Footer navigation">
           <a href="#about">ABOUT / SOURCES</a
-          ><button id="city-footer-theme">STARTUP SETTINGS</button
+          ><button id="city-footer-theme">SETTINGS</button
           ><a
             href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io"
             target="_blank"
@@ -302,8 +329,8 @@
     </div>
     <dialog id="theme-dialog" aria-labelledby="theme-title">
       <div class="dialog-bar">
-        <span>OVERDRIVE / PERSONALIZE</span
-        ><button data-close aria-label="Close settings menu">[×]</button>
+        <span id="theme-title">NAVIGATION</span
+        ><button data-close aria-label="Close navigation menu">[×]</button>
       </div>
       <nav class="menu-pages" aria-label="Menu navigation">
         <a href="#index">HOME</a><a href="#projects">ALL PROJECTS</a
@@ -312,27 +339,264 @@
         ><a href="#about">ABOUT / SOURCES</a
         ><button id="city-commands">COMMANDS / CTRL K</button>
       </nav>
-      <h2 id="theme-title">Choose your entrance.</h2>
-      <p class="muted">One interface. Six different ways in. OVERDRIVE.</p>
-      <fieldset class="intro-picker" aria-describedby="intro-help">
-        <legend>STARTUP / SELECT A SEQUENCE</legend>
-        <p id="intro-help">
-          Six visual sequences. Select one to use on your next visit, or preview
-          it now. Your choice stays in this browser.
-        </p>
-        <div id="intro-options" class="intro-options"></div>
-        <p id="intro-selection" aria-live="polite"></p>
-      </fieldset>
-      <div class="intro-actions">
-        <button class="bracket" id="replay-intro">
-          [ Preview Signal Fracture ↗ ]
+      <button class="menu-settings-link" id="menu-settings">
+        ⚙ Settings <span>Accessibility, appearance &amp; startup ↗</span>
+      </button>
+    </dialog>
+    <dialog id="settings-dialog" aria-labelledby="settings-title">
+      <header class="settings-header">
+        <div>
+          <span class="settings-eyebrow">PERSONAL PREFERENCES</span>
+          <h2 id="settings-title">Settings</h2>
+        </div>
+        <button data-close aria-label="Close settings">×</button>
+      </header>
+      <div
+        class="settings-tabs"
+        role="tablist"
+        aria-label="Settings categories"
+      >
+        <button
+          id="tab-general"
+          role="tab"
+          data-settings-tab="general"
+          aria-selected="true"
+          aria-controls="settings-general"
+        >
+          General
         </button>
-        <button class="bracket" id="dialog-motion">[ Pause animations ]</button>
+        <button
+          id="tab-accessibility"
+          role="tab"
+          data-settings-tab="accessibility"
+          aria-selected="false"
+          aria-controls="settings-accessibility"
+          tabindex="-1"
+        >
+          Accessibility
+        </button>
+        <button
+          id="tab-customize"
+          role="tab"
+          data-settings-tab="customize"
+          aria-selected="false"
+          aria-controls="settings-customize"
+          tabindex="-1"
+        >
+          Customize
+        </button>
       </div>
-      <p class="fineprint">
-        Preferences and bookmarks are stored only in this browser. System
-        reduced-motion preference is respected by default.
-      </p>
+      <div class="settings-content">
+        <section
+          id="settings-general"
+          role="tabpanel"
+          aria-labelledby="tab-general"
+          tabindex="0"
+        >
+          <h3>Make yourself at home.</h3>
+          <p class="settings-lead">Small preferences for how the site works.</p>
+          <label class="setting-row"
+            ><span
+              ><b>Play startup on arrival</b
+              ><small
+                >Show your selected intro on each full page load.</small
+              ></span
+            ><input type="checkbox" data-setting="autoplay"
+          /></label>
+          <label class="setting-row"
+            ><span
+              ><b>Keyboard shortcuts</b
+              ><small
+                >Enable Ctrl / ⌘ K, /, J/K and project shortcuts. Tab, Escape
+                and control arrow keys always work.</small
+              ></span
+            ><input type="checkbox" data-setting="shortcuts"
+          /></label>
+          <label class="setting-row"
+            ><span
+              ><b>Smooth section scrolling</b
+              ><small
+                >Ease between homepage sections. Reduced motion overrides
+                this.</small
+              ></span
+            ><input type="checkbox" data-setting="smoothScroll"
+          /></label>
+          <div class="settings-note">
+            <b>Private by default</b>
+            <p>
+              No account, analytics or tracking. Preferences and saved projects
+              stay in this browser; they do not sync to another device.
+            </p>
+          </div>
+          <button class="settings-secondary" id="settings-reset">
+            Reset preferences…
+          </button>
+          <div id="settings-reset-confirm" class="settings-note" hidden>
+            <p>
+              Restore default settings and Signal Fracture? Your saved projects
+              will stay.
+            </p>
+            <div class="settings-actions">
+              <button id="settings-reset-cancel">Cancel</button
+              ><button id="settings-reset-accept">Reset preferences</button>
+            </div>
+          </div>
+        </section>
+        <section
+          id="settings-accessibility"
+          role="tabpanel"
+          aria-labelledby="tab-accessibility"
+          tabindex="0"
+          hidden
+        >
+          <h3>Your comfort comes first.</h3>
+          <p class="settings-lead">
+            These controls override decorative effects.
+          </p>
+          <label class="setting-row" for="setting-motion"
+            ><span
+              ><b>Motion</b
+              ><small id="motion-status"
+                >System preference is respected by default.</small
+              ></span
+            ><select
+              id="setting-motion"
+              data-setting="motion"
+              aria-describedby="motion-status"
+            >
+              <option value="system">Follow system</option>
+              <option value="on">Animations on</option>
+              <option value="off">Reduce motion</option>
+            </select></label
+          >
+          <label class="setting-row" for="setting-text"
+            ><span
+              ><b>Reading size</b
+              ><small
+                >Enlarge body copy and interface labels. Browser zoom still
+                works.</small
+              ></span
+            ><select id="setting-text" data-setting="textSize">
+              <option value="standard">Standard</option>
+              <option value="large">Large</option>
+            </select></label
+          >
+          <label class="setting-row"
+            ><span
+              ><b>High contrast</b
+              ><small
+                >Solid surfaces, brighter text and stronger borders. Removes
+                background texture.</small
+              ></span
+            ><input type="checkbox" data-setting="contrast"
+          /></label>
+          <label class="setting-row"
+            ><span
+              ><b>Underline links</b
+              ><small
+                >Identify links without relying on color alone.</small
+              ></span
+            ><input type="checkbox" data-setting="underlineLinks"
+          /></label>
+          <div class="settings-note">
+            <b>Keyboard friendly</b>
+            <p>
+              Tab moves between controls. Use ← / → to change settings tabs, and
+              Escape to close. Skip to content is the first page link.
+            </p>
+          </div>
+        </section>
+        <section
+          id="settings-customize"
+          role="tabpanel"
+          aria-labelledby="tab-customize"
+          tabindex="0"
+          hidden
+        >
+          <h3>Make it yours.</h3>
+          <p class="settings-lead">
+            Same projects. Your interface, signal and entrance.
+          </p>
+          <fieldset class="style-picker">
+            <legend>Interface style</legend>
+            <div class="style-options">
+              <label
+                ><input
+                  type="radio"
+                  name="skin"
+                  data-setting="skin"
+                  value="overdrive"
+                /><span class="style-card style-overdrive"
+                  ><i aria-hidden="true"></i><b>Overdrive</b
+                  ><small>Angular / red + yellow</small></span
+                ></label
+              >
+              <label
+                ><input
+                  type="radio"
+                  name="skin"
+                  data-setting="skin"
+                  value="icewire"
+                /><span class="style-card style-icewire"
+                  ><i aria-hidden="true"></i><b>Icewire</b
+                  ><small>Technical / ice blue</small></span
+                ></label
+              >
+              <label
+                ><input
+                  type="radio"
+                  name="skin"
+                  data-setting="skin"
+                  value="monolith"
+                /><span class="style-card style-monolith"
+                  ><i aria-hidden="true"></i><b>Monolith</b
+                  ><small>Minimal / monochrome</small></span
+                ></label
+              >
+            </div>
+          </fieldset>
+          <label class="setting-row" for="setting-fx"
+            ><span
+              ><b>FX package</b
+              ><small
+                >Signal: grain + glitches. Clean: fluid motion only. CRT: fine
+                scanlines. Intro scenes keep their own effects.</small
+              ></span
+            ><select id="setting-fx" data-setting="fx">
+              <option value="signal">Signal interference</option>
+              <option value="clean">Clean motion</option>
+              <option value="crt">CRT scanlines</option>
+            </select></label
+          >
+          <label class="setting-row"
+            ><span
+              ><b>Background parallax</b
+              ><small
+                >Let the city image follow the pointer slightly.</small
+              ></span
+            ><input type="checkbox" data-setting="parallax"
+          /></label>
+          <fieldset class="intro-picker" aria-describedby="intro-help">
+            <legend>Startup animation</legend>
+            <p id="intro-help">
+              Pick an entrance. Preview works even when startup on arrival is
+              off.
+            </p>
+            <div id="intro-options" class="intro-options"></div>
+            <p id="intro-selection" aria-live="polite"></p>
+          </fieldset>
+          <div class="intro-actions">
+            <button class="bracket" id="replay-intro">
+              [ Preview Signal Fracture ↗ ]
+            </button>
+          </div>
+        </section>
+      </div>
+      <footer class="settings-footer">
+        <span id="settings-status" role="status"
+          >Saved in this browser. No account or tracking.</span
+        ><span>HIRSU / 14</span>
+      </footer>
     </dialog>
     <dialog id="command-dialog" aria-labelledby="command-title">
       <div class="dialog-bar">

@@ -10,10 +10,11 @@ import {
   findProjects,
   resolveRoute,
   escapeHTML as esc,
-} from "./console-model.js?v=8";
+} from "./console-model.js?v=14";
 import { createProjectNetwork } from "./project-network.js?v=9";
 import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=11";
-import { createCityMotion } from "./city-motion.js?v=13";
+import { createCityMotion } from "./city-motion.js?v=14";
+import { mountSettings } from "./settings.js?v=14";
 import {
   introById,
   introOptions,
@@ -102,8 +103,7 @@ function setView(view, { push = true } = {}) {
   write("hirsu-city-view-v9", view);
   document.querySelector('meta[name="theme-color"]').content =
     interfaces[view].color;
-  $("#top-theme").innerHTML =
-    'Startup settings <span aria-hidden="true">⌄</span>';
+  $("#top-theme").innerHTML = 'Settings <span aria-hidden="true">⌄</span>';
   if (push)
     history.pushState(
       { hirsuView: view },
@@ -123,19 +123,13 @@ function setView(view, { push = true } = {}) {
     cityMotion.enter(screen);
   }
 }
-function setMotion(on, persist = true) {
-  root.dataset.motion = on ? "on" : "off";
-  if (persist) write("hirsu-console-motion", on ? "on" : "off");
-  $("#city-motion").setAttribute("aria-pressed", String(on));
-  $("#city-motion").textContent = on ? "FX: ON" : "FX: OFF";
-  $("#motion-button").setAttribute("aria-pressed", String(on));
-  $("#motion-button").textContent = `Motion: ${on ? "on" : "off"}`;
-  $("#dialog-motion").textContent = on
-    ? "[ Pause animations ]"
-    : "[ Enable animations ]";
-  $("#replay-intro").disabled = !on;
+function refreshMotion() {
+  $("#replay-intro").disabled = root.dataset.motion !== "on";
   syncIntroChoice();
   document.dispatchEvent(new Event("appearancechange"));
+}
+function setMotion(on) {
+  preferences.set("motion", on ? "on" : "off");
 }
 function syncIntroChoice() {
   const intro = introById(root.dataset.intro);
@@ -156,9 +150,24 @@ $("#intro-options").addEventListener("change", (event) => {
   if (!persisted)
     toast("Startup selected for this session. Browser storage is unavailable.");
 });
-const mediaQuery = matchMedia("(prefers-reduced-motion: reduce)");
-mediaQuery.addEventListener("change", () => {
-  if (!read("hirsu-console-motion")) setMotion(!mediaQuery.matches, false);
+const preferences = mountSettings({
+  read,
+  write,
+  onApply: refreshMotion,
+  onReset: () => {
+    root.dataset.intro = "fracture";
+    $("#intro-options").innerHTML = introOptions("fracture");
+    return write(introStorageKey, "fracture");
+  },
+});
+function openSettings(tab = "general") {
+  preferences.selectTab(tab);
+  openDialog("#settings-dialog");
+  $("#settings-dialog [aria-selected='true']").focus({ preventScroll: true });
+}
+$("#settings-dialog").addEventListener("close", () => {
+  if (!document.querySelector("dialog[open]"))
+    $("#city-settings").focus({ preventScroll: true });
 });
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-close]")) e.target.closest("dialog").close();
@@ -176,23 +185,23 @@ for (const d of document.querySelectorAll("dialog"))
         d.close();
     }
   });
-$("#theme-button").onclick = $("#top-theme").onclick = () =>
-  openDialog("#theme-dialog");
-$("#motion-button").onclick = $("#dialog-motion").onclick = () =>
-  setMotion(root.dataset.motion !== "on");
+$("#theme-button").onclick =
+  $("#top-theme").onclick =
+  $("#city-settings").onclick =
+  $("#city-footer-theme").onclick =
+  $("#menu-settings").onclick =
+    () => openSettings();
 $("#help-button").onclick = () => openDialog("#help-dialog");
 document.querySelector(".skip").addEventListener("click", (e) => {
   e.preventDefault();
   $("#main").focus({ preventScroll: true });
   $("#main").scrollIntoView({ block: "start", behavior: "instant" });
 });
-$("#city-menu").onclick = $("#city-footer-theme").onclick = () =>
-  openDialog("#theme-dialog");
-$("#city-motion").onclick = () => setMotion(root.dataset.motion !== "on");
+$("#city-menu").onclick = () => openDialog("#theme-dialog");
 function replayIntro() {
   document.querySelectorAll("dialog[open]").forEach((d) => d.close());
   // Return to a visible control after preview; a closed menu cannot receive focus.
-  $("#city-menu").focus({ preventScroll: true });
+  $("#city-settings").focus({ preventScroll: true });
   cityMotion.opening({ replay: true });
 }
 $("#replay-intro").onclick = replayIntro;
@@ -499,7 +508,7 @@ function renderRoute({ focus = false } = {}) {
       root.dataset.page = "index";
       renderHome();
     }
-    openDialog("#theme-dialog");
+    openSettings("customize");
     return;
   }
   networkCleanup?.();
@@ -550,7 +559,10 @@ screen.addEventListener("click", (e) => {
     e.preventDefault();
     const target = document.getElementById(jump.dataset.homeSection);
     target?.scrollIntoView({
-      behavior: root.dataset.motion === "on" ? "smooth" : "instant",
+      behavior:
+        root.dataset.motion === "on" && root.dataset.smoothScroll !== "off"
+          ? "smooth"
+          : "instant",
       block: "start",
     });
     const heading = target?.querySelector("h2");
@@ -630,7 +642,7 @@ function commands() {
     {
       label: "Choose startup animation / settings",
       type: "SETTING",
-      run: () => openDialog("#theme-dialog"),
+      run: () => openSettings("customize"),
     },
     {
       label:
@@ -710,6 +722,7 @@ $("#command-dialog").addEventListener("keydown", (e) => {
   }
 });
 document.addEventListener("keydown", (e) => {
+  if (root.dataset.shortcuts === "off") return;
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
     e.preventDefault();
     $("#command-dialog").open ? $("#command-dialog").close() : openCommands();
@@ -776,6 +789,6 @@ document.addEventListener("keydown", (e) => {
 setView(interfaceFromSearch(location.search, read("hirsu-city-view-v9")), {
   push: false,
 });
-setMotion(root.dataset.motion !== "off", false);
+refreshMotion();
 renderRoute();
 cityMotion.opening();

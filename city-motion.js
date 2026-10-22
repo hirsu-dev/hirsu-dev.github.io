@@ -223,6 +223,7 @@ export function createCityMotion() {
   function opening({ replay = false } = {}) {
     if (
       !enabled() ||
+      (!replay && root.dataset.autoplay === "off") ||
       !boot ||
       bootActive ||
       document.querySelector("dialog[open]")
@@ -310,7 +311,13 @@ export function createCityMotion() {
   }
   function easePointer(now) {
     pointerFrame = 0;
-    if (!pointerHero?.isConnected || !enabled() || bootActive) return;
+    if (
+      !pointerHero?.isConnected ||
+      !enabled() ||
+      root.dataset.parallax === "off" ||
+      bootActive
+    )
+      return;
     const dt = pointerLast ? Math.min(now - pointerLast, 50) : 16.67;
     const damping = 1 - Math.exp(-dt / 130);
     pointerLast = now;
@@ -325,7 +332,12 @@ export function createCityMotion() {
   document.addEventListener(
     "pointermove",
     (e) => {
-      if (!enabled() || bootActive || !matchMedia("(pointer:fine)").matches)
+      if (
+        !enabled() ||
+        root.dataset.parallax === "off" ||
+        bootActive ||
+        !matchMedia("(pointer:fine)").matches
+      )
         return;
       const hero = e.target.closest?.(".city-hero,.od-hero");
       if (!hero) return;
@@ -351,6 +363,7 @@ export function createCityMotion() {
     { passive: true },
   );
   document.addEventListener("appearancechange", () => {
+    if (root.dataset.parallax === "off") resetPointer();
     if (!enabled()) {
       animations.forEach((a) => a.cancel());
       animations.clear();

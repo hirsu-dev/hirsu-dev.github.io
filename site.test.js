@@ -65,7 +65,7 @@ test("live shell and controller offer no retired interface controls or route", (
     controller,
     /cityHome|Switch to Night City|setView\("neon"\)/,
   );
-  assert.match(html, /STARTUP SETTINGS/);
+  assert.match(html, /id="settings-dialog"/);
 });
 
 test("legacy circular navigation helper wraps correctly", () => {
