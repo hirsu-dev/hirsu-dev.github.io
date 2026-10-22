@@ -1,0 +1,344 @@
+/* v17: charged gates, longer easing and restrained signal interference. */
+.intro-default {
+  margin-left: 8px;
+  padding: 3px 5px;
+  color: #ff9ca7;
+  border: 1px solid #a54a57;
+  font: normal 8px var(--mono);
+  vertical-align: middle;
+}
+#boot-dialog[data-intro="redline"] .cut-left {
+  background: linear-gradient(120deg, #210e17, #0d0a10 65%);
+}
+#boot-dialog[data-intro="redline"] .cut-right {
+  background: linear-gradient(300deg, #1b0d15, #080910 65%);
+}
+.cut-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 4px,
+    #ff335508 4px 5px
+  );
+  opacity: 0.35;
+}
+#boot-dialog[data-intro="redline"] .cut-word {
+  letter-spacing: -0.055em;
+}
+#boot-dialog[data-intro="redline"] .cut-word::after {
+  content: "HIRSU_";
+  position: absolute;
+  color: #ffb5c3;
+  opacity: 0;
+  clip-path: inset(42% 0 39%);
+}
+#boot-dialog[open][data-intro="redline"] .cut-word::after {
+  animation: redline-echo 0.45s 1.92s steps(1, end) both;
+}
+#boot-dialog[open][data-intro="redline"] .cut-beam path {
+  animation: charged-seam 0.85s 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+#boot-dialog[data-intro="redline"] .cut-beam .cut-aura {
+  stroke-width: 16;
+  stroke-opacity: 0.15;
+  filter: blur(5px);
+}
+#boot-dialog[data-intro="redline"] .cut-beam .cut-core {
+  stroke-width: 1;
+  stroke: #ffcad5;
+  filter: none;
+}
+#boot-dialog[open][data-intro="redline"] .cut-beam {
+  animation: seam-release 0.62s 2.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+#boot-dialog[open][data-intro="redline"] .cut-left {
+  animation: redline-gate-left 0.64s 2.25s cubic-bezier(0.68, 0, 0.12, 1) both;
+}
+#boot-dialog[open][data-intro="redline"] .cut-right {
+  animation: redline-gate-right 0.64s 2.25s cubic-bezier(0.68, 0, 0.12, 1) both;
+}
+#boot-dialog[open][data-intro="redline"] .cut-spark {
+  animation: redline-debris 0.58s var(--delay) cubic-bezier(0.12, 0.65, 0.3, 1)
+    both;
+}
+.cut-impact {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30vmin;
+  height: 30vmin;
+  border: 1px solid #ff6b8766;
+  border-radius: 50%;
+  translate: -50% -50%;
+  transform: scale(0.3);
+  opacity: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+#boot-dialog[open] .cut-impact {
+  animation: redline-shock 0.64s 2.25s cubic-bezier(0.12, 0.65, 0.3, 1) both;
+}
+.cut-rulers {
+  position: absolute;
+  inset: 14%;
+  z-index: 2;
+  pointer-events: none;
+}
+.cut-ruler {
+  position: absolute;
+  width: 52px;
+  height: 1px;
+  left: calc(5% + var(--n) * 12%);
+  top: calc(10% + var(--n) * 10%);
+  background: linear-gradient(90deg, transparent, #ff5667aa);
+  opacity: 0;
+}
+#boot-dialog[open] .cut-ruler {
+  animation: redline-ruler 0.8s calc(0.4s + var(--n) * 0.12s)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.cut-diagnostics {
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: 70%;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font: 9px/1.5 var(--mono);
+  letter-spacing: 0.2em;
+  color: #b86b7c;
+}
+#boot-dialog[open] .cut-diagnostics {
+  animation: redline-diagnostics 2.35s ease both;
+}
+@keyframes charged-seam {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.45;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+@keyframes seam-release {
+  0% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  28% {
+    opacity: 0.8;
+    transform: scaleX(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1.6);
+  }
+}
+@keyframes redline-gate-left {
+  0% {
+    transform: none;
+  }
+  13% {
+    transform: translate(-9px, -3px);
+  }
+  100% {
+    transform: translate(-95%, -22%) skewX(-5deg);
+  }
+}
+@keyframes redline-gate-right {
+  0% {
+    transform: none;
+  }
+  13% {
+    transform: translate(9px, 3px);
+  }
+  100% {
+    transform: translate(95%, 22%) skewX(-5deg);
+  }
+}
+@keyframes redline-debris {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.3);
+  }
+  12% {
+    opacity: 0.85;
+  }
+  38% {
+    opacity: 0.65;
+    transform: translate(calc(var(--dx) * 0.55), calc(var(--dy) * 0.35))
+      scaleX(2.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scaleX(0.2);
+  }
+}
+@keyframes redline-shock {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  20% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(4);
+  }
+}
+@keyframes redline-echo {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.55;
+    transform: translateX(-15px);
+  }
+  45% {
+    opacity: 0.2;
+    transform: translateX(9px);
+  }
+  70% {
+    opacity: 0.5;
+    transform: translateX(-3px);
+  }
+}
+@keyframes redline-ruler {
+  0% {
+    opacity: 0;
+    transform: translateX(-40px) scaleX(0.2);
+  }
+  35% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(90px) scaleX(1.4);
+  }
+}
+@keyframes redline-diagnostics {
+  0%,
+  15% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  35%,
+  88% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Shared choreography: UI surfaces settle; controls respond without flashing. */
+html[data-motion="on"] .city-nav > :is(a, button) {
+  transition:
+    background 0.24s,
+    color 0.24s,
+    box-shadow 0.24s;
+}
+html[data-motion="on"]
+  :is(.nr-window, .relic-file, .project-card, .panel, .terminal-profile) {
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+html[data-motion="on"]
+  :is(.nr-window, .relic-file, .project-card, .panel):focus-within {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent),
+    0 10px 36px #0002;
+}
+html[data-motion="on"]
+  :is(
+    .od-text-link,
+    .layout-primary,
+    .layout-action,
+    .nr-dock > a,
+    .nr-dock > button
+  ) {
+  transition:
+    translate 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s,
+    background 0.3s;
+}
+html[data-motion="on"]
+  :is(.od-text-link, .layout-primary, .layout-action):is(
+    :hover,
+    :focus-visible
+  ) {
+  translate: 3px 0;
+}
+html[data-motion="on"]
+  :is(
+    .nr-file-list button,
+    .relic-index button,
+    .relic-filebar button,
+    .relic-tabs button
+  ) {
+  transition:
+    background 0.28s ease,
+    color 0.28s ease,
+    border-color 0.28s ease;
+}
+html[data-motion="on"] .od-build .od-open {
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.3s ease;
+}
+html[data-motion="on"] .od-build:focus-within .od-open,
+html[data-motion="on"] .od-build:hover .od-open {
+  transform: translate(3px, -3px);
+}
+html[data-motion="on"] .relic-footnotes a {
+  transition:
+    background 0.4s,
+    padding-left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+html[data-motion="on"] .relic-footnotes a:is(:hover, :focus-visible) {
+  background: var(--panel);
+  padding-left: 30px;
+}
+html[data-view="blacksite"][data-motion="on"] .motion-ready {
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+html[data-motion="off"] :is(.cut-impact, .cut-rulers, .cut-diagnostics) {
+  display: none;
+}
+html[data-contrast="high"] .cut-panel::after {
+  display: none;
+}
+@media (max-width: 650px) {
+  .cut-diagnostics {
+    top: 65%;
+    left: 7%;
+    right: 7%;
+    font-size: 7px;
+    letter-spacing: 0.08em;
+  }
+  .cut-rulers {
+    inset: 8%;
+  }
+}
+@media (max-height: 520px) {
+  .cut-diagnostics {
+    top: 66%;
+    font-size: 7px;
+  }
+  .cut-rulers {
+    inset: 8% 14%;
+  }
+}

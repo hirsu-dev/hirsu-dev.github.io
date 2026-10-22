@@ -1,3 +1,4 @@
+import { skyObjects } from "./sky-model.js?v=17";
 import { projects } from "./projects.js?v=8";
 import { escapeHTML as esc } from "./console-model.js?v=15";
 export const networkLinks = [
@@ -12,26 +13,37 @@ export const networkLinks = [
 export function networkInspector(index = -1) {
   const p = projects[index];
   if (!p)
-    return `<div><p class="eyebrow">NODE INSPECTOR / READY</p><h3>Find the shared thread.</h3><p>Select a project label to lock onto its node. Inspect the tools and connections below, then open its full project file.</p></div><div><p class="eyebrow">ORBITAL MODEL / 07 NODES</p><p>This is a conceptual map, not a geographical globe or a scan of the home network. Links describe related work, not live connections.</p><a href="#lab">Explore the Signal Lab ↗</a></div>`;
+    return `<div><p class="eyebrow">STAR ATLAS / 07 CONSTELLATIONS</p><h3>Every build leaves a light.</h3><p>Choose a constellation to drift toward it. Each bright star represents a project; its neighboring stars form a small, original pattern.</p></div><div><p class="eyebrow">ILLUSTRATED NIGHT SKY</p><p>An imaginary sky for real projects—not astronomical coordinates or live telemetry. The thin links between constellations describe shared tools and related work.</p><a href="#lab">Explore the Signal Lab ↗</a></div>`;
   const neighbors = networkLinks
     .filter(([a, b]) => a === p.id || b === p.id)
     .map(([a, b, why]) => ({
       project: projects.find((item) => item.id === (a === p.id ? b : a)),
       why,
     }));
-  return `<div><p class="eyebrow">NODE LOCK / ${esc(p.status)}</p><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><p>${p.tags.map(esc).join(" / ")}</p><a href="#${p.id}">Open project file ↗</a></div><div><p class="eyebrow">RELATED WORK / ${neighbors.length} LINKS</p><div class="network-connections">${neighbors.map(({ project, why }) => `<div><a href="#${project.id}">${esc(project.title)} ↗</a><span>${esc(why)}</span></div>`).join("")}</div></div>`;
+  return `<div><p class="eyebrow">CONSTELLATION / ${esc(p.status)}</p><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><p>${p.tags.map(esc).join(" / ")}</p><a href="#${p.id}">Open project file ↗</a></div><div><p class="eyebrow">RELATED WORK / ${neighbors.length} LINKS</p><div class="network-connections">${neighbors.map(({ project, why }) => `<div><a href="#${project.id}">${esc(project.title)} ↗</a><span>${esc(why)}</span></div>`).join("")}</div></div>`;
 }
 export function networkContent() {
-  return `<section class="network-shell" id="network-shell" aria-label="Interactive project network"><div class="network-toolbar"><span>PROJECT CONSTELLATION / V.02</span><div aria-label="Globe display"><button data-network-mode="orbital" aria-pressed="true">ORBITAL</button><button data-network-mode="minimal" aria-pressed="false">CONNECTIONS</button></div></div><div class="network-viewport"><canvas tabindex="0" aria-label="Conceptual project sphere. Drag horizontally or use arrow keys to rotate; plus and minus to zoom. Select project labels to inspect connections."></canvas><div class="network-crosshair" aria-hidden="true"></div><span class="network-meta"><span class="network-state">ORBIT / ACTIVE</span>07 PROJECT NODES<br />CONCEPTUAL MAP<br />NOT LIVE TELEMETRY</span><div class="network-labels">${projects.map((p, i) => `<button class="network-node" data-node-index="${i}" aria-pressed="false" aria-label="Inspect ${esc(p.title)} connections">${esc(p.title)}</button>`).join("")}</div></div><div class="network-controls"><button id="spin-button" aria-pressed="true">[ Pause rotation ]</button><button id="network-reset">[ Reset / unlock ]</button><div class="zoom-buttons" aria-label="Zoom"><button data-zoom="-1" aria-label="Zoom out">−</button><button data-zoom="1" aria-label="Zoom in">+</button></div><span>DRAG / ← ↑ ↓ →</span><div class="quality" aria-label="Wireframe detail">${[
-    [8, "LOW"],
-    [14, "MID"],
-    [22, "HIGH"],
-  ]
-    .map(
-      ([q, label]) =>
-        `<button data-quality="${q}" aria-pressed="${q === 14}" aria-label="${label.toLowerCase()} wireframe detail">${label}</button>`,
-    )
-    .join(
-      "",
-    )}</div></div><section class="network-inspector" aria-label="Selected project details" aria-live="polite">${networkInspector()}</section></section><p class="network-legend">Select a label to inspect. Drag horizontally to orbit; + / − to zoom. Reset releases a node lock. Wheel zoom works only on the dedicated network page with the canvas focused. Touch scrolling stays available on the homepage.</p><nav class="network-index" aria-label="Accessible project list">${projects.map((p) => `<a href="#${p.id}">${esc(p.title)}<span>${esc(p.status)} →</span></a>`).join("")}</nav>`;
+  return `<section class="network-shell sky-shell" id="network-shell" aria-label="Interactive night-sky constellations">
+    <div class="network-toolbar"><span>AFTER DARK <b>/</b> PROJECT ATLAS</span><div aria-label="Sky display"><button data-sky-control data-network-mode="atlas" aria-pressed="true">CONSTELLATIONS</button><button data-sky-control data-network-mode="ambient" aria-pressed="false">STARFIELD</button></div></div>
+    <div class="sky-layout"><div class="network-viewport"><div class="sky-caption" aria-hidden="true"><span>07 LIGHTS / ONE WORKBENCH</span><b>Look a little closer.</b></div><canvas tabindex="0" aria-label="Illustrated night sky with seven project constellations. Drag or use arrow keys to pan. Plus and minus zoom. Select a bright star or use the project buttons beside the sky. Home resets the view."></canvas><span class="sky-horizon" aria-hidden="true">AN ORIGINAL SKY / NOT ASTRONOMY DATA</span><p class="sky-fallback">The animated sky is unavailable. Choose a project from the constellation index; all project details still work.</p></div>
+    <nav class="sky-sidebar" aria-label="Constellation index"><p>FOLLOW A CONSTELLATION <span>↓</span></p><div class="network-labels">${skyObjects
+      .map((object, i) => {
+        const p = projects.find((p) => p.id === object.id);
+        return `<button class="network-node" data-node-index="${i}" aria-pressed="false" aria-controls="sky-inspector" aria-label="Inspect ${esc(p.title)} constellation"><span>${String(i + 1).padStart(2, "0")}</span><b>${esc(p.title)}</b><small>${esc(p.status)}</small><i aria-hidden="true">↗</i></button>`;
+      })
+      .join(
+        "",
+      )}</div><div class="sky-sidebar-note"><span class="network-state">NIGHT SKY / ACTIVE</span><p>Choose a star.<br />Find the story behind it.</p></div></nav></div>
+    <div class="network-controls"><button data-sky-control id="sky-pause" aria-pressed="false">Pause sky</button><button data-sky-control id="network-reset">Reset view</button><div class="zoom-buttons" aria-label="Sky zoom"><button data-sky-control data-zoom="-1" aria-label="Zoom out">−</button><button data-sky-control data-zoom="1" aria-label="Zoom in">+</button></div><span>DRAG TO EXPLORE / ARROWS TO PAN</span><div class="quality" aria-label="Star density">${[
+      [8, "LOW"],
+      [14, "MID"],
+      [22, "RICH"],
+    ]
+      .map(
+        ([q, label]) =>
+          `<button data-sky-control data-quality="${q}" aria-pressed="${q === 14}" aria-label="${label.toLowerCase()} star density">${label}</button>`,
+      )
+      .join("")}</div></div>
+    <section id="sky-inspector" class="network-inspector" aria-label="Selected constellation details" aria-live="polite">${networkInspector()}</section>
+  </section><p class="network-legend">Select a bright star or a project name. Drag to pan; + / − to zoom; Reset to see the whole sky. Wheel zoom requires canvas focus on this dedicated page. Normal page scrolling stays available.</p><nav class="network-index" aria-label="Accessible project list">${projects.map((p) => `<a href="#${p.id}">${esc(p.title)}<span>${esc(p.status)} →</span></a>`).join("")}</nav>`;
 }

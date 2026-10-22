@@ -1,0 +1,353 @@
+/* A wide, quiet astronomical composition, not a re-skinned globe. */
+html[data-view="blacksite"] .sky-shell {
+  padding: 0;
+  clip-path: none;
+  border: 1px solid #39445b;
+  background: #080d19;
+  border-radius: 2px;
+  overflow: hidden;
+  isolation: isolate;
+}
+html[data-view="blacksite"] .sky-shell::before,
+html[data-view="blacksite"] .sky-shell::after {
+  display: none;
+}
+.sky-shell .network-toolbar {
+  padding: 18px 24px;
+  background: #0c1321;
+  border-bottom: 1px solid #303b50;
+  color: #bccbdf;
+}
+.sky-shell .network-toolbar > span {
+  color: #d9e3f1;
+  letter-spacing: 0.16em;
+}
+.sky-shell .network-toolbar b {
+  margin-inline: 12px;
+  color: var(--accent);
+}
+.sky-shell .network-toolbar button {
+  color: #b5c3d6;
+  border-color: #384359;
+  font-size: 9px;
+  padding: 10px 14px;
+}
+.sky-shell .network-toolbar button[aria-pressed="true"] {
+  background: #bccede;
+  color: #07101b;
+  border-color: #bccede;
+}
+.sky-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 246px;
+}
+html[data-view="blacksite"] .sky-shell .network-viewport {
+  height: 590px;
+  min-width: 0;
+  background: #050914;
+  padding: 0;
+  border: 0;
+}
+.sky-shell .network-viewport canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+  cursor: grab;
+}
+.sky-shell .network-viewport canvas:active {
+  cursor: grabbing;
+}
+.sky-shell .network-viewport canvas:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+.sky-caption {
+  position: absolute;
+  z-index: 1;
+  left: 26px;
+  top: 26px;
+  pointer-events: none;
+}
+.sky-caption > span {
+  display: block;
+  color: #8ea2bf;
+  font: 8px var(--mono);
+  letter-spacing: 0.16em;
+}
+.sky-caption b {
+  display: block;
+  color: #cdd9ea;
+  font: 400 22px/1.4 var(--mono);
+  margin-top: 8px;
+  letter-spacing: -0.045em;
+}
+.sky-horizon {
+  position: absolute;
+  bottom: 20px;
+  left: 26px;
+  color: #7d8faa;
+  font: 8px var(--mono);
+  letter-spacing: 0.15em;
+  pointer-events: none;
+}
+.sky-sidebar {
+  border-left: 1px solid #303b50;
+  background: linear-gradient(170deg, #111b2d, #090e19);
+  padding: 22px 16px 18px;
+}
+.sky-sidebar > p {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 4px 20px;
+  font: 8px/1.5 var(--mono);
+  letter-spacing: 0.12em;
+  color: #8fa4c1;
+}
+.sky-shell .network-labels {
+  display: grid;
+  position: static;
+  inset: auto;
+  gap: 5px;
+  pointer-events: auto;
+}
+html[data-view="blacksite"] .sky-shell .network-node {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 12px;
+  gap: 5px 7px;
+  position: static;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  min-height: 54px;
+  padding: 11px 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #d9e3ef;
+  font: 11px/1.4 var(--mono);
+  text-align: left;
+  white-space: normal;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    translate 0.25s ease;
+}
+.sky-shell .network-node::before {
+  display: none;
+}
+.sky-shell .network-node > span {
+  grid-row: span 2;
+  color: #8ca0bc;
+  font-size: 9px;
+  padding-top: 2px;
+}
+.sky-shell .network-node b {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.sky-shell .network-node small {
+  grid-column: 2;
+  font-size: 9px;
+  color: #91a1b9;
+}
+.sky-shell .network-node > i {
+  grid-column: 3;
+  grid-row: 1/3;
+  align-self: center;
+  font-style: normal;
+  color: #8da9c8;
+}
+html[data-view="blacksite"]
+  .sky-shell
+  .network-node:is(:hover, :focus-visible) {
+  border-color: #415570;
+  background: #17243b;
+  translate: 2px 0;
+}
+html[data-view="blacksite"] .sky-shell .network-node[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: #1a2334;
+  color: var(--accent);
+}
+.sky-sidebar-note {
+  margin: 22px 4px 0;
+  border-top: 1px solid #303b50;
+  padding-top: 18px;
+}
+.sky-sidebar-note .network-state {
+  display: block;
+  color: #aacddf;
+  font: 8px var(--mono);
+  letter-spacing: 0.1em;
+}
+.sky-sidebar-note p {
+  color: #7d90ab;
+  font: 10px/1.7 var(--mono);
+  margin-bottom: 0;
+}
+.sky-shell .network-controls {
+  border-top: 1px solid #303b50;
+  padding: 14px 20px;
+  background: #0c1321;
+  gap: 12px;
+  color: #a3b1c6;
+  flex-wrap: wrap;
+}
+.sky-shell .network-controls button {
+  font: 10px var(--mono);
+  min-height: 36px;
+  padding: 9px 12px;
+  border: 1px solid #384359;
+  color: #c4d2e4;
+}
+.sky-shell .network-controls .quality button[aria-pressed="true"] {
+  color: #07101b;
+  background: #bccede;
+}
+.sky-shell .network-controls > span {
+  font: 8px/1.5 var(--mono);
+  letter-spacing: 0.06em;
+}
+.sky-shell .network-controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.sky-shell .network-inspector {
+  background: #0c1220;
+  border-color: #303b50;
+  color: #cfdaeb;
+}
+.sky-shell .network-inspector p,
+.sky-shell .network-connections span {
+  color: #a8b7cc;
+}
+.sky-shell .network-inspector .eyebrow {
+  color: #b5ccdf;
+}
+.sky-shell .network-inspector a {
+  color: var(--accent);
+}
+.sky-fallback {
+  display: none;
+}
+.sky-shell[data-renderer="unavailable"] .network-viewport canvas {
+  display: none;
+}
+.sky-shell[data-renderer="unavailable"] .sky-fallback {
+  display: block;
+  position: absolute;
+  top: 45%;
+  left: 10%;
+  right: 10%;
+  color: #cdd9ea;
+  font: 14px/1.8 var(--mono);
+}
+html[data-contrast="high"]
+  .sky-shell
+  :is(.network-toolbar, .sky-sidebar, .network-controls, .network-inspector) {
+  background: #050509;
+  border-color: #bbb;
+}
+html[data-contrast="high"]
+  .sky-shell
+  :is(
+    p,
+    small,
+    .sky-horizon,
+    .sky-caption span,
+    .network-state,
+    .network-node > span
+  ) {
+  color: #eee;
+}
+html[data-text-size="large"]
+  .sky-shell
+  :is(
+    .network-node,
+    .network-node small,
+    .network-controls button,
+    .network-toolbar button
+  ) {
+  font-size: 14px;
+}
+html[data-text-size="large"] .sky-shell .sky-sidebar {
+  padding-inline: 10px;
+}
+html[data-motion="off"] .sky-shell .network-node {
+  transition: none;
+}
+@media (max-width: 900px) {
+  .sky-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  html[data-view="blacksite"] .sky-shell .network-viewport {
+    height: 520px;
+  }
+  .sky-sidebar {
+    border-left: 0;
+    border-top: 1px solid #303b50;
+    padding: 20px;
+  }
+  .sky-shell .network-labels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 14px;
+  }
+  .sky-sidebar-note {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 14px;
+  }
+  .sky-sidebar-note p {
+    margin: 0;
+  }
+  .sky-caption b {
+    font-size: 17px;
+  }
+}
+@media (max-width: 480px) {
+  .sky-caption b {
+    display: none;
+  }
+  html[data-view="blacksite"] .sky-shell .network-viewport {
+    height: 560px;
+  }
+  .sky-caption {
+    left: 18px;
+    top: 18px;
+  }
+  .sky-shell .network-toolbar {
+    padding: 16px;
+  }
+  .sky-shell .network-toolbar > span {
+    font-size: 9px;
+  }
+  .sky-shell .network-toolbar button {
+    padding: 9px;
+  }
+  .sky-sidebar {
+    padding: 18px 10px;
+  }
+  .sky-shell .network-labels {
+    gap: 5px;
+  }
+  html[data-view="blacksite"] .sky-shell .network-node {
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 3px 5px;
+    padding: 10px 5px;
+    font-size: 10px;
+  }
+  .sky-shell .network-node > i {
+    display: none;
+  }
+  .sky-shell .network-controls {
+    padding: 12px;
+    gap: 6px;
+  }
+  .sky-horizon {
+    font-size: 7px;
+    left: 18px;
+  }
+}

@@ -25,8 +25,8 @@ export function mountSettings({ read, write, onApply, onReset }) {
     }
     dialog.querySelector("#motion-status").textContent =
       root.dataset.motion === "on"
-        ? "Animations are on. Reduced motion turns off the intro, globe rotation and page effects."
-        : "Animations are off. Manual globe controls and all project links still work.";
+        ? "Animations are on. Reduced motion turns off the intro, sky ambience and page effects."
+        : "Animations are off. Manual sky controls and all project links still work.";
     onApply();
   }
   function persist() {

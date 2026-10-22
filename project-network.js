@@ -1,429 +1,400 @@
 import { projects } from "./projects.js?v=8";
-import { networkLinks, networkInspector } from "./network-view.js?v=15";
+import { networkLinks, networkInspector } from "./network-view.js?v=17";
+import {
+  skyObjects,
+  skyPoints,
+  projectStar,
+  focusStar,
+  starfield,
+  nearestStar,
+  meteorAt,
+  clamp,
+} from "./sky-model.js?v=17";
 
-// A conceptual map of project relationships, not a map of devices or locations.
 export const connections = networkLinks.map(([a, b]) => [a, b]);
-export function focusAngles([x, y, z], currentAngle = 0) {
-  const target = Math.atan2(-x, z);
-  const delta = Math.atan2(
-    Math.sin(target - currentAngle),
-    Math.cos(target - currentAngle),
-  );
-  return { angle: currentAngle + delta, tilt: Math.atan2(y, Math.hypot(x, z)) };
-}
-export function spherePoints(count) {
-  return Array.from({ length: count }, (_, i) => {
-    const y = 1 - (2 * (i + 0.5)) / count,
-      r = Math.sqrt(1 - y * y);
-    const a = i * Math.PI * (3 - Math.sqrt(5));
-    return [Math.cos(a) * r, y, Math.sin(a) * r];
-  });
-}
-export function dockLabels(sizes, width, height) {
-  return sizes.map((size, i) => {
-    const left = i % 2 === 0,
-      half = Math.min(size, width - 20) / 2;
-    const row = width < 440 ? i : Math.floor(i / 2);
-    const count =
-      width < 440
-        ? sizes.length
-        : left
-          ? Math.ceil(sizes.length / 2)
-          : Math.floor(sizes.length / 2);
-    return {
-      x: left ? half + 10 : width - half - 10,
-      y: 115 + (row * (height - 195)) / Math.max(1, count - 1),
-      edge: left ? 20 + half * 2 : width - 20 - half * 2,
-      left,
-    };
-  });
-}
-// Spherical interpolation keeps links on the globe instead of cutting through it.
-export function arcPoints(a, b, steps = 48, lift = 0.13) {
-  const dot = Math.max(
-    -1,
-    Math.min(
-      1,
-      a.reduce((sum, n, i) => sum + n * b[i], 0),
-    ),
-  );
-  const theta = Math.acos(dot),
-    sine = Math.sin(theta);
-  const axis = Math.abs(a[0]) < 0.8 ? [1, 0, 0] : [0, 1, 0];
-  const cross = [
-    a[1] * axis[2] - a[2] * axis[1],
-    a[2] * axis[0] - a[0] * axis[2],
-    a[0] * axis[1] - a[1] * axis[0],
-  ];
-  const length = Math.hypot(...cross);
-  return Array.from({ length: steps + 1 }, (_, i) => {
-    const t = i / steps,
-      radius = 1 + Math.sin(t * Math.PI) * lift;
-    if (theta < 1e-6) return a.map((n) => n * radius);
-    if (Math.abs(sine) < 1e-6)
-      return a.map(
-        (n, j) =>
-          (n * Math.cos(Math.PI * t) +
-            (cross[j] / length) * Math.sin(Math.PI * t)) *
-          radius,
-      );
-    return a.map(
-      (n, j) =>
-        ((n * Math.sin((1 - t) * theta) + b[j] * Math.sin(t * theta)) / sine) *
-        radius,
-    );
-  });
-}
 
-function gridLines(detail) {
-  const lines = [];
-  for (let lat = 1; lat < detail; lat++) {
-    const a = (lat / detail) * Math.PI;
-    lines.push(
-      Array.from({ length: 73 }, (_, i) => {
-        const b = (i / 72) * Math.PI * 2;
-        return [
-          Math.sin(a) * Math.cos(b),
-          Math.cos(a),
-          Math.sin(a) * Math.sin(b),
-        ];
-      }),
-    );
-  }
-  for (let lon = 0; lon < detail; lon++) {
-    const a = (lon / detail) * Math.PI * 2;
-    lines.push(
-      Array.from({ length: 49 }, (_, i) => {
-        const b = (i / 48) * Math.PI;
-        return [
-          Math.sin(b) * Math.cos(a),
-          Math.cos(b),
-          Math.sin(b) * Math.sin(a),
-        ];
-      }),
-    );
-  }
-  return lines;
-}
-
+// A flat, illustrated night sky. No sphere projection, globe mesh or rotation.
 export function createProjectNetwork(container, { scrollZoom = true } = {}) {
-  container.dataset.scrollZoom = String(scrollZoom);
   const canvas = container.querySelector("canvas"),
     ctx = canvas.getContext("2d");
   const labels = [...container.querySelectorAll(".network-node")];
-  if (!ctx) {
-    container.dataset.renderer = "unavailable";
-    const status = container.querySelector(".network-state");
-    if (status) status.textContent = "PROJECT LINKS / STATIC";
-    labels.forEach((label) => {
-      label.disabled = true;
-    });
-    return () => {};
-  }
+  const stateLabel = container.querySelector(".network-state");
+  const inspector = container.querySelector(".network-inspector");
+  const listeners = [];
+  container.dataset.scrollZoom = String(scrollZoom);
+  container.dataset.renderer = ctx ? "night-sky" : "unavailable";
   let width = 0,
     height = 0,
-    angle = 0.4,
-    tilt = -0.14,
-    zoom = 1;
-  let targetAngle = angle,
-    targetTilt = tilt,
-    targetZoom = zoom;
-  let spinning = true,
-    focused = false,
-    quality = 14,
-    drag = null;
-  let raf = 0,
-    last = 0,
     phase = 0,
-    disposed = false,
+    reveal = 0,
+    last = 0,
+    raf = 0;
+  let disposed = false,
     visible = true,
-    active = -1,
-    selected = -1,
-    mode = "orbital";
+    paused = false,
+    focused = false,
+    drag = null;
+  let selected = -1,
+    hover = -1,
+    mode = "atlas",
+    quality = 14;
+  let points = [],
+    positions = [],
+    stars = starfield(),
+    glows = [];
   let ink = "#fcee0a",
-    cyan = "#79edf0",
-    grid = gridLines(quality),
-    dots = spherePoints(700),
-    labelDocks = [];
-  let cosAngle = 1,
-    sinAngle = 0,
-    cosTilt = 1,
-    sinTilt = 0;
-  const points = spherePoints(projects.length);
-  const arcs = connections.map(([a, b]) => {
-    const from = projects.findIndex((p) => p.id === a),
-      to = projects.findIndex((p) => p.id === b);
-    return { from, to, points: arcPoints(points[from], points[to]) };
-  });
-  const orbits = [0.42, -0.65].map((inclination, ring) =>
-    Array.from({ length: 121 }, (_, i) => {
-      const a = (i / 120) * Math.PI * 2,
-        r = 1.18 + ring * 0.12;
-      return [
-        Math.cos(a) * r,
-        Math.sin(a) * Math.sin(inclination) * r,
-        Math.sin(a) * Math.cos(inclination) * r,
-      ];
-    }),
-  );
-  const stars = Array.from({ length: 70 }, (_, i) => ({
-    x: ((i * 73 + 17) % 997) / 997,
-    y: ((i * 137 + 31) % 991) / 991,
-    size: i % 9 === 0 ? 1.4 : 0.6,
-  }));
-  const stateLabel = container.querySelector(".network-state");
+    cyan = "#9ccee5",
+    contrast = false;
+  const camera = { x: 0, y: 0, zoom: 1 },
+    target = { ...camera };
   const motion = () => document.documentElement.dataset.motion !== "off";
-  const radius = () => Math.min(width * 0.29, height * 0.32) * zoom;
-  const rotate = ([x, y, z]) => {
-    const rx = x * cosAngle + z * sinAngle;
-    const rz = z * cosAngle - x * sinAngle;
-    return [rx, y * cosTilt - rz * sinTilt, y * sinTilt + rz * cosTilt];
+  const ambience = () => motion() && !paused && !focused && !drag;
+  const edges = networkLinks.map(([a, b]) => [
+    skyObjects.findIndex((p) => p.id === a),
+    skyObjects.findIndex((p) => p.id === b),
+  ]);
+  const listen = (node, name, fn, options) => {
+    node.addEventListener(name, fn, options);
+    listeners.push([node, name, fn]);
   };
-  function project(p) {
-    const [x, y, z] = rotate(p),
-      r = radius();
-    return { x: width / 2 + x * r, y: height / 2 + y * r, z };
-  }
-  function linePath(points, color, alpha) {
+  const project = (p) => projectStar(p, camera, width, height);
+  const line = (a, b, color, alpha, weight = 1, progress = 1) => {
     ctx.strokeStyle = color;
     ctx.globalAlpha = alpha;
+    ctx.lineWidth = weight;
     ctx.beginPath();
-    points.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(a.x + (b.x - a.x) * progress, a.y + (b.y - a.y) * progress);
     ctx.stroke();
-  }
+  };
+  const star = (x, y, size, color, alpha) => {
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fill();
+  };
   function draw() {
-    if (disposed || !width) return;
-    cosAngle = Math.cos(angle);
-    sinAngle = Math.sin(angle);
-    cosTilt = Math.cos(tilt);
-    sinTilt = Math.sin(tilt);
+    if (!ctx || disposed || width <= 0 || height <= 0) return;
     ctx.clearRect(0, 0, width, height);
-    const highlight = active >= 0 ? active : selected;
-    const r = radius(),
-      cx = width / 2,
-      cy = height / 2;
-    const glow = ctx.createRadialGradient(cx, cy, r * 0.2, cx, cy, r * 1.45);
-    glow.addColorStop(0, "#67dfed0c");
-    glow.addColorStop(0.65, "#67dfed10");
-    glow.addColorStop(1, "#67dfed00");
     ctx.globalAlpha = 1;
-    ctx.fillStyle = glow;
+    ctx.fillStyle = contrast ? "#02040a" : "#050914";
     ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = cyan;
-    ctx.globalAlpha = 0.28;
-    for (const star of stars)
-      ctx.fillRect(star.x * width, star.y * height, star.size, star.size);
-    ctx.lineWidth = 0.65;
-    const projectedGrid =
-      mode === "orbital" ? grid.map((line) => line.map(project)) : [];
-    // Batch front/back segments: a clear, translucent shell rather than a flat wire ball.
-    for (const front of [false, true]) {
-      ctx.strokeStyle = cyan;
-      ctx.globalAlpha = front ? 0.26 : 0.065;
-      ctx.beginPath();
-      for (const line of projectedGrid)
-        for (let i = 1; i < line.length; i++) {
-          const a = line[i - 1],
-            b = line[i];
-          if (a.z + b.z >= 0 !== front) continue;
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-        }
-      ctx.stroke();
-    }
-    ctx.fillStyle = cyan;
-    for (const point of mode === "orbital" ? dots : []) {
-      const p = project(point);
-      if (p.z < 0) continue;
-      ctx.globalAlpha = 0.12 + p.z * 0.38;
-      ctx.fillRect(p.x, p.y, 1.2, 1.2);
-    }
-    orbits.forEach((orbit, i) => {
-      ctx.setLineDash(i ? [2, 9] : []);
-      linePath(orbit.map(project), i ? ink : cyan, i ? 0.36 : 0.22);
-      // Orbital couriers leave short, fading trails. Decorative, not live traffic.
-      for (let trail = 0; trail < 6; trail++) {
-        const step = Math.floor(
-          ((phase * 0.055 + i * 0.5 - trail * 0.007 + 10) % 1) *
-            (orbit.length - 1),
-        );
-        const p = project(orbit[step]);
-        ctx.fillStyle = i ? ink : cyan;
-        ctx.globalAlpha = (1 - trail / 6) * (p.z > 0 ? 0.8 : 0.25);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, trail ? 1.2 : 2.8, 0, Math.PI * 2);
-        ctx.fill();
+    if (!contrast && mode === "atlas") {
+      for (const glow of glows) {
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, width, height);
       }
-    });
-    ctx.setLineDash([]);
-    // Static instrument ticks remain crisp when motion is disabled.
-    ctx.strokeStyle = cyan;
-    ctx.globalAlpha = 0.28;
-    ctx.beginPath();
-    for (let i = 0; i < 80; i++) {
-      const a = (i / 80) * Math.PI * 2,
-        inner = r * 1.38,
-        outer = inner + (i % 5 ? 3 : 8);
-      ctx.moveTo(cx + Math.cos(a) * inner, cy + Math.sin(a) * inner);
-      ctx.lineTo(cx + Math.cos(a) * outer, cy + Math.sin(a) * outer);
     }
-    ctx.stroke();
-    const positions = points.map(project);
-    arcs.forEach((arc, i) => {
-      const path = arc.points.map(project),
-        linked = highlight === arc.from || highlight === arc.to;
-      ctx.lineWidth = linked ? 1.8 : 0.85;
-      // Depth-correct link segments make the back hemisphere recede.
-      for (const front of [false, true]) {
-        ctx.strokeStyle = linked ? ink : cyan;
-        ctx.globalAlpha =
-          (highlight < 0 ? 0.55 : linked ? 0.95 : 0.12) * (front ? 1 : 0.23);
-        ctx.beginPath();
-        for (let j = 1; j < path.length; j++) {
-          if (path[j].z + path[j - 1].z >= 0 !== front) continue;
-          ctx.moveTo(path[j - 1].x, path[j - 1].y);
-          ctx.lineTo(path[j].x, path[j].y);
+    for (const s of stars) {
+      const x =
+        (((s.x * width +
+          camera.x * width * s.depth * 0.15 +
+          Math.sin(phase * 0.035 + s.phase) * 3) %
+          width) +
+          width) %
+        width;
+      const y =
+        (((s.y * height +
+          camera.y * height * s.depth * 0.15 +
+          Math.cos(phase * 0.026 + s.phase) * 2) %
+          height) +
+          height) %
+        height;
+      const brightness =
+        s.brightness * (0.82 + 0.18 * Math.sin(phase * 0.55 + s.phase));
+      star(x, y, s.size, s.depth > 0.75 ? "#e8d9c2" : "#b7d5ee", brightness);
+      if (s.size > 1.65) {
+        line(
+          { x: x - 4, y },
+          { x: x + 4, y },
+          "#c2ddf0",
+          brightness * 0.35,
+          0.6,
+        );
+        line(
+          { x, y: y - 4 },
+          { x, y: y + 4 },
+          "#c2ddf0",
+          brightness * 0.35,
+          0.6,
+        );
+      }
+    }
+    positions = points.map(project);
+    const active = hover >= 0 ? hover : selected;
+    if (mode === "atlas") {
+      // Cross-project connections are faint; the actual small constellations lead.
+      for (const [a, b] of edges) {
+        const linked = active === a || active === b;
+        line(
+          positions[a],
+          positions[b],
+          linked ? ink : cyan,
+          (linked ? 0.55 : 0.09) * reveal,
+          linked ? 1.1 : 0.6,
+          reveal,
+        );
+        if (linked && reveal === 1) {
+          const t = (phase * 0.1 + a * 0.17) % 1;
+          const p = {
+            x: positions[a].x + (positions[b].x - positions[a].x) * t,
+            y: positions[a].y + (positions[b].y - positions[a].y) * t,
+          };
+          star(p.x, p.y, 1.4, ink, 0.7);
         }
+      }
+    }
+    points.forEach((object, i) => {
+      const main = positions[i],
+        shape = object.shape.map(project),
+        activeStar = i === active;
+      if (mode === "atlas") {
+        for (let j = 1; j < shape.length; j++) {
+          const progress = clamp((reveal - i * 0.035 - j * 0.025) * 2, 0, 1);
+          line(
+            shape[j - 1],
+            shape[j],
+            activeStar ? ink : "#aac9e2",
+            activeStar ? 0.8 : 0.3,
+            activeStar ? 1.25 : 0.8,
+            progress,
+          );
+        }
+        shape
+          .slice(1)
+          .forEach((p, j) =>
+            star(
+              p.x,
+              p.y,
+              1.15 + (j % 2) * 0.4,
+              "#d6e5f4",
+              reveal * (0.55 + 0.15 * Math.sin(phase * 0.6 + j + i)),
+            ),
+          );
+      }
+      const alpha = reveal * (activeStar ? 1 : 0.85),
+        size = activeStar ? 4 : 2.8;
+      star(main.x, main.y, size * 3.8, activeStar ? ink : cyan, alpha * 0.045);
+      star(main.x, main.y, size * 2, activeStar ? ink : cyan, alpha * 0.12);
+      star(main.x, main.y, size, "#eef5ff", alpha);
+      line(
+        { x: main.x - 10, y: main.y },
+        { x: main.x + 10, y: main.y },
+        activeStar ? ink : "#c9e6ff",
+        alpha * 0.55,
+        0.7,
+      );
+      line(
+        { x: main.x, y: main.y - 10 },
+        { x: main.x, y: main.y + 10 },
+        activeStar ? ink : "#c9e6ff",
+        alpha * 0.55,
+        0.7,
+      );
+      if (i === selected) {
+        const radius = 19 + Math.sin(phase) * 1.5;
+        ctx.strokeStyle = ink;
+        ctx.globalAlpha = 0.55;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(main.x, main.y, radius, 0, Math.PI * 2);
         ctx.stroke();
       }
-      const packet =
-        path[
-          Math.floor(((phase * 0.12 + i / arcs.length) % 1) * (path.length - 1))
-        ];
-      ctx.fillStyle = ink;
-      ctx.globalAlpha =
-        (packet.z > 0 ? 0.85 : 0.2) * (highlight < 0 || linked ? 1 : 0.25);
-      ctx.beginPath();
-      ctx.arc(packet.x, packet.y, linked ? 2.8 : 1.8, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    ctx.lineWidth = 0.8;
-    positions.forEach((p, i) => {
-      const label = labels[i],
-        { x: labelX, y: labelY, left, edge } = labelDocks[i];
-      // Fixed docking rails prevent moving targets, label collisions and keyboard jitter.
-      label.dataset.active = String(highlight === i);
-      linePath(
-        [p, { x: edge + (left ? 12 : -12), y: labelY }, { x: edge, y: labelY }],
-        highlight === i ? ink : cyan,
-        highlight === i ? 0.85 : 0.16,
-      );
-      ctx.fillStyle = ink;
-      ctx.globalAlpha = 0.65 + (p.z + 1) * 0.175;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, highlight === i ? 4.5 : 3, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = ink;
-      ctx.globalAlpha = highlight === i ? 0.65 : 0.25;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 8 + Math.sin(phase * 1.5 + i) * 1.5, 0, Math.PI * 2);
-      ctx.stroke();
-      if (selected === i) {
-        ctx.globalAlpha = 0.75;
-        ctx.strokeStyle = cyan;
-        const s = 14;
-        for (const dx of [-1, 1])
-          for (const dy of [-1, 1]) {
-            linePath(
-              [
-                { x: p.x + dx * s, y: p.y + dy * (s - 5) },
-                { x: p.x + dx * s, y: p.y + dy * s },
-                { x: p.x + dx * (s - 5), y: p.y + dy * s },
-              ],
-              cyan,
-              0.75,
-            );
-          }
+      if (
+        main.x > 6 &&
+        main.x < width - 6 &&
+        main.y > 16 &&
+        main.y < height - 26
+      ) {
+        const fontSize =
+          document.documentElement.dataset.textSize === "large" ? 12 : 10;
+        ctx.font = (activeStar ? "600 " : "") + fontSize + "px monospace";
+        ctx.fillStyle = activeStar ? ink : "#aebed0";
+        ctx.globalAlpha = alpha;
+        const text =
+          String(i + 1).padStart(2, "0") + " / " + skyObjects[i].label;
+        const alignRight =
+          main.x + 14 + text.length * fontSize * 0.62 > width - 12;
+        ctx.textAlign = alignRight ? "right" : "left";
+        ctx.fillText(text, main.x + (alignRight ? -14 : 14), main.y - 13);
       }
     });
+    const meteor = !contrast ? meteorAt(phase) : null;
+    if (meteor) {
+      for (let j = 0; j < 18; j++) {
+        const x = meteor.x * width - j * 4,
+          y = meteor.y * height - j * 2.5;
+        line(
+          { x, y },
+          { x: x - 4, y: y - 2.5 },
+          "#cbe9ff",
+          meteor.opacity * (1 - j / 18),
+          1.4,
+        );
+      }
+    }
     ctx.globalAlpha = 1;
   }
   function frame(time) {
     raf = 0;
-    if (disposed || !visible || document.hidden) return;
-    const dt = Math.min(Math.max((time - last) / 1000, 0.001), 0.05);
-    const animate = motion() && spinning && !focused && !drag && selected < 0;
-    if (animate) {
-      targetAngle += dt * 0.11;
-      phase += dt;
-    }
-    const ease = motion() ? 1 - Math.exp(-dt * (drag ? 22 : 12)) : 1;
-    angle += (targetAngle - angle) * ease;
-    tilt += (targetTilt - tilt) * ease;
-    zoom += (targetZoom - zoom) * ease;
+    if (disposed || !visible || document.hidden || !ctx || !width || !height)
+      return;
+    const dt = clamp((time - last) / 1000, 0.001, 0.05);
     last = time;
-    draw();
+    if (ambience()) phase += dt;
+    reveal = motion() ? Math.min(1, reveal + dt / 1.25) : 1;
+    const ease = motion() ? 1 - Math.exp(-dt * (drag ? 18 : 7)) : 1;
+    for (const key of ["x", "y", "zoom"])
+      camera[key] += (target[key] - camera[key]) * ease;
     const settling =
-      Math.abs(targetAngle - angle) +
-        Math.abs(targetTilt - tilt) +
-        Math.abs(targetZoom - zoom) >
-      0.0005;
-    if (animate || settling) raf = requestAnimationFrame(frame);
+      Math.abs(target.x - camera.x) +
+        Math.abs(target.y - camera.y) +
+        Math.abs(target.zoom - camera.zoom) >
+      0.0001;
+    draw();
+    if (ambience() || settling || reveal < 1)
+      raf = requestAnimationFrame(frame);
   }
   function refresh() {
     if (stateLabel)
-      stateLabel.textContent = !motion()
-        ? "STATIC / FX OFF"
-        : focused
-          ? "FOCUS LOCK"
-          : selected >= 0
-            ? "NODE / LOCKED"
-            : spinning
-              ? "ORBIT / ACTIVE"
-              : "ORBIT / PAUSED";
-    if (!raf && !disposed && visible && !document.hidden) {
+      stateLabel.textContent = !ctx
+        ? "STATIC / PROJECT INDEX"
+        : !motion()
+          ? "STATIC / FX OFF"
+          : paused
+            ? "SKY / PAUSED"
+            : focused
+              ? "FOCUS / STILL"
+              : "NIGHT SKY / ACTIVE";
+    if (
+      !raf &&
+      !disposed &&
+      ctx &&
+      visible &&
+      !document.hidden &&
+      width &&
+      height
+    ) {
       last = performance.now();
       raf = requestAnimationFrame(frame);
     }
   }
+  function select(index) {
+    if (!skyObjects[index]) return;
+    selected = index;
+    hover = -1;
+    if (points[index]) Object.assign(target, focusStar(points[index]));
+    labels.forEach((label, i) => {
+      label.setAttribute("aria-pressed", String(index === i));
+      label.dataset.active = String(index === i);
+    });
+    if (inspector)
+      inspector.innerHTML = networkInspector(
+        projects.findIndex((p) => p.id === skyObjects[index].id),
+      );
+    refresh();
+  }
   function resize() {
+    if (!ctx) return;
     const rect = canvas.getBoundingClientRect(),
-      ratio = Math.min(devicePixelRatio || 1, 2);
+      ratio = Math.min(globalThis.devicePixelRatio || 1, 2);
     width = rect.width;
     height = rect.height;
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    labelDocks = dockLabels(
-      labels.map((label) => label.offsetWidth),
-      width,
-      height,
-    );
-    labels.forEach((label, i) => {
-      label.style.left = labelDocks[i].x + "px";
-      label.style.top = labelDocks[i].y + "px";
-    });
+    points = skyPoints(width, height);
+    glows =
+      width && height
+        ? [
+            [0.2, 0.7, 0.65, "#314e6d24"],
+            [0.6, 0.35, 0.7, "#46538920"],
+            [0.85, 0.1, 0.55, "#68436b18"],
+          ].map(([x, y, r, color]) => {
+            const glow = ctx.createRadialGradient(
+              x * width,
+              y * height,
+              0,
+              x * width,
+              y * height,
+              Math.max(width, height) * r,
+            );
+            glow.addColorStop(0, color);
+            glow.addColorStop(1, "#05091400");
+            return glow;
+          })
+        : [];
+    if (selected >= 0) Object.assign(target, focusStar(points[selected]));
     refresh();
   }
+  const coordinate = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - (rect.left || 0), y: e.clientY - (rect.top || 0) };
+  };
   const down = (e) => {
-    if (e.button !== 0 || drag) return;
-    drag = { x: e.clientX, y: e.clientY, id: e.pointerId };
+    if (!ctx || e.button !== 0 || drag) return;
+    drag = {
+      id: e.pointerId,
+      x: e.clientX,
+      y: e.clientY,
+      startX: e.clientX,
+      startY: e.clientY,
+      moved: false,
+    };
     canvas.setPointerCapture(e.pointerId);
     canvas.focus();
   };
   const move = (e) => {
-    if (!drag || drag.id !== e.pointerId) return;
-    targetAngle += (e.clientX - drag.x) * 0.007;
-    targetTilt = Math.max(
-      -1,
-      Math.min(1, targetTilt + (e.clientY - drag.y) * 0.006),
+    if (!ctx) return;
+    if (!drag) {
+      const p = coordinate(e),
+        next = nearestStar(positions, p.x, p.y);
+      if (hover !== next) {
+        hover = next;
+        canvas.style.cursor = next >= 0 ? "pointer" : "grab";
+        refresh();
+      }
+      return;
+    }
+    if (drag.id !== e.pointerId) return;
+    target.x = clamp(
+      target.x + (e.clientX - drag.x) / Math.max(1, width) / camera.zoom,
+      -0.65,
+      0.65,
     );
-    drag = { x: e.clientX, y: e.clientY, id: e.pointerId };
+    target.y = clamp(
+      target.y + (e.clientY - drag.y) / Math.max(1, height) / camera.zoom,
+      -0.65,
+      0.65,
+    );
+    drag.moved ||=
+      Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > 6;
+    drag.x = e.clientX;
+    drag.y = e.clientY;
     refresh();
   };
   const up = (e) => {
-    if (drag && drag.id !== e.pointerId) return;
+    if (!drag || drag.id !== e.pointerId) return;
+    const shouldSelect = !drag.moved && e.type === "pointerup",
+      id = drag.id;
     drag = null;
+    if (canvas.hasPointerCapture?.(id)) canvas.releasePointerCapture(id);
+    if (shouldSelect) {
+      const p = coordinate(e);
+      select(nearestStar(positions, p.x, p.y));
+    }
     refresh();
   };
   const wheel = (e) => {
-    if (!scrollZoom || document.activeElement !== canvas) return;
+    if (!ctx || !scrollZoom || document.activeElement !== canvas) return;
     e.preventDefault();
-    targetZoom = Math.max(0.65, Math.min(1.3, targetZoom - e.deltaY * 0.0008));
+    target.zoom = clamp(target.zoom - e.deltaY * 0.001, 0.7, 2.1);
     refresh();
   };
   const key = (e) => {
     if (
+      !ctx ||
       ![
         "ArrowLeft",
         "ArrowRight",
@@ -432,164 +403,152 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
         "+",
         "-",
         "=",
+        "Home",
       ].includes(e.key)
     )
       return;
     e.preventDefault();
     e.stopPropagation();
-    if (e.key === "ArrowLeft") targetAngle -= 0.12;
-    if (e.key === "ArrowRight") targetAngle += 0.12;
-    if (e.key === "ArrowUp") targetTilt = Math.max(-1, targetTilt - 0.1);
-    if (e.key === "ArrowDown") targetTilt = Math.min(1, targetTilt + 0.1);
+    if (e.key === "ArrowLeft") target.x = clamp(target.x + 0.06, -0.65, 0.65);
+    if (e.key === "ArrowRight") target.x = clamp(target.x - 0.06, -0.65, 0.65);
+    if (e.key === "ArrowUp") target.y = clamp(target.y + 0.06, -0.65, 0.65);
+    if (e.key === "ArrowDown") target.y = clamp(target.y - 0.06, -0.65, 0.65);
     if (e.key === "+" || e.key === "=")
-      targetZoom = Math.min(1.3, targetZoom + 0.1);
-    if (e.key === "-") targetZoom = Math.max(0.65, targetZoom - 0.1);
+      target.zoom = clamp(target.zoom + 0.15, 0.7, 2.1);
+    if (e.key === "-") target.zoom = clamp(target.zoom - 0.15, 0.7, 2.1);
+    if (e.key === "Home") reset();
     refresh();
   };
+  function reset() {
+    selected = hover = -1;
+    Object.assign(target, { x: 0, y: 0, zoom: 1 });
+    labels.forEach((label) => {
+      label.setAttribute("aria-pressed", "false");
+      label.dataset.active = "false";
+    });
+    if (inspector) inspector.innerHTML = networkInspector();
+  }
   const click = (e) => {
     const button = e.target.closest("button");
-    const node = button?.dataset.nodeIndex;
-    if (node !== undefined && /^\d+$/.test(node) && points[Number(node)]) {
-      selected = Number(node);
-      const aim = focusAngles(points[selected], angle);
-      targetAngle = aim.angle;
-      targetTilt = aim.tilt;
-      labels.forEach((label, i) =>
-        label.setAttribute("aria-pressed", String(i === selected)),
-      );
-      const inspector = container.querySelector(".network-inspector");
-      if (inspector) inspector.innerHTML = networkInspector(selected);
-      refresh();
-    }
-    if (["orbital", "minimal"].includes(button?.dataset.networkMode)) {
+    if (!button) return;
+    if (
+      button.dataset.nodeIndex !== undefined &&
+      /^\d+$/.test(button.dataset.nodeIndex)
+    )
+      select(Number(button.dataset.nodeIndex));
+    if (["atlas", "ambient"].includes(button.dataset.networkMode)) {
       mode = button.dataset.networkMode;
       container
         .querySelectorAll("[data-network-mode]")
         .forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
-      refresh();
     }
-    if (["-1", "1"].includes(button?.dataset.zoom)) {
-      targetZoom = Math.max(
-        0.65,
-        Math.min(1.3, targetZoom + Number(button.dataset.zoom) * 0.1),
+    if (["-1", "1"].includes(button.dataset.zoom))
+      target.zoom = clamp(
+        target.zoom + Number(button.dataset.zoom) * 0.15,
+        0.7,
+        2.1,
       );
-      refresh();
+    if (button.id === "sky-pause") {
+      paused = !paused;
+      button.setAttribute("aria-pressed", String(paused));
+      button.textContent = paused ? "Resume sky" : "Pause sky";
     }
-    if (button?.id === "spin-button") {
-      spinning = !spinning;
-      button.setAttribute("aria-pressed", String(spinning));
-      button.textContent = spinning
-        ? "[ Pause rotation ]"
-        : "[ Resume rotation ]";
-      refresh();
-    }
-    if (button?.dataset.quality) {
+    if (["8", "14", "22"].includes(button.dataset.quality)) {
       quality = Number(button.dataset.quality);
-      grid = gridLines(quality);
-      dots = spherePoints(quality * 50);
+      stars = starfield(quality * 30);
       container
         .querySelectorAll("[data-quality]")
         .forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
-      refresh();
     }
-    if (button?.id === "network-reset") {
-      selected = -1;
-      labels.forEach((label) => label.setAttribute("aria-pressed", "false"));
-      const inspector = container.querySelector(".network-inspector");
-      if (inspector) inspector.innerHTML = networkInspector();
-      targetAngle = angle + ((0.4 - angle) % (Math.PI * 2));
-      targetTilt = -0.14;
-      targetZoom = 1;
-      refresh();
-    }
+    if (button.id === "network-reset") reset();
+    refresh();
   };
-  const viewport = container.querySelector(".network-viewport");
   const focusIn = (e) => {
-    focused = viewport.contains(e.target);
-    active = labels.indexOf(e.target.closest(".network-node"));
-    if (focused) {
-      if (selected < 0) {
-        targetAngle = angle;
-        targetTilt = tilt;
-      }
-    }
+    focused = e.target === canvas;
     refresh();
   };
   const focusOut = (e) => {
-    focused = viewport.contains(e.relatedTarget);
-    active = labels.indexOf(e.relatedTarget?.closest?.(".network-node"));
-    refresh();
-  };
-  const hover = (e) => {
-    active = labels.indexOf(e.target.closest?.(".network-node"));
+    focused = e.relatedTarget === canvas;
     refresh();
   };
   const leave = () => {
-    active = labels.indexOf(document.activeElement);
+    hover = -1;
+    canvas.style.cursor = "grab";
     refresh();
   };
   const appearance = () => {
+    if (!ctx) {
+      refresh();
+      return;
+    }
     const style = getComputedStyle(container);
-    ink = style.getPropertyValue("--accent").trim();
-    cyan = style.getPropertyValue("--cyan").trim();
+    ink = style.getPropertyValue("--accent").trim() || "#fcee0a";
+    cyan = style.getPropertyValue("--cyan").trim() || "#9ccee5";
+    contrast = document.documentElement.dataset.contrast === "high";
     if (!motion()) {
-      angle = targetAngle;
-      tilt = targetTilt;
-      zoom = targetZoom;
+      Object.assign(camera, target);
+      reveal = 1;
     }
     resize();
+    refresh();
   };
   const visibility = () => {
     cancelAnimationFrame(raf);
     raf = 0;
+    const pointerId = drag?.id;
+    drag = null;
+    if (pointerId !== undefined && canvas.hasPointerCapture?.(pointerId))
+      canvas.releasePointerCapture(pointerId);
     refresh();
   };
-  const observer = new ResizeObserver(resize);
-  observer.observe(canvas);
+  const observer =
+    ctx && typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(resize)
+      : null;
   const intersection =
-    typeof IntersectionObserver === "undefined"
-      ? null
-      : new IntersectionObserver((entries) => {
+    ctx && typeof IntersectionObserver !== "undefined"
+      ? new IntersectionObserver((entries) => {
           visible = entries[0].isIntersecting;
           cancelAnimationFrame(raf);
           raf = 0;
           refresh();
-        });
+        })
+      : null;
+  observer?.observe(canvas);
   intersection?.observe(canvas);
-  canvas.addEventListener("pointerdown", down);
-  canvas.addEventListener("pointermove", move);
-  canvas.addEventListener("pointerup", up);
-  canvas.addEventListener("pointercancel", up);
-  canvas.addEventListener("lostpointercapture", up);
-  canvas.addEventListener("wheel", wheel, { passive: !scrollZoom });
-  canvas.addEventListener("keydown", key);
-  container.addEventListener("click", click);
-  container.addEventListener("focusin", focusIn);
-  container.addEventListener("focusout", focusOut);
-  container.addEventListener("pointerover", hover);
-  container.addEventListener("pointerleave", leave);
-  document.addEventListener("visibilitychange", visibility);
-  document.addEventListener("appearancechange", appearance);
+  if (!ctx) {
+    canvas.tabIndex = -1;
+    canvas.setAttribute("aria-disabled", "true");
+    container.querySelectorAll("[data-sky-control]").forEach((button) => {
+      button.disabled = true;
+    });
+  }
+  for (const [name, fn] of [
+    ["pointerdown", down],
+    ["pointermove", move],
+    ["pointerup", up],
+    ["pointercancel", up],
+    ["lostpointercapture", up],
+    ["pointerleave", leave],
+    ["keydown", key],
+  ])
+    listen(canvas, name, fn);
+  listen(canvas, "wheel", wheel, { passive: !scrollZoom });
+  listen(container, "click", click);
+  listen(container, "focusin", focusIn);
+  listen(container, "focusout", focusOut);
+  listen(document, "visibilitychange", visibility);
+  listen(document, "appearancechange", appearance);
   appearance();
   return () => {
     if (disposed) return;
     disposed = true;
     cancelAnimationFrame(raf);
-    observer.disconnect();
+    observer?.disconnect();
     intersection?.disconnect();
-    canvas.removeEventListener("pointerdown", down);
-    canvas.removeEventListener("pointermove", move);
-    canvas.removeEventListener("pointerup", up);
-    canvas.removeEventListener("pointercancel", up);
-    canvas.removeEventListener("lostpointercapture", up);
-    canvas.removeEventListener("wheel", wheel);
-    canvas.removeEventListener("keydown", key);
-    container.removeEventListener("click", click);
-    container.removeEventListener("focusin", focusIn);
-    container.removeEventListener("focusout", focusOut);
-    container.removeEventListener("pointerover", hover);
-    container.removeEventListener("pointerleave", leave);
-    document.removeEventListener("visibilitychange", visibility);
-    document.removeEventListener("appearancechange", appearance);
+    if (drag && canvas.hasPointerCapture?.(drag.id))
+      canvas.releasePointerCapture(drag.id);
+    drag = null;
+    listeners.forEach(([node, name, fn]) => node.removeEventListener(name, fn));
   };
 }

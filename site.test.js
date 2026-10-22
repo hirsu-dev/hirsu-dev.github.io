@@ -20,12 +20,16 @@ import {
   resolveRoute,
   escapeHTML,
 } from "./console-model.js";
+import { connections } from "./project-network.js";
 import {
-  spherePoints,
-  connections,
-  dockLabels,
-  arcPoints,
-} from "./project-network.js";
+  skyObjects,
+  skyPoints,
+  projectStar,
+  focusStar,
+  starfield,
+  meteorAt,
+  nearestStar,
+} from "./sky-model.js";
 import {
   interfaces,
   interfaceFromSearch,
@@ -165,10 +169,11 @@ test("visual progress reaches 100 before the glitch release finishes", () => {
   assert.equal(bootProgressAt(bootDuration), 100);
 });
 test("panel transition restores visibility with a single non-flashing entrance", () => {
-  assert.equal(panelFrames.length, 2);
+  assert.equal(panelFrames.length, 3);
   assert.equal(panelFrames[0].opacity, 0);
   assert.equal(panelFrames[1].opacity, 1);
-  assert.equal(panelFrames[1].transform, "translateX(0)");
+  assert.equal(panelFrames.at(-1).transform, "translate3d(0, 0, 0) scale(1)");
+  assert.equal(panelFrames.filter((frame) => frame.opacity === 0).length, 1);
 });
 test("opening timeline is ordered, bounded and has one release stage", () => {
   assert.ok(bootDuration > 2000 && bootDuration <= 3000);
@@ -223,67 +228,55 @@ test("boot is closed without JavaScript; real content is not made inert or hidde
 test("HTML escaping covers user-supplied query attribute delimiters", () => {
   assert.equal(escapeHTML('<a x="&">\''), "&lt;a x=&quot;&amp;&quot;&gt;&#39;");
 });
-test("project sphere is finite, normalized and connected only to real projects", () => {
-  const points = spherePoints(7);
-  assert.equal(points.length, 7);
-  for (const p of points)
-    assert.ok(Math.abs(p.reduce((s, n) => s + n * n, 0) - 1) < 1e-12);
+test("seven original constellations map exactly to real project data", () => {
+  assert.equal(skyObjects.length, 7);
   const ids = new Set(projects.map((p) => p.id));
+  assert.deepEqual(new Set(skyObjects.map((p) => p.id)), ids);
   for (const pair of connections) for (const id of pair) assert.ok(ids.has(id));
-  assert.deepEqual(spherePoints(0), []);
+  for (const [w, h] of [
+    [280, 560],
+    [390, 560],
+    [720, 520],
+    [1024, 590],
+  ]) {
+    const points = skyPoints(w, h);
+    for (const p of points) {
+      assert.ok(p.x > 0 && p.x < 1 && p.y > 0 && p.y < 1);
+      for (const star of p.shape)
+        assert.ok(star.x > 0 && star.x < 1 && star.y > 0 && star.y < 1);
+      const at = projectStar(p, focusStar(p), w, h);
+      assert.ok(Math.abs(at.x - w / 2) < 1e-9 && Math.abs(at.y - h / 2) < 1e-9);
+    }
+  }
+});
+test("seeded starfield is bounded and reproducible, without random flashing", () => {
+  assert.deepEqual(starfield(420), starfield(420));
+  assert.equal(starfield(10000).length, 900);
+  assert.deepEqual(starfield(-1), []);
+  for (const star of starfield(660)) {
+    assert.ok(star.x >= 0 && star.x <= 1 && star.y >= 0 && star.y <= 1);
+    assert.ok(star.size > 0 && star.size <= 2);
+    assert.ok(star.brightness >= 0.25 && star.brightness <= 0.8);
+  }
+});
+test("meteor events are brief and bounded; pointer selection chooses the nearest star", () => {
+  assert.equal(meteorAt(0), null);
+  assert.equal(meteorAt(9), null);
+  assert.ok(meteorAt(7.5).opacity > 0 && meteorAt(7.5).opacity <= 0.65);
+  assert.equal(
+    nearestStar(
+      [
+        { x: 20, y: 10 },
+        { x: 35, y: 10 },
+      ],
+      22,
+      10,
+    ),
+    0,
+  );
+  assert.equal(nearestStar([{ x: 20, y: 10 }], 90, 90), -1);
 });
 
-test("docked labels stay in bounds and never overlap on mobile or desktop", () => {
-  const sizes = [98, 124, 150, 110, 92, 80, 110];
-  for (const width of [240, 280, 320, 390, 440, 720, 1200]) {
-    const positions = dockLabels(sizes, width, 460);
-    const boxes = positions.map((p, i) => ({
-      left: p.x - sizes[i] / 2,
-      right: p.x + sizes[i] / 2,
-      top: p.y - 18,
-      bottom: p.y + 18,
-    }));
-    for (const box of boxes) {
-      assert.ok(box.left >= 0 && box.right <= width);
-      assert.ok(box.top >= 80 && box.bottom <= 460);
-    }
-    boxes.forEach((a, i) =>
-      boxes.slice(i + 1).forEach((b) => {
-        assert.ok(
-          a.right <= b.left ||
-            b.right <= a.left ||
-            a.bottom <= b.top ||
-            b.bottom <= a.top,
-        );
-      }),
-    );
-  }
-  assert.deepEqual(dockLabels([], 400, 460), []);
-});
-test("curved connections preserve endpoints and stay outside the globe", () => {
-  const points = spherePoints(7);
-  for (const [a, b] of [
-    [points[0], points[4]],
-    [
-      [1, 0, 0],
-      [-1, 0, 0],
-    ],
-    [
-      [0, 1, 0],
-      [0, 1, 0],
-    ],
-  ]) {
-    const arc = arcPoints(a, b);
-    assert.equal(arc.length, 49);
-    for (const p of arc) {
-      assert.ok(p.every(Number.isFinite));
-      assert.ok(Math.hypot(...p) >= 1 - 1e-9);
-      assert.ok(Math.hypot(...p) <= 1.13 + 1e-9);
-    }
-    a.forEach((n, i) => assert.ok(Math.abs(n - arc[0][i]) < 1e-9));
-    b.forEach((n, i) => assert.ok(Math.abs(n - arc.at(-1)[i]) < 1e-9));
-  }
-});
 test("language counts are per repository, not duplicated file/language entries", () => {
   assert.deepEqual(
     languageCounts([

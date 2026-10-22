@@ -2,6 +2,16 @@
 
 Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Pages. No Raspberry Pi hosting, backend, paid domain, portfolio analytics, accounts, external fonts, or runtime npm dependencies. Optional background radio connects to Spotify only after explicit consent. Tests use Happy DOM as a development-only dependency.
 
+## Night sky and Redline / v17
+
+- **The globe is removed.** The homepage and `#network` now share an original flat night-sky atlas: seven project constellations, a seeded depth-layered starfield, slow twinkling, soft nebula haze, and one brief meteor every twelve seconds. These are fictional star patterns for real projects—not astronomical positions or home-network telemetry.
+- **Explore:** choose a star on the canvas or a stationary project button to glide into its constellation and inspect related work. Drag/arrows pan, +/− zoom, Home/Reset restores the complete atlas. Constellations/Starfield switches line layers; LOW/MID/RICH adjusts star density. Pause freezes ambience. Homepage wheel scrolling is never intercepted; the dedicated page only zooms with canvas focus. Touch retains vertical page scrolling.
+- **Lifecycle/accessibility:** motion-off snaps to a static drawing, canvas focus pauses ambience, hidden/offscreen views stop their render loop, high contrast removes haze and meteors, and disposal releases observers/listeners. If Canvas is unavailable, project selectors and their inspector still work, while drawing controls are disabled.
+- **Redline is the new default:** the picker puts it first. A charged three-layer seam, 72 bounded red fragments, a soft impact ring and recoiling gates reveal the page at 100%. All six intros remain interchangeable. The one-time startup preference version is now `hirsu-startup-v17`; old startup choices remain in their old key, while the first v17 visit uses Redline. Subsequent choices persist normally. Other settings, music and bookmarks are untouched. Reset uses Redline.
+- **Motion:** a longer eased page entrance with a tiny settling keyframe, layered section entrances, smoother hover/focus transitions, and coordinated Redline timing. Skip/Escape/reduced-motion cancellation and the 2.9-second ceiling are retained; no full-screen flashes.
+- **Edit:** `sky-model.js` for deterministic stars/constellation geometry, `project-network.js` for Canvas and interactions, `network-view.js` / `constellation.css` for the atlas UI, and `motion-upgrade.css` / `intro-variants.js` / `city-motion.js` for animation.
+- **Verification:** automated geometry, controller, DOM, accessibility and regression checks; production Canvas rendered separately at desktop/mobile dimensions to inspect star spacing. This renderer-only check does not validate CSS or real-browser animation. Full browser QA is unavailable in the current session.
+
 ## Background radio and independent layouts / v16
 
 - **Settings → Customize → Interface layout:** Overdrive remains the default cinematic workbench. Netrunner is a tiled workstation with a searchable file directory, project inspector, expandable build notes and application dock. Relic is a numbered visual dossier with previous/next file navigation and keyboard-operable Overview / Build notes / Tools tabs. Project archive layouts change too. All three share the same factual project data. Palette, effects, intro and accessibility settings remain independent.
@@ -29,14 +39,14 @@ Validation: `npm ci && npm run check`. DOM/controller tests mock the external pl
 SETTINGS opens a compact, keyboard-accessible panel, separate from the navigation-only MENU. Its three tabs have independent scrolling and work on mobile. Preferences save automatically in this browser; blocked storage keeps session-only changes and displays a notice. No accounts, analytics or remote settings service.
 
 - **General:** startup autoplay, keyboard shortcuts, smooth section scrolling, local privacy information, and a confirmed reset. Reset restores the default intro and preferences, never saved projects.
-- **Accessibility:** system/on/reduced motion, larger reading text, high contrast, and underlined links. System motion follows OS changes live; reduced motion disables the intro, automatic globe rotation and page animation. Tab, Escape and native control navigation are never disabled.
+- **Accessibility:** system/on/reduced motion, larger reading text, high contrast, and underlined links. System motion follows OS changes live; reduced motion disables the intro, sky ambience and page animation. Tab, Escape and native control navigation are never disabled.
 - **Customize:** Overdrive, Netrunner and Relic layouts; Overdrive, Icewire and Monolith color palettes; Signal interference, Clean motion and CRT scanline FX packages; pointer parallax; all six independent startup scenes and manual preview. Palettes change color; layouts change structure. The retired Night City interface is not restored. Accessibility overrides win over skins and FX. Clean/CRT affect page FX, not the selected intro's own artwork.
 
 Edit `settings.css` for panel presentation, skins and visual overrides; `settings-model.js` for validated defaults; `settings.js` for controls, storage and reset; `index.html` for settings content. Preferences use `hirsu-settings-v14`; existing motion and intro choices are retained. `#settings` and legacy `#themes` open customization. Disable startup autoplay to go straight to the page while keeping manual preview available.
 
 ## Overdrive
 
-Overdrive is the default interface: an original red/yellow game-menu-style project terminal, a real Shinjuku night photograph, all seven scrolling project showcases, an interactive globe and workbench. https://hrushikbarani-hub.github.io/
+Overdrive is the default interface: an original red/yellow game-menu-style project terminal, a real Shinjuku night photograph, all seven scrolling project showcases, an interactive night-sky atlas and workbench. https://hrushikbarani-hub.github.io/
 
 SETTINGS and the footer open preferences; MENU contains page navigation and a settings shortcut. Night City has been removed from the menu, command palette and active renderer. Old `?view=neon` links and saved theme preferences now open Overdrive without losing the project hash. Historical styles/source remain for provenance but the retired homepage module is not loaded. Bookmarks and explicit motion preferences are retained locally. Motion defaults on unless the visitor requests reduced motion or previously paused FX.
 
@@ -107,7 +117,7 @@ Search across project titles, descriptions, status, categories and tags. Multi-w
 
 Ctrl / Command K opens the searchable command menu; arrows and Enter navigate. On project cards, arrows or J/K move, Enter opens, S saves, E expands, / focuses search and ? opens help. Escape closes dialogs and returns focus. Input fields and native buttons/links retain their standard keys.
 
-The upgraded project-network sphere is on #network: drag / arrows to rotate, wheel / + / - to zoom, pause / reset and low / mid / high detail. A regular list of project links is also available. Labels dock on alternating vertical positions on narrow displays. The sphere is a conceptual relationship map, not live telemetry or actual device locations.
+The night-sky atlas is on #network: drag / arrows pan; focused-canvas wheel or + / − zoom; Pause, Reset and star-density controls remain accessible. A fixed project index and regular source links accompany the canvas. It is an illustrated relationship map, not astronomical data or live telemetry.
 
 #stack contains dated public data, not skill ratings. #log contains factual open work, not invented dated activity. #about includes reference credits and privacy notes. Storage failures fall back to session-only bookmarks with an explicit message.
 
@@ -121,7 +131,7 @@ Illustrated project images, actual CAD, and real app screenshots are labeled sep
 
 stack-data.js is the October 20, 2026 public REST snapshot. Language numbers count repositories containing a language across five project repos, not proficiency. The calendar includes 78 authored public default-branch commits across those repos plus this portfolio in the bounded April–October period. It is not a live GitHub contributions calendar. Sources: /repos/hrushikbarani-hub/{repo}/languages and /commits?per_page=100&since=2026-04-20T00:00:00Z. All six commit responses were below the limit. To refresh, paginate as needed, filter author login hrushikbarani-hub, aggregate UTC dates, and update the dated caption. Never imply capped responses are complete.
 
-The sphere is a conceptual map of related projects, not a map of actual locations, connected devices, or network telemetry. No credentials, home IPs, private contact information, or backend endpoints are published. The portfolio itself makes no outbound runtime API calls; the optional, consent-gated Radio player is the explicit external-service exception.
+The illustrated night sky represents related projects, not actual celestial positions, locations, connected devices, or network telemetry. No credentials, home IPs, private contact information, or backend endpoints are published. The portfolio itself makes no outbound runtime API calls; the optional, consent-gated Radio player is the explicit external-service exception.
 
 ## Edit / verify / deploy
 
@@ -136,7 +146,7 @@ The sphere is a conceptual map of related projects, not a map of actual location
 - city-upgrade.css: v8 media system, static grain, orbital boot rings, motion refinements and observatory styling.
 - console.js: routes, project rendering, search, bookmarks, galleries, keyboard commands, theme / motion state.
 - console-model.js: pure route/search/storage/escaping helpers.
-- project-network.js: original sphere renderer and lifecycle.
+- project-network.js / sky-model.js / constellation.css: night-sky renderer, deterministic geometry, interactions and lifecycle.
 - projects.js / stack-data.js: factual project metadata and dated snapshot.
 - interfaces.js: Overdrive registry and legacy URL normalization helpers.
 - intro-variants.js / intro-scenes.css: startup choices, scene markup, particles and v13 keyframes. Change the particle sizes/timing in `redlineParticles`; edit the `cut-*` rules for Redline's slash and split.
@@ -148,6 +158,6 @@ Serving the static site requires no npm install. For development checks, install
     npm run check
     python -m http.server 8130 --bind 127.0.0.1
 
-Open http://127.0.0.1:8130/. ES modules need HTTP. Tests cover default mode, URLs, routes, search/filtering, malformed storage, escaping, both homepages, photo attribution, assets, file selection and keyboard navigation, panel frames, boot percentage/release/dismissal/replay/focus/timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, unsupported dialogs, finite spherical arcs, collision-free docking, embedded globe scroll passthrough, globe pause/focus/quality/visibility/FX/lifecycle behavior, canvas fallback, language aggregation, UTC dates and the legacy wrap helper. `side-channel.test.js` adds DOM-level signal editing, clipboard failure, safe text rendering, fragment persistence, no-consent/no-provider-request assertions, player readiness/errors/cancellation, route-persistent playback and background pause. Controller tests use deterministic DOM/canvas/RAF doubles; they do not replace visual browser QA.
+Open http://127.0.0.1:8130/. ES modules need HTTP. Tests cover default mode, URLs, routes, search/filtering, malformed storage, escaping, both homepages, photo attribution, assets, file selection and keyboard navigation, panel frames, boot percentage/release/dismissal/replay/focus/timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, unsupported dialogs, bounded constellation geometry, deterministic starfields, embedded sky scroll passthrough, sky pause/focus/quality/visibility/FX/lifecycle behavior, canvas fallback, language aggregation, UTC dates and the legacy wrap helper. `side-channel.test.js` adds DOM-level signal editing, clipboard failure, safe text rendering, fragment persistence, no-consent/no-provider-request assertions, player readiness/errors/cancellation, route-persistent playback and background pause. Controller tests use deterministic DOM/canvas/RAF doubles; they do not replace visual browser QA.
 
 Push main. GitHub Pages deploys main / root with .nojekyll and HTTPS. No paid service, backend, Pi, or custom domain is required. The preview server may be stopped without affecting the live site.

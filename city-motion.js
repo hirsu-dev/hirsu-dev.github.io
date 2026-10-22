@@ -1,12 +1,22 @@
 // Original, optional HUD motion. Boot stages are presentation, not network work.
-import { introById, introArtwork } from "./intro-variants.js?v=13";
+import { introById, introArtwork } from "./intro-variants.js?v=17";
 export const panelFrames = [
   {
     opacity: 0,
-    transform: "translateX(28px) scale(.985)",
-    clipPath: "inset(0 0 8% 3%)",
+    transform: "translate3d(0, 24px, 0) scale(.985)",
+    clipPath: "inset(0 0 10% 0)",
   },
-  { opacity: 1, transform: "translateX(0)", clipPath: "inset(0 0 0 0)" },
+  {
+    opacity: 1,
+    transform: "translate3d(0, -1px, 0) scale(1.002)",
+    clipPath: "inset(0)",
+    offset: 0.78,
+  },
+  {
+    opacity: 1,
+    transform: "translate3d(0, 0, 0) scale(1)",
+    clipPath: "inset(0)",
+  },
 ];
 export const bootPhases = Object.freeze([
   { at: 0, name: "init" },
@@ -39,7 +49,7 @@ export function createCityMotion() {
     bootReleasing = false;
   let returnFocus = null;
   const enabled = () => root.dataset.motion === "on" && !document.hidden;
-  function animate(element, frames = panelFrames, duration = 480, delay = 0) {
+  function animate(element, frames = panelFrames, duration = 620, delay = 0) {
     if (!enabled() || !element?.animate || (bootActive && !bootReleasing))
       return;
     elementAnimations.get(element)?.cancel();
@@ -169,7 +179,7 @@ export function createCityMotion() {
       animate(container);
       container
         .querySelectorAll(
-          ".page-head .eyebrow,.page-head h1,.page-head p:not(.eyebrow),.network-shell,.feed-tools,.nr-masthead,.nr-window,.nr-dock,.relic-masthead,.relic-index,.relic-file,.relic-footnotes",
+          ".page-head .eyebrow,.page-head h1,.page-head p:not(.eyebrow),.sky-shell,.feed-tools,.nr-masthead,.nr-window,.nr-dock,.relic-masthead,.relic-index,.relic-file,.relic-footnotes",
         )
         .forEach((piece, i) =>
           animate(
@@ -177,13 +187,13 @@ export function createCityMotion() {
             [
               {
                 opacity: 0,
-                transform: "translateY(14px)",
+                transform: "translate3d(0, 24px, 0)",
                 clipPath: "inset(0 0 100% 0)",
               },
               { opacity: 1, transform: "translateY(0)", clipPath: "inset(0)" },
             ],
-            650,
-            80 + i * 70,
+            800,
+            70 + Math.min(i, 7) * 65,
           ),
         );
       animate(

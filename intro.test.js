@@ -7,14 +7,19 @@ import {
   introOptions,
   introArtwork,
   redlineParticles,
+  introStorageKey,
+  defaultIntro,
 } from "./intro-variants.js";
 
 test("six distinct startup sequences with deterministic safe fallback", () => {
+  assert.equal(defaultIntro, "redline");
+  assert.equal(introStorageKey, "hirsu-startup-v17");
+  assert.match(introOptions(null), /^<label[^]*?value="redline" checked/);
   assert.equal(intros.length, 6);
   assert.equal(new Set(intros.map((i) => i.id)).size, 6);
   assert.equal(new Set(intros.map((i) => introArtwork(i.id))).size, 6);
   for (const value of [null, undefined, "unknown", "__proto__", "<script>"])
-    assert.equal(introById(value).id, "fracture");
+    assert.equal(introById(value).id, "redline");
   for (const intro of intros) {
     assert.equal(introById(intro.id), intro);
     assert.equal(intro.stages.length, 3);
@@ -24,12 +29,12 @@ test("Redline is an independent split-screen scene with bounded red particle geo
   const html = introArtwork("redline");
   assert.equal((html.match(/class="cut-panel /g) || []).length, 2);
   assert.match(html, /class="cut-beam"/);
-  assert.equal((html.match(/class="cut-spark"/g) || []).length, 48);
+  assert.equal((html.match(/class="cut-spark"/g) || []).length, 72);
   assert.doesNotMatch(html, /intro-backdrop|red-gate|red-blades/);
   for (const p of redlineParticles) {
     assert.ok(p.y >= 0 && p.y <= 100);
     assert.ok(Math.abs(p.dx) <= 285 && Math.abs(p.dy) <= 85);
-    assert.ok(p.delay >= 2 && p.delay + 0.7 <= 2.9);
+    assert.ok(p.delay >= 2 && p.delay + 0.58 <= 2.9);
     assert.ok(p.width <= 38 && p.height <= 5);
   }
 });

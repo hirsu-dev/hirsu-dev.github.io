@@ -11,23 +11,24 @@ import {
   resolveRoute,
   escapeHTML as esc,
 } from "./console-model.js?v=15";
-import { createProjectNetwork } from "./project-network.js?v=15";
-import { networkContent } from "./network-view.js?v=15";
+import { createProjectNetwork } from "./project-network.js?v=17";
+import { networkContent } from "./network-view.js?v=17";
 import {
   labContent,
   archiveContent,
   mountSignalPage,
 } from "./signal-pages.js?v=15";
 import { mountRadio } from "./music.js?v=16";
-import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=16";
-import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=15";
-import { createCityMotion } from "./city-motion.js?v=16";
-import { mountSettings } from "./settings.js?v=16";
+import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=17";
+import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=17";
+import { createCityMotion } from "./city-motion.js?v=17";
+import { mountSettings } from "./settings.js?v=17";
 import {
   introById,
+  defaultIntro,
   introOptions,
   introStorageKey,
-} from "./intro-variants.js?v=13";
+} from "./intro-variants.js?v=17";
 import { mountProjectTerminal } from "./project-terminal.js?v=11";
 import { photoCredit } from "./photo.js?v=11";
 
@@ -175,9 +176,9 @@ const preferences = mountSettings({
   write,
   onApply: refreshMotion,
   onReset: () => {
-    root.dataset.intro = "fracture";
-    $("#intro-options").innerHTML = introOptions("fracture");
-    return write(introStorageKey, "fracture");
+    root.dataset.intro = defaultIntro;
+    $("#intro-options").innerHTML = introOptions(defaultIntro);
+    return write(introStorageKey, defaultIntro);
   },
 });
 const radio = mountRadio();
@@ -447,8 +448,8 @@ function renderNetwork() {
   screen.innerHTML =
     pageHead(
       "02",
-      "The project network.",
-      "Different experiments. Shared tools. Lock onto a node and discover the connections.",
+      "A sky full of projects.",
+      "Seven original constellations. Follow a star, explore a build, and find the ideas that connect them.",
     ) + networkContent();
   networkCleanup = createProjectNetwork($("#network-shell"));
 }
@@ -513,8 +514,8 @@ function renderAbout() {
     ) +
     `<section class="panel"><h2>A small, useful corner of the internet.</h2><p>This is my project archive: a telescope that followed sky coordinates, a Pi keeping home services useful, tools for maintainers and civic records, and a few experiments that are still taking shape.</p><p>Not everything here is finished. Each project includes its actual status, source when public, and a clear distinction between an illustration, CAD, or a working app screenshot.</p><div class="facts"><span><b>7</b> projects</span><span><b>5</b> public project repos</span><span><b>3</b> side channels</span></div><a class="bracket" href="https://github.com/hrushikbarani-hub" target="_blank" rel="noopener noreferrer">[ Find me on GitHub ↗ ]</a></section>
   <section class="panel"><h2>Colophon / visual references</h2><p>Overdrive reinterprets the angular red/yellow menu language of <a href="https://www.cyberpunk.net/us/en/" target="_blank" rel="noopener noreferrer">Cyberpunk 2077 ↗</a> as an original project terminal. Select a file, inspect its real status and preview, then scroll through the workbench. Settings → Customize offers three independent layouts: the scrolling Overdrive workbench, a Netrunner file desktop, and the Relic visual dossier. Palettes, effects and startup scenes are separate choices. No game source, character art or official branding is bundled; this independent portfolio is not affiliated with the franchise.</p><p>The earlier text-first archive and keyboard controls take inspiration from <a href="https://cyberspace.online/" target="_blank" rel="noopener noreferrer">Cyberspace ↗</a>. The supplied UI references informed geometric callouts, sliding panels, hover/focus states and chromatic distortion. The implementation and project content are original.</p><h3>A real city, photographed.</h3><p>The homepage background uses a genuine photograph of Shinjuku, Tokyo, not AI-generated artwork. The original photograph is bundled locally with a smaller responsive copy; only the display crop, dark overlay and temporary glitch slices alter its presentation.</p>${photoCredit()}<p><a href="PHOTO-CREDITS.md">Full photo attribution and license notes ↗</a></p></section>
-  <section class="panel"><h2>A signal from the workbench.</h2><p>The opening takes the idea of an assembling interface from <a href="https://hancore.dev/site/#stack" target="_blank" rel="noopener noreferrer">hancore.dev ↗</a>, reinterpreted as an original short boot sequence with a reticle and chromatic slices that fracture into the page at 100%. It is a visual introduction, not a download meter or system scan. Skip or Escape dismisses it; replay is in the interface menu. FX off disables motion and the intro. System reduced motion is respected by default.</p></section>
-  <section class="panel"><h2>Local by default.</h2><p>Static files on free GitHub Pages. No Raspberry Pi hosting, portfolio accounts, analytics, backend, or API keys. Saved project IDs, interface preferences and recovered fragments stay in this browser. The network graphic is a conceptual project map, not home-network telemetry or real locations.</p><p><strong>Optional music:</strong> The background radio connects to Spotify only after you enable it. Spotify receives browser data and may use cookies under its <a href="https://www.spotify.com/legal/privacy-policy/" target="_blank" rel="noopener noreferrer">privacy policy</a>. We do not download or host music, access your account, or store listening history. The compact native player stays loaded across site pages and layout changes. Closing it disconnects playback. Full songs or previews depend on Spotify sign-in, availability and region; use Spotify or your device for volume. Open <a href="#radio">background radio</a> for six song choices and the continuous Cyberpunk playlist.</p><p>Project facts: five public GitHub repositories and descriptions supplied by Hrushi. The Pi lab is Pi-hole, VPN, and Tailscale; NEXUS is an experimental client for existing local AI models, not a self-trained foundation model. Images are visibly labeled. Snapshot data and provenance are documented in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io" target="_blank" rel="noopener noreferrer">site source ↗</a>.</p></section>`;
+  <section class="panel"><h2>A signal from the workbench.</h2><p>The opening takes the idea of an assembling interface from <a href="https://hancore.dev/site/#stack" target="_blank" rel="noopener noreferrer">hancore.dev ↗</a>, reinterpreted through six original short boot sequences. Redline is the default: a charged red seam, fractured wordmark, and particle-lined gates that split into the page at 100%. It is a visual introduction, not a download meter or system scan. Skip or Escape dismisses it; replay is in the interface menu. FX off disables motion and the intro. System reduced motion is respected by default.</p></section>
+  <section class="panel"><h2>Local by default.</h2><p>Static files on free GitHub Pages. No Raspberry Pi hosting, portfolio accounts, analytics, backend, or API keys. Saved project IDs, interface preferences and recovered fragments stay in this browser. The night sky is an original project illustration, not astronomical coordinates, home-network telemetry or real locations.</p><p><strong>Optional music:</strong> The background radio connects to Spotify only after you enable it. Spotify receives browser data and may use cookies under its <a href="https://www.spotify.com/legal/privacy-policy/" target="_blank" rel="noopener noreferrer">privacy policy</a>. We do not download or host music, access your account, or store listening history. The compact native player stays loaded across site pages and layout changes. Closing it disconnects playback. Full songs or previews depend on Spotify sign-in, availability and region; use Spotify or your device for volume. Open <a href="#radio">background radio</a> for six song choices and the continuous Cyberpunk playlist.</p><p>Project facts: five public GitHub repositories and descriptions supplied by Hrushi. The Pi lab is Pi-hole, VPN, and Tailscale; NEXUS is an experimental client for existing local AI models, not a self-trained foundation model. Images are visibly labeled. Snapshot data and provenance are documented in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io" target="_blank" rel="noopener noreferrer">site source ↗</a>.</p></section>`;
 }
 function renderRoute({ focus = false } = {}) {
   let requested = resolveRoute(location.hash);
@@ -660,7 +661,7 @@ function commands() {
     ...[
       ["index", "Home / landing page"],
       ["projects", "All projects / archive"],
-      ["network", "Project network"],
+      ["network", "Night sky / project constellations"],
       ["stack", "Technology stack"],
       ["log", "Workbench"],
       ["saved", "Saved projects"],

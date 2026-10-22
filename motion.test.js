@@ -6,12 +6,7 @@ import { intros } from "./intro-variants.js";
 // Minimal DOM/timer harness exercises the production controller without a browser dependency.
 function harness(
   t,
-  {
-    motion = "on",
-    hidden = false,
-    modalError = false,
-    intro = "fracture",
-  } = {},
+  { motion = "on", hidden = false, modalError = false, intro = "redline" } = {},
 ) {
   const root = { dataset: { motion, view: "neon", intro } };
   const doc = new EventTarget();
@@ -240,9 +235,9 @@ for (const intro of intros) {
     assert.equal(h.controller.opening(), false);
   });
 }
-test("invalid saved startup safely uses the original sequence", (t) => {
+test("invalid saved startup safely uses Redline", (t) => {
   const h = harness(t, { intro: "__proto__" });
   h.controller.opening();
-  assert.equal(h.boot.dataset.intro, "fracture");
+  assert.equal(h.boot.dataset.intro, "redline");
   h.skip.dispatchEvent(new Event("click"));
 });

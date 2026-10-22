@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createProjectNetwork } from "./project-network.js";
+import { skyPoints, projectStar } from "./sky-model.js";
 
 // Exercise the real renderer/controller with deterministic canvas, focus and RAF
 // boundaries. This checks lifecycle behavior; it is not a visual browser test.
@@ -23,6 +24,7 @@ function harness(
     emit(name, extra = {}) {
       const event = {
         target: this,
+        type: name,
         preventDefault() {},
         stopPropagation() {},
         ...extra,
@@ -50,6 +52,7 @@ function harness(
     "fill",
     "arc",
     "setLineDash",
+    "fillText",
   ]) {
     ctx[name] = (...args) => {
       for (const arg of args)
@@ -85,7 +88,7 @@ function harness(
   const reset = new Target();
   reset.id = "network-reset";
   reset.closest = (s) => (s === "button" ? reset : null);
-  const modes = ["orbital", "minimal"].map((mode) => {
+  const modes = ["atlas", "ambient"].map((mode) => {
     const b = new Target();
     b.dataset.networkMode = mode;
     b.closest = (s) => (s === "button" ? b : null);
@@ -97,7 +100,7 @@ function harness(
     b.closest = (s) => (s === "button" ? b : null);
     return b;
   });
-  spin.id = "spin-button";
+  spin.id = "sky-pause";
   spin.closest = (selector) => (selector === "button" ? spin : null);
   canvas.closest = () => null;
   canvas.setPointerCapture = () => {};
@@ -205,7 +208,7 @@ function harness(
     },
   };
 }
-test("embedded globe never intercepts normal page scrolling", (t) => {
+test("embedded night sky never intercepts normal page scrolling", (t) => {
   const h = harness(t, { scrollZoom: false });
   let prevented = false;
   h.canvas.emit("wheel", {
@@ -217,7 +220,7 @@ test("embedded globe never intercepts normal page scrolling", (t) => {
   assert.equal(prevented, false);
 });
 
-test("globe spins while visible, suspends offscreen/background, and resumes", (t) => {
+test("sky twinkles while visible, suspends offscreen/background, and resumes", (t) => {
   const h = harness(t);
   h.tick();
   assert.equal(h.frames.size, 1);
@@ -241,7 +244,7 @@ test("globe spins while visible, suspends offscreen/background, and resumes", (t
   assert.equal(h.frames.size, 1);
 });
 
-test("FX off draws a static globe and manual controls remain usable", (t) => {
+test("FX off draws a static sky and manual controls remain usable", (t) => {
   const h = harness(t, { motion: "off" });
   h.tick();
   assert.equal(h.frames.size, 0);
@@ -263,7 +266,7 @@ test("pause, keyboard focus and quality settings have bounded frame behavior", (
   h.container.emit("click", { target: h.spin });
   h.tick(100);
   assert.equal(h.frames.size, 0);
-  assert.equal(h.spin.attributes["aria-pressed"], "false");
+  assert.equal(h.spin.attributes["aria-pressed"], "true");
   h.container.emit("click", { target: h.quality[2] });
   h.tick();
   assert.equal(h.quality[2].attributes["aria-pressed"], "true");
@@ -271,7 +274,7 @@ test("pause, keyboard focus and quality settings have bounded frame behavior", (
   h.container.emit("click", { target: h.spin });
   h.canvas.focus();
   h.tick(100);
-  assert.equal(h.state.textContent, "FOCUS LOCK");
+  assert.equal(h.state.textContent, "FOCUS / STILL");
   assert.equal(h.frames.size, 0);
   h.canvas.emit("keydown", { key: "ArrowUp" });
   h.tick(100);
@@ -306,7 +309,7 @@ test("a missing 2D canvas degrades to accessible links without starting a loop",
   assert.equal(h.frames.size, 0);
   assert.equal(h.observers.length, 0);
 });
-test("node selection locks, updates meaningful inspector links, and reset resumes orbit", (t) => {
+test("star selection glides to a project, keeps ambience, and reset restores the atlas", (t) => {
   const h = harness(t);
   h.tick(3);
   h.container.emit("click", { target: h.labels[4] });
@@ -314,12 +317,12 @@ test("node selection locks, updates meaningful inspector links, and reset resume
   assert.equal(h.labels[4].attributes["aria-pressed"], "true");
   assert.match(h.inspector.innerHTML, /MaintainerOS/);
   assert.match(h.inspector.innerHTML, /Python · FastAPI · SQLite/);
-  assert.equal(h.frames.size, 0);
-  assert.equal(h.state.textContent, "NODE / LOCKED");
+  assert.equal(h.frames.size, 1);
+  assert.equal(h.state.textContent, "NIGHT SKY / ACTIVE");
   h.container.emit("click", { target: h.reset });
   h.tick(150);
   assert.equal(h.labels[4].attributes["aria-pressed"], "false");
-  assert.match(h.inspector.innerHTML, /Find the shared thread/);
+  assert.match(h.inspector.innerHTML, /Every build leaves a light/);
   assert.equal(h.frames.size, 1);
 });
 test("display layers and zoom controls work without ongoing animation", (t) => {
@@ -377,5 +380,72 @@ test("dedicated map wheel zoom requires focus and secondary pointers cannot stea
   assert.notEqual(JSON.stringify(h.calls), initial);
   h.canvas.emit("pointercancel", { pointerId: 1 });
   h.tick();
+  assert.equal(h.frames.size, 0);
+});
+
+test("a bright-star click selects its project; dragging does not trigger selection", (t) => {
+  const h = harness(t, { motion: "off" });
+  h.tick();
+  const p = projectStar(
+    skyPoints(720, 460)[0],
+    { x: 0, y: 0, zoom: 1 },
+    720,
+    460,
+  );
+  h.canvas.emit("pointerdown", {
+    button: 0,
+    pointerId: 1,
+    clientX: p.x,
+    clientY: p.y,
+  });
+  h.canvas.emit("pointerup", { pointerId: 1, clientX: p.x, clientY: p.y });
+  h.tick();
+  assert.equal(h.labels[0].attributes["aria-pressed"], "true");
+  assert.match(h.inspector.innerHTML, /Robo Telescope/);
+  h.canvas.emit("keydown", { key: "Home" });
+  h.tick();
+  assert.equal(h.labels[0].attributes["aria-pressed"], "false");
+  h.canvas.emit("pointerdown", {
+    button: 0,
+    pointerId: 2,
+    clientX: p.x,
+    clientY: p.y,
+  });
+  h.canvas.emit("pointermove", {
+    pointerId: 2,
+    clientX: p.x + 40,
+    clientY: p.y,
+  });
+  h.canvas.emit("pointerup", { pointerId: 2, clientX: p.x + 40, clientY: p.y });
+  h.tick();
+  assert.match(h.inspector.innerHTML, /Every build leaves a light/);
+  assert.equal(h.frames.size, 0);
+});
+
+test("portrait resize keeps the selected constellation centered and never creates invalid geometry", (t) => {
+  const h = harness(t, { motion: "off" });
+  h.container.emit("click", { target: h.labels[4] });
+  h.tick();
+  h.canvas.getBoundingClientRect = () => ({ width: 320, height: 560 });
+  h.observers[0].callback();
+  h.tick();
+  assert.ok(
+    h.calls.some(
+      ([method, x, y, r]) =>
+        method === "arc" &&
+        Math.abs(x - 160) < 0.001 &&
+        Math.abs(y - 280) < 0.001 &&
+        r === 4,
+    ),
+  );
+  assert.equal(h.frames.size, 0);
+});
+
+test("canvas fallback still lets every project button inspect its actual file", (t) => {
+  const h = harness(t, { canvasAvailable: false });
+  h.container.emit("click", { target: h.labels[3] });
+  assert.match(h.inspector.innerHTML, /NEXUS Macro Pad/);
+  assert.equal(h.labels[3].attributes["aria-pressed"], "true");
+  assert.equal(h.canvas.tabIndex, -1);
   assert.equal(h.frames.size, 0);
 });

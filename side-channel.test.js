@@ -19,7 +19,7 @@ import {
   layoutProjects,
 } from "./layouts.js";
 import { resolveRoute } from "./console-model.js";
-import { focusAngles, spherePoints } from "./project-network.js";
+import { skyPoints, projectStar, focusStar } from "./sky-model.js";
 import {
   networkContent,
   networkInspector,
@@ -221,19 +221,14 @@ test("blocked fragment storage is announced and unknown codes are harmless", (t)
   );
   assert.match(h.$("#packet-status").textContent, /No match/);
 });
-test("network aims every selected node at the front without a long rotation", () => {
-  for (const point of spherePoints(7))
-    for (const current of [0, 8, -40]) {
-      const { angle, tilt } = focusAngles(point, current),
-        [x, y, z] = point;
-      const rx = x * Math.cos(angle) + z * Math.sin(angle),
-        rz = z * Math.cos(angle) - x * Math.sin(angle);
-      assert.ok(Math.abs(rx) < 1e-10);
-      assert.ok(Math.abs(y * Math.cos(tilt) - rz * Math.sin(tilt)) < 1e-10);
-      assert.ok(Math.abs(angle - current) <= Math.PI);
-      assert.ok(y * Math.sin(tilt) + rz * Math.cos(tilt) > 0.99);
-    }
+test("night sky focuses project constellations with a flat pan-and-zoom camera", () => {
+  for (const point of skyPoints(720, 590)) {
+    const p = projectStar(point, focusStar(point), 720, 590);
+    assert.equal(p.x, 360);
+    assert.equal(p.y, 295);
+  }
 });
+
 test("network inspector links only to actual projects and explains each connection", (t) => {
   const h = dom(t, networkContent());
   assert.equal(h.doc.querySelectorAll("[data-node-index]").length, 7);
@@ -557,10 +552,13 @@ test("full app routes new pages, preserves the deck, and retains existing projec
     "hirsu-settings-v14",
     JSON.stringify({ motion: "off", autoplay: false }),
   );
+  h.win.localStorage.setItem("hirsu-startup-v12", "fracture");
   h.win.history.replaceState(null, "", "#lab");
   h.win.HTMLCanvasElement.prototype.getContext = () => null;
-  await import("./console.js?integration-v16");
+  await import("./console.js?integration-v17");
   assert.ok(h.$("#signal-controls"));
+  assert.equal(h.doc.documentElement.dataset.intro, "redline");
+  assert.equal(h.$('input[name="startup"]:checked').value, "redline");
   const deck = h.$("#music-dock");
   const go = (hash) => {
     h.win.history.replaceState(null, "", "#" + hash);
@@ -578,6 +576,9 @@ test("full app routes new pages, preserves the deck, and retains existing projec
   go("network");
   assert.ok(h.$(".network-inspector"));
   assert.equal(h.$("#network-shell").dataset.renderer, "unavailable");
+  h.$('[data-node-index="4"]').click();
+  assert.match(h.$(".network-inspector").textContent, /MaintainerOS/);
+  assert.equal(h.$("#sky-pause").disabled, true);
   go("maintaineros");
   assert.match(h.$("#screen").textContent, /MaintainerOS/);
   go("index");
