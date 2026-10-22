@@ -1,0 +1,616 @@
+/* v13: separate scene compositions; only the original keeps the classic loader. */
+#boot-dialog:not([data-intro="fracture"]) .boot-center {
+  display: contents;
+}
+#boot-dialog:not([data-intro="fracture"])
+  :is(.boot-kicker, .boot-reticle, .boot-stages, .boot-grid) {
+  display: none;
+}
+/* Keep the modal's accessible name/description without duplicating the scene visually. */
+#boot-dialog:not([data-intro="fracture"]) :is(#boot-title, #boot-description) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+#boot-dialog:not([data-intro="fracture"]) .boot-meter {
+  position: absolute;
+  left: 30px;
+  bottom: 94px;
+  width: min(270px, 45%);
+}
+#boot-dialog:not([data-intro="fracture"]) .boot-track {
+  position: absolute;
+  left: 30px;
+  bottom: 86px;
+  width: min(270px, 45%);
+  height: 2px;
+}
+#boot-dialog:not([data-intro="fracture"]) .boot-shell {
+  border-color: #ffffff10;
+}
+.neural-core {
+  position: absolute;
+  inset: 33%;
+  display: grid;
+  align-content: center;
+  text-align: center;
+  border: 1px solid #91efff88;
+  background: #07131ce6;
+  clip-path: polygon(
+    25% 0,
+    75% 0,
+    100% 25%,
+    100% 75%,
+    75% 100%,
+    25% 100%,
+    0 75%,
+    0 25%
+  );
+}
+.neural-core > span {
+  font:
+    100px/0.9 Impact,
+    sans-serif;
+  color: #abf4ff;
+}
+.neural-core small {
+  font: 9px var(--mono);
+  color: #a1d0dc;
+  letter-spacing: 0.15em;
+  margin-top: 22px;
+}
+.neural-readout {
+  position: absolute;
+  top: 50%;
+  left: 8%;
+  display: grid;
+  gap: 20px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: #9af5fb;
+}
+#boot-dialog[open] .neural-core {
+  animation: core-arrive 1.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+#boot-dialog[open] .neural-readout span {
+  animation: data-copy 0.5s 0.8s steps(8, end) both;
+}
+@keyframes core-arrive {
+  from {
+    transform: scale(0.15) rotate(-90deg);
+    opacity: 0;
+  }
+  65% {
+    transform: scale(0.95) rotate(5deg);
+    opacity: 0.8;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.rain-terminal {
+  position: absolute;
+  left: 12%;
+  top: 24%;
+  width: 76%;
+  padding: 35px;
+  border-left: 3px solid #8effbd;
+  background: linear-gradient(90deg, #05120ff5, #05120f22);
+  color: #a0ffc0;
+  font: clamp(13px, 1.8vw, 27px)/1.8 var(--mono);
+}
+.rain-terminal > small {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  margin-bottom: 35px;
+  color: #6abf96;
+}
+.rain-terminal code {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  white-space: pre-wrap;
+}
+.rain-terminal code:last-child {
+  font-size: clamp(32px, 5vw, 80px);
+  color: #d4ffe4;
+}
+#boot-dialog[open] .rain-terminal code {
+  animation: terminal-type 0.3s calc(0.15s + var(--row) * 0.22s) steps(14, end)
+    both;
+}
+@keyframes terminal-type {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.3;
+  }
+  to {
+    clip-path: inset(0);
+    opacity: 1;
+  }
+}
+.ghost-scope {
+  position: absolute;
+  inset: 26% 10%;
+  border: 1px solid #c8f6e333;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 9.9%, #b4dfcd18 10%),
+    repeating-linear-gradient(0deg, transparent 0 49px, #b4dfcd18 50px);
+  color: #d8f2e4;
+}
+.ghost-scope > span {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+.ghost-scope svg {
+  position: absolute;
+  width: 100%;
+  height: 65%;
+  top: 17%;
+  overflow: visible;
+}
+.ghost-scope path {
+  stroke: #c1f8da;
+  stroke-width: 2;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  filter: drop-shadow(0 0 5px #9bf2c588);
+}
+.ghost-scope > div {
+  position: absolute;
+  inset: auto 20px 20px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+}
+.ghost-scope b {
+  font:
+    32px Impact,
+    sans-serif;
+  letter-spacing: 0.1em;
+}
+.ghost-scope small {
+  font-size: 8px;
+}
+#boot-dialog[open] .ghost-scope path {
+  animation: scope-draw 1.9s 0.1s linear both;
+}
+@keyframes scope-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.shard-emblem {
+  position: absolute;
+  width: min(420px, 65vw);
+  aspect-ratio: 1;
+  top: 48%;
+  left: 50%;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+}
+.emblem-plate {
+  position: absolute;
+  inset: calc(var(--n) * 9%);
+  border: 2px solid #d9bdff;
+  background: #15283455;
+  clip-path: polygon(
+    20% 0,
+    80% 0,
+    100% 20%,
+    100% 80%,
+    80% 100%,
+    20% 100%,
+    0 80%,
+    0 20%
+  );
+  rotate: calc(var(--n) * 30deg);
+}
+.emblem-plate:nth-child(2) {
+  border-color: #6de7f2;
+}
+.shard-emblem b {
+  font:
+    clamp(70px, 11vw, 140px) Impact,
+    sans-serif;
+  color: #e9daff;
+  z-index: 1;
+}
+.shard-emblem > span {
+  position: absolute;
+  top: calc(100% + 30px);
+  width: 100vw;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: #b3ccdb;
+}
+#boot-dialog[open] .emblem-plate {
+  animation: plate-arrive 1.2s calc(var(--n) * 0.15s)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+#boot-dialog[open] .shard-emblem b {
+  animation: optic-copy 0.5s 1s both;
+}
+#boot-dialog[open][data-phase="release"] .shard-emblem {
+  animation: emblem-break 0.5s 0.13s ease-in both;
+}
+@keyframes plate-arrive {
+  from {
+    transform: translateX(calc((var(--n) - 1) * 300px)) translateY(-180px)
+      rotate(-60deg);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes emblem-break {
+  to {
+    transform: scale(1.8) rotate(30deg);
+    opacity: 0;
+  }
+}
+/* REDLINE: the page is covered by two exact complementary diagonal masks. */
+#boot-dialog[data-intro="redline"] .boot-variant-art {
+  animation: none;
+}
+#boot-dialog[open][data-intro="redline"] .boot-shell {
+  animation: cut-hud-out 0.45s 2.25s ease-out both;
+}
+.cut-scene,
+.cut-panel,
+.cut-particles,
+.cut-tears {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.cut-panel {
+  background: #0b080d;
+  will-change: transform;
+}
+.cut-left {
+  clip-path: polygon(0 0, 70.1% 0, 30.1% 100%, 0 100%);
+  background: repeating-linear-gradient(0deg, #120b10 0 3px, #190e14 4px);
+}
+.cut-right {
+  clip-path: polygon(70% 0, 100% 0, 100% 100%, 30% 100%);
+  background: #09090e;
+}
+.cut-word {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ff465d;
+  font:
+    italic clamp(85px, 19vw, 300px)/1 Impact,
+    sans-serif;
+  letter-spacing: -0.025em;
+}
+.cut-word span {
+  color: #ffc6cb;
+}
+.cut-left .cut-word {
+  text-shadow: -5px 0 #ff172e66;
+}
+.cut-right .cut-word {
+  text-shadow: 5px 0 #ff172e66;
+}
+.cut-beam {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  overflow: visible;
+}
+.cut-beam path {
+  stroke: #ff5a69;
+  stroke-width: 3;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  filter: drop-shadow(0 0 9px #ff183f);
+}
+.cut-spark {
+  position: absolute;
+  background: #ff3b53;
+  box-shadow: 0 0 8px #ff1a3d88;
+  opacity: 0;
+  z-index: 4;
+}
+.cut-spark:nth-child(4n) {
+  background: #ffb2b8;
+}
+.cut-callout {
+  position: absolute;
+  top: 24%;
+  left: 50%;
+  translate: -50% 0;
+  color: #ff8c97;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  white-space: nowrap;
+}
+.cut-tear {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: calc(37% + var(--n) * 11%);
+  height: 3px;
+  background: #ff315d77;
+  opacity: 0;
+}
+#boot-dialog[open] .cut-left .cut-word {
+  animation: cut-title-left 0.9s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+#boot-dialog[open] .cut-right .cut-word {
+  animation: cut-title-right 0.9s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+#boot-dialog[open] .cut-beam path {
+  animation: slash-draw 0.5s 1.4s cubic-bezier(0.8, 0, 0.2, 1) both;
+}
+#boot-dialog[open] .cut-beam {
+  animation: slash-dissolve 0.45s 2.25s both;
+}
+#boot-dialog[open] .cut-spark {
+  animation: cut-particle 0.7s var(--delay) cubic-bezier(0.15, 0.7, 0.4, 1) both;
+}
+#boot-dialog[open] .cut-left {
+  animation: slice-left 0.64s 2.25s cubic-bezier(0.65, 0, 0.2, 1) both;
+}
+#boot-dialog[open] .cut-right {
+  animation: slice-right 0.64s 2.25s cubic-bezier(0.65, 0, 0.2, 1) both;
+}
+#boot-dialog[open] .cut-callout {
+  animation: cut-hud-out 0.3s 2.15s both;
+}
+#boot-dialog[open] .cut-tear {
+  animation: cut-interference 0.5s calc(1.85s + var(--n) * 0.1s) steps(1, end)
+    both;
+}
+@keyframes cut-title-left {
+  from {
+    transform: translate(-12%, -18px);
+    opacity: 0;
+  }
+  65% {
+    transform: translate(0, 3px);
+    opacity: 1;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes cut-title-right {
+  from {
+    transform: translate(12%, 18px);
+    opacity: 0;
+  }
+  65% {
+    transform: translate(0, -3px);
+    opacity: 1;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes slash-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes slash-dissolve {
+  to {
+    opacity: 0;
+    transform: scaleX(1.04);
+  }
+}
+@keyframes slice-left {
+  15% {
+    transform: translate(-6px, -2px);
+  }
+  28% {
+    transform: translate(2px, 0);
+  }
+  to {
+    transform: translate(-80%, -20%);
+  }
+}
+@keyframes slice-right {
+  15% {
+    transform: translate(6px, 2px);
+  }
+  28% {
+    transform: translate(-2px, 0);
+  }
+  to {
+    transform: translate(80%, 20%);
+  }
+}
+@keyframes cut-particle {
+  0% {
+    opacity: 0;
+    transform: none;
+  }
+  10% {
+    opacity: 0.9;
+    transform: translate(3px, 0);
+  }
+  24% {
+    opacity: 0.65;
+    transform: translate(calc(var(--dx) * 0.22), calc(var(--dy) * 0.12))
+      scaleX(2);
+  }
+  30% {
+    opacity: 0.85;
+    transform: translate(calc(var(--dx) * 0.3 - 7px), calc(var(--dy) * 0.2));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.3);
+  }
+}
+@keyframes cut-interference {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.5;
+    translate: -15px 0;
+  }
+  50% {
+    opacity: 0.3;
+    translate: 22px 0;
+  }
+  70% {
+    opacity: 0;
+  }
+}
+@keyframes cut-hud-out {
+  to {
+    opacity: 0;
+  }
+}
+@media (max-width: 650px) {
+  #boot-dialog:not([data-intro="fracture"]) .boot-meter {
+    left: 18px;
+    bottom: 140px;
+    width: 48%;
+  }
+  #boot-dialog:not([data-intro="fracture"]) .boot-track {
+    left: 18px;
+    bottom: 132px;
+    width: 48%;
+  }
+  .neural-core > span {
+    font-size: 58px;
+  }
+  .neural-core small {
+    font-size: 6px;
+    margin-top: 12px;
+  }
+  .neural-readout {
+    top: 24%;
+    left: 8%;
+    gap: 10px;
+    font-size: 8px;
+  }
+  .rain-terminal {
+    top: 25%;
+    left: 8%;
+    width: 84%;
+    padding: 20px 16px;
+    font-size: 12px;
+  }
+  .rain-terminal > small {
+    font-size: 7px;
+    margin-bottom: 24px;
+  }
+  .ghost-scope {
+    inset: 28% 7% 36%;
+  }
+  .ghost-scope > span {
+    font-size: 7px;
+    left: 12px;
+  }
+  .ghost-scope b {
+    font-size: 24px;
+  }
+  .ghost-scope small {
+    display: none;
+  }
+  .cut-callout {
+    font-size: 8px;
+    letter-spacing: 0.15em;
+  }
+  .shard-emblem {
+    top: 43%;
+  }
+  .shard-emblem > span {
+    font-size: 8px;
+    letter-spacing: 0.12em;
+  }
+}
+@media (max-height: 520px) {
+  #boot-dialog:not([data-intro="fracture"]) .boot-meter {
+    bottom: 65px;
+    left: 20px;
+  }
+  #boot-dialog:not([data-intro="fracture"]) .boot-track {
+    bottom: 57px;
+    left: 20px;
+  }
+  .rain-terminal {
+    top: 17%;
+    padding: 12px 20px;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+  .rain-terminal > small {
+    margin-bottom: 10px;
+  }
+  .rain-terminal code:last-child {
+    font-size: 30px;
+  }
+  .cut-word {
+    font-size: 30vh;
+  }
+  .cut-callout {
+    top: 20%;
+  }
+  .shard-emblem {
+    width: 40vh;
+    top: 44%;
+  }
+  .shard-emblem b {
+    font-size: 18vh;
+  }
+  .shard-emblem > span {
+    top: calc(100% + 8px);
+    font-size: 8px;
+  }
+  .neural-optics {
+    width: 65vh;
+    top: 43%;
+  }
+  .neural-core > span {
+    font-size: 45px;
+  }
+  .neural-core small {
+    display: none;
+  }
+}
+html[data-motion="off"] #boot-dialog * {
+  animation: none !important;
+  transition: none !important;
+}
+html[data-visibility="hidden"] #boot-dialog * {
+  animation-play-state: paused !important;
+}

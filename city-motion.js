@@ -1,5 +1,5 @@
 // Original, optional HUD motion. Boot stages are presentation, not network work.
-import { introById, introArtwork } from "./intro-variants.js?v=12";
+import { introById, introArtwork } from "./intro-variants.js?v=13";
 export const panelFrames = [
   {
     opacity: 0,

@@ -10,6 +10,6 @@
 
 This is a genuine camera photograph of Shinjuku, Tokyo. No generative image tool was used for this background. The full-resolution file is unchanged; the smaller version is the Wikimedia-provided downsample. CSS crops the image to the viewport, overlays dark or yellow gradients, and temporarily displays offset slices for the optional glitch effect. Those are presentation changes, not alterations to the bundled original image.
 
-Attribution and the license link appear on both homepages and in About / Sources. Neither the photographer nor Wikimedia endorses this site. The photograph's CC BY 3.0 license is independent of the portfolio's code. Preserve this attribution and identify further changes when reusing the photograph.
+Attribution and the license link appear on the Overdrive homepage and in About / Sources. Neither the photographer nor Wikimedia endorses this site. The photograph's CC BY 3.0 license is independent of the portfolio's code. Preserve this attribution and identify further changes when reusing the photograph.
 
-Earlier generated artwork remains in repository history / archived assets for provenance, but is no longer loaded by either active interface. Project images are separately labeled as app screenshots, CAD or conceptual illustrations; replacing the background does not turn those illustrations into photographs.
+Earlier generated artwork remains in repository history / archived assets for provenance, but is no longer loaded by the active interface. Project images are separately labeled as app screenshots, CAD or conceptual illustrations; replacing the background does not turn those illustrations into photographs.

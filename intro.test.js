@@ -6,6 +6,7 @@ import {
   introById,
   introOptions,
   introArtwork,
+  redlineParticles,
 } from "./intro-variants.js";
 
 test("six distinct startup sequences with deterministic safe fallback", () => {
@@ -18,6 +19,37 @@ test("six distinct startup sequences with deterministic safe fallback", () => {
     assert.equal(introById(intro.id), intro);
     assert.equal(intro.stages.length, 3);
   }
+});
+test("Redline is an independent split-screen scene with bounded red particle geometry", () => {
+  const html = introArtwork("redline");
+  assert.equal((html.match(/class="cut-panel /g) || []).length, 2);
+  assert.match(html, /class="cut-beam"/);
+  assert.equal((html.match(/class="cut-spark"/g) || []).length, 48);
+  assert.doesNotMatch(html, /intro-backdrop|red-gate|red-blades/);
+  for (const p of redlineParticles) {
+    assert.ok(p.y >= 0 && p.y <= 100);
+    assert.ok(Math.abs(p.dx) <= 285 && Math.abs(p.dy) <= 85);
+    assert.ok(p.delay >= 2 && p.delay + 0.7 <= 2.9);
+    assert.ok(p.width <= 38 && p.height <= 5);
+  }
+});
+test("the new non-original scenes do not reuse the large loader title layout", () => {
+  const css = readFileSync(
+    new URL("intro-scenes.css", import.meta.url),
+    "utf8",
+  );
+  for (const scene of [
+    "neural-core",
+    "rain-terminal",
+    "ghost-scope",
+    "shard-emblem",
+    "cut-scene",
+  ])
+    assert.ok(css.includes(`.${scene}`));
+  assert.match(
+    css,
+    /#boot-dialog:not\(\[data-intro="fracture"\]\) :is\(#boot-title, #boot-description\)/,
+  );
 });
 test("selector is a native labeled radio group with one selected option", () => {
   for (const intro of intros) {

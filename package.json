@@ -1,6 +1,6 @@
 {
   "name": "hirsu-workshop",
-  "version": "12.0.0",
+  "version": "13.0.0",
   "private": true,
   "type": "module",
   "description": "Hrushi's static developer and hardware portfolio",

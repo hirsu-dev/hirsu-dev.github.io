@@ -33,15 +33,18 @@ import {
   validInterface,
 } from "./interfaces.js";
 
-test("exactly two valid interfaces; explicit links override saved choice", () => {
-  assert.deepEqual(Object.keys(interfaces), ["neon", "blacksite"]);
-  assert.equal(interfaceFromSearch("?view=neon", "blacksite"), "neon");
+test("Overdrive is the only interface; legacy Night City URLs and storage migrate safely", () => {
+  assert.deepEqual(Object.keys(interfaces), ["blacksite"]);
+  assert.equal(interfaceFromSearch("?view=neon", "blacksite"), "blacksite");
+  assert.equal(interfaceFromSearch("?view=neon", "neon"), "blacksite");
+  assert.equal(interfaceFromSearch("", "neon"), "blacksite");
+  assert.equal(validInterface("neon"), false);
   assert.equal(interfaceFromSearch("", "blacksite"), "blacksite");
   assert.equal(interfaceFromSearch("?view=unknown", "bad-value"), "blacksite");
   assert.equal(interfaceFromSearch(""), "blacksite");
   assert.equal(validInterface("__proto__"), false);
 });
-test("switching interfaces preserves the selected project and other query state", () => {
+test("legacy interface URL normalization preserves project and other query state", () => {
   const url = interfaceURL(
     "https://example.test/?q=python&view=neon#maintaineros",
     "blacksite",
@@ -50,6 +53,19 @@ test("switching interfaces preserves the selected project and other query state"
   assert.equal(url.searchParams.get("view"), "blacksite");
   assert.equal(url.hash, "#maintaineros");
   assert.throws(() => interfaceURL(url, "__proto__"));
+});
+test("live shell and controller offer no retired interface controls or route", () => {
+  const html = readFileSync(new URL("index.html", import.meta.url), "utf8");
+  const controller = readFileSync(
+    new URL("console.js", import.meta.url),
+    "utf8",
+  );
+  assert.doesNotMatch(html, /Night City|data-view-choice|SWITCH INTERFACE/);
+  assert.doesNotMatch(
+    controller,
+    /cityHome|Switch to Night City|setView\("neon"\)/,
+  );
+  assert.match(html, /STARTUP SETTINGS/);
 });
 
 test("legacy circular navigation helper wraps correctly", () => {

@@ -1,12 +1,4 @@
 export const interfaces = {
-  neon: {
-    name: "Night City",
-    number: "01",
-    tagline: "From code to the real world.",
-    description:
-      "Yellow/black cinematic landing page, real city photography, clipped panels and game-inspired transitions.",
-    color: "#fcee0a",
-  },
   blacksite: {
     name: "Overdrive",
     number: "02",

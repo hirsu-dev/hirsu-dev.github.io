@@ -11,7 +11,7 @@ import { cityHome } from "./city-content.js";
 import { overdriveHome } from "./overdrive-content.js";
 import { cityPhoto, photoCredit } from "./photo.js";
 
-test("both active themes use only the credited real photograph for their hero", () => {
+test("Overdrive and the archived theme use only the credited real photograph for their hero", () => {
   for (const html of [cityHome(), overdriveHome("")]) {
     assert.ok(html.includes(`srcset="${cityPhoto.srcset}"`));
     assert.ok(html.includes(cityPhoto.source));

@@ -28,11 +28,6 @@
         ? "off"
         : "on";
       try {
-        const view =
-          new URLSearchParams(location.search).get("view") ||
-          localStorage.getItem("hirsu-city-view-v9");
-        document.documentElement.dataset.view =
-          view === "neon" ? "neon" : "blacksite";
         const motion = localStorage.getItem("hirsu-console-motion");
         document.documentElement.dataset.motion =
           motion === "off" ||
@@ -50,8 +45,9 @@
     <link rel="stylesheet" href="overdrive.css?v=9" />
     <link rel="stylesheet" href="cyber-hud.css?v=10" />
     <link rel="stylesheet" href="terminal-ui.css?v=11" />
-    <link rel="stylesheet" href="intro-variants.css?v=12" />
-    <script type="module" src="console.js?v=12"></script>
+    <link rel="stylesheet" href="intro-variants.css?v=13" />
+    <link rel="stylesheet" href="intro-scenes.css?v=13" />
+    <script type="module" src="console.js?v=13"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -73,7 +69,7 @@
         ><button
           id="city-menu"
           aria-haspopup="dialog"
-          aria-label="Open navigation and interface menu"
+          aria-label="Open navigation and startup menu"
         >
           MENU <span>+</span></button
         ><a
@@ -149,7 +145,7 @@
         <button
           class="rail-item"
           id="theme-button"
-          aria-label="Open interface menu"
+          aria-label="Open startup settings"
           aria-haspopup="dialog"
         >
           <span class="rail-icon" aria-hidden="true">◐</span
@@ -183,10 +179,10 @@
           <span class="local-label"><i></i> PERSONAL ARCHIVE</span
           ><button
             id="top-theme"
-            aria-label="Switch interface"
+            aria-label="Open startup settings"
             aria-haspopup="dialog"
           >
-            Night City <span aria-hidden="true">⌄</span>
+            Startup settings <span aria-hidden="true">⌄</span>
           </button>
         </div>
       </header>
@@ -229,13 +225,8 @@
             </div>
           </div>
           <div class="theme-strip">
-            <span class="muted">INTERFACE:</span
-            ><button data-view-choice="neon" aria-pressed="true">
-              Night City</button
-            ><span>/</span
-            ><button data-view-choice="blacksite" aria-pressed="false">
-              Overdrive</button
-            ><button id="motion-button" aria-pressed="true">Motion: on</button>
+            <span class="muted">INTERFACE: OVERDRIVE</span>
+            <button id="motion-button" aria-pressed="true">Motion: on</button>
           </div>
         </section>
         <div id="screen"></div>
@@ -291,7 +282,7 @@
         </p>
         <nav aria-label="Footer navigation">
           <a href="#about">ABOUT / SOURCES</a
-          ><button id="city-footer-theme">SWITCH INTERFACE</button
+          ><button id="city-footer-theme">STARTUP SETTINGS</button
           ><a
             href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io"
             target="_blank"
@@ -311,8 +302,8 @@
     </div>
     <dialog id="theme-dialog" aria-labelledby="theme-title">
       <div class="dialog-bar">
-        <span>INTERFACE / PERSONALIZE</span
-        ><button data-close aria-label="Close interface menu">[×]</button>
+        <span>OVERDRIVE / PERSONALIZE</span
+        ><button data-close aria-label="Close settings menu">[×]</button>
       </div>
       <nav class="menu-pages" aria-label="Menu navigation">
         <a href="#index">HOME</a><a href="#projects">ALL PROJECTS</a
@@ -321,25 +312,8 @@
         ><a href="#about">ABOUT / SOURCES</a
         ><button id="city-commands">COMMANDS / CTRL K</button>
       </nav>
-      <h2 id="theme-title">Choose a frequency.</h2>
-      <p class="muted">Same projects. Two different signals.</p>
-      <div class="theme-options">
-        <button data-view-choice="neon">
-          <span class="swatches"><i></i><i></i><i></i></span
-          ><b>01 / Night City</b
-          ><span
-            >Cinematic yellow/black landing page, real city photography, clipped
-            panels and game-inspired motion.</span
-          ></button
-        ><button data-view-choice="blacksite">
-          <span class="swatches overdrive"><i></i><i></i><i></i></span
-          ><b>02 / Overdrive</b
-          ><span
-            >A red/yellow project terminal, real night photography, a scrolling
-            workbench and connected project globe. Default interface.</span
-          >
-        </button>
-      </div>
+      <h2 id="theme-title">Choose your entrance.</h2>
+      <p class="muted">One interface. Six different ways in. OVERDRIVE.</p>
       <fieldset class="intro-picker" aria-describedby="intro-help">
         <legend>STARTUP / SELECT A SEQUENCE</legend>
         <p id="intro-help">

@@ -2,20 +2,25 @@
 
 Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Pages. No Raspberry Pi hosting, backend, paid domain, tracking, accounts, external fonts, or build dependencies.
 
-## Two interfaces
+## Overdrive
 
-- **Overdrive** (default): an original red/yellow game-menu-style project terminal, a real Shinjuku night photograph, all seven scrolling project showcases, an interactive globe and workbench. https://hrushikbarani-hub.github.io/?view=blacksite
-- **Night City**: the alternate acid-yellow / black landing page with the same credited real photograph, clipped navigation and matching archive / detail UI. https://hrushikbarani-hub.github.io/?view=neon
+Overdrive is the only interface: an original red/yellow game-menu-style project terminal, a real Shinjuku night photograph, all seven scrolling project showcases, an interactive globe and workbench. https://hrushikbarani-hub.github.io/
 
-Switch in MENU or the footer. Mode changes preserve project, gallery shot, bookmarks, search, expansions and motion. History restores modes, including the original bare URL. The v9 view preference starts returning visitors on Overdrive unless they use an explicit theme link; subsequent choices are remembered. Bookmarks and explicit motion preferences are retained locally. Motion defaults on unless the visitor requests reduced motion or previously paused FX.
+MENU and the footer open startup settings. Night City has been removed from the menu, command palette and active renderer. Old `?view=neon` links and saved theme preferences now open Overdrive without losing the project hash. Historical styles/source remain for provenance but the retired homepage module is not loaded. Bookmarks and explicit motion preferences are retained locally. Motion defaults on unless the visitor requests reduced motion or previously paused FX.
 
 Home is #index. The complete searchable archive is #projects. Old #project- project links, #stack, #bench, #whoami and #themes links remain supported; #work opens the archive.
 
-## Interchangeable startup sequences / v12
+## Independent scene animation / v13
+
+Redline is rebuilt around two complementary diagonal screen masks. The split wordmark converges, a red slash draws across it, 48 deterministic pixel sparks burst from points along the slash, and the two screen halves tear apart to reveal the real page. The particles are bounded CSS elements, not a continuous JavaScript render loop. There is no bright full-screen flash.
+
+The other new sequences also have separate compositions: an optical core, a typing terminal, an oscilloscope trace and converging geometric plates. They no longer show recolored copies of the original centered loader. Signal Fracture preserves the original. The shared percentage and Skip control remain small HUD elements; the existing bounded controller and cancellation rules apply to every scene. Scene geometry and keyframes are in `intro-scenes.css` and `intro-variants.js`.
+
+## Interchangeable startup sequences / v12 foundation
 
 MENU → **Startup / Select a sequence** offers six original treatments: Signal Fracture (the original eight-band glitch), Neural Link (optical rings and a radial rush), Data Rain (falling code and upward peel), Redline (diagonal split gates), Ghost Scan (CRT trace and line collapse), and Shard Assembly (six converging/scattering plates). Native radio cards provide keyboard selection and static previews. Use **Preview** to play the selected sequence; the choice is saved in `hirsu-startup-v12` independently of theme and motion. Blocked storage gives a session-only notice; unknown saved values fall back to Signal Fracture.
 
-Every treatment uses the same bounded 2.9-second controller: 100% at 2.25 seconds, exit at 2.38 seconds, completion at 2.9 seconds. No network request or asset loading controls the timer. Skip, Escape, backgrounding, FX-off and unsupported dialogs release the modal and scroll lock. Preview returns focus to the visible MENU button. FX-off disables preview without forgetting the selected sequence; system reduced motion remains respected. Decorative code is not a shell or device scan. No sound or bright full-screen strobes.
+Every treatment uses the same bounded 2.9-second controller: 100% at 2.25 seconds, the exit transition begins at 2.25–2.38 seconds depending on the scene, and completion is at 2.9 seconds. No network request or asset loading controls the timer. Skip, Escape, backgrounding, FX-off and unsupported dialogs release the modal and scroll lock. Preview returns focus to the visible MENU button. FX-off disables preview without forgetting the selected sequence; system reduced motion remains respected. Decorative code is not a shell or device scan. No sound or bright full-screen strobes.
 
 `intro-variants.js` holds the validated registry, radio cards and decorative geometry; `intro-variants.css` holds the distinct compositions and transitions. `intro.test.js` and expanded `motion.test.js` cover each treatment's selection, completion and cancellation paths.
 
@@ -89,7 +94,7 @@ The sphere is a conceptual map of related projects, not a map of actual location
 ## Edit / verify / deploy
 
 - index.html: shell, cinematic header, preference bootstrap, menu, native dialogs, no-JavaScript fallback.
-- city-content.js: original cinematic homepage composition and factual featured projects.
+- city-content.js: archived Night City homepage, no longer imported by the active renderer.
 - overdrive-content.js / overdrive.css: continuous Overdrive homepage, responsive showcase system, 100%-to-glitch transition and v9 motion refinements.
 - project-terminal.js / terminal-ui.css: v11 interactive file directory and red/yellow material system.
 - photo.js / PHOTO-CREDITS.md: shared responsive photograph metadata, visible attribution and license notes.
@@ -101,7 +106,9 @@ The sphere is a conceptual map of related projects, not a map of actual location
 - console-model.js: pure route/search/storage/escaping helpers.
 - project-network.js: original sphere renderer and lifecycle.
 - projects.js / stack-data.js: factual project metadata and dated snapshot.
-- interfaces.js: two-mode registry and validated URL helpers.
+- interfaces.js: Overdrive registry and legacy URL normalization helpers.
+- intro-variants.js / intro-scenes.css: startup choices, scene markup, particles and v13 keyframes. Change the particle sizes/timing in `redlineParticles`; edit the `cut-*` rules for Redline's slash and split.
+- intro-variants.css: startup picker styling and the optical, data, CRT and shard foundation effects.
 
 No npm install needed:
 
