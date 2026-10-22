@@ -1,11 +1,12 @@
 import { projects } from "./projects.js?v=8";
 import { escapeHTML as esc } from "./console-model.js?v=8";
+import { cityPhoto, photoCredit } from "./photo.js?v=11";
 
 export const featuredIds = ["maintaineros", "civiclens", "custom-keyboard"];
 export function cityHome() {
   const featured = featuredIds.map((id) => projects.find((p) => p.id === id));
   return `<section class="city-hero" aria-labelledby="hero-title">
-    <div class="city-keyart" aria-hidden="true"><img src="assets/night-city-engineer-v8.png" width="1672" height="941" alt="" fetchpriority="high" decoding="async" /></div>
+    <div class="city-keyart" aria-hidden="true"><img src="${cityPhoto.src}" srcset="${cityPhoto.srcset}" sizes="100vw" width="3888" height="2592" alt="" fetchpriority="high" decoding="async" /></div>
     <div class="hero-lines" aria-hidden="true"></div>
     <div class="city-hero-content">
       <div class="hero-disciplines"><span>SOFTWARE<br /><b>THAT SOLVES</b></span><span>HARDWARE<br /><b>THAT MOVES</b></span><span>CURIOSITY<br /><b>THAT BUILDS</b></span></div>
@@ -16,7 +17,7 @@ export function cityHome() {
       <div class="hero-tools" aria-label="Selected project tools"><span>PYTHON</span><span>JAVASCRIPT</span><span>SWIFTUI</span><span>RASPBERRY PI</span><span>KiCAD</span></div>
     </div>
     <div class="hero-loadout" aria-label="Quick project links"><a href="#robo-telescope" class="loadout-item loadout-one"><span>01 / ROBOTICS</span><b>ROBO TELESCOPE</b><small>UNDER REPAIR</small><i aria-hidden="true"></i></a><a href="#nexus-ai" class="loadout-item loadout-two"><span>02 / PERSONAL AI</span><b>NEXUS MOBILE</b><small>EXPERIMENTAL CLIENT</small><i aria-hidden="true"></i></a><a href="#custom-keyboard" class="loadout-item loadout-three"><span>03 / ELECTRONICS</span><b>NEXUS MACRO PAD</b><small>DESIGN PREPARED</small><i aria-hidden="true"></i></a></div>
-    <div class="hero-bottom"><span><b>07</b> PERSONAL PROJECTS <i>/</i> <b>05</b> PUBLIC REPOS</span><span class="hero-art-credit">ORIGINAL FICTIONAL KEY ART / NOT A PORTRAIT</span><a href="#projects">SCROLL / EXPLORE <span aria-hidden="true">↓</span></a></div>
+    <div class="hero-bottom"><span><b>07</b> PERSONAL PROJECTS <i>/</i> <b>05</b> PUBLIC REPOS</span>${photoCredit()}<a href="#projects">SCROLL / EXPLORE <span aria-hidden="true">↓</span></a></div>
   </section>
   <section class="city-featured city-section" aria-labelledby="featured-title"><div class="section-label"><span>/// PROJECT.MODULE_HIGHLIGHT</span><span>PERSONAL ARCHIVE / 2026</span></div><div class="city-section-heading" data-reveal><h2 id="featured-title">SELECTED<br /><span>TRANSMISSIONS.</span></h2><a class="text-link" href="#projects">ALL 7 PROJECTS <span>↗</span></a></div>
     <div class="featured-grid">${featured.map((p, i) => `<article class="feature-tile feature-${i}" data-reveal><a class="feature-image" href="#${p.id}" aria-label="Open ${esc(p.title)}"><img src="${p.image}" alt="${esc(p.alt)}" loading="lazy" width="1200" height="750" /><span class="feature-index">0${i + 1} / ${esc(p.status.toUpperCase())}</span><span class="feature-open" aria-hidden="true">↗</span></a><div class="feature-copy"><p class="city-kicker">${esc(p.category)}</p><h3><a href="#${p.id}">${esc(p.title)}</a></h3><p>${esc(p.description)}</p><small>${esc(p.caption)}</small></div></article>`).join("")}</div>

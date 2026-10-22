@@ -4,14 +4,20 @@ Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Page
 
 ## Two interfaces
 
-- **Overdrive** (default): a chartreuse / violet scrolling portfolio with cinematic typography, all seven project showcases, an embedded interactive globe, the technology loadout and workbench. https://hrushikbarani-hub.github.io/?view=blacksite
-- **Night City**: the alternate acid-yellow / black landing page inspired by the official Cyberpunk 2077 website, with original fictional key art, clipped navigation and matching archive / detail UI. https://hrushikbarani-hub.github.io/?view=neon
+- **Overdrive** (default): an original red/yellow game-menu-style project terminal, a real Shinjuku night photograph, all seven scrolling project showcases, an interactive globe and workbench. https://hrushikbarani-hub.github.io/?view=blacksite
+- **Night City**: the alternate acid-yellow / black landing page with the same credited real photograph, clipped navigation and matching archive / detail UI. https://hrushikbarani-hub.github.io/?view=neon
 
 Switch in MENU or the footer. Mode changes preserve project, gallery shot, bookmarks, search, expansions and motion. History restores modes, including the original bare URL. The v9 view preference starts returning visitors on Overdrive unless they use an explicit theme link; subsequent choices are remembered. Bookmarks and explicit motion preferences are retained locally. Motion defaults on unless the visitor requests reduced motion or previously paused FX.
 
 Home is #index. The complete searchable archive is #projects. Old #project- project links, #stack, #bench, #whoami and #themes links remain supported; #work opens the archive.
 
-## Angular HUD / v10
+## Project terminal & real photography / v11
+
+The default homepage is now a working project directory: select any of seven files to inspect its preview, description, factual status, tools and source link. Arrow keys wrap through files, Home/End jump, and Tab reaches the preview and links. Selection uses native buttons and ARIA tabs; transitions use the existing optional motion controller. The full scrolling archive and globe remain below.
+
+The original composition uses warning-red frames, yellow selection bars, cyan metadata, stepped panel cuts and existing localized glitches. Both active backgrounds now load **Shinjuku by Night by Fboas**, a real camera photograph under **CC BY 3.0**. The original is bundled alongside a smaller responsive copy, with visible attribution on both homepages and in About. See [PHOTO-CREDITS.md](PHOTO-CREDITS.md) for the source, license and display-change notes. Generated hero art is no longer used by either interface. Actual project screenshots and illustrations retain their factual labels and unchanged files.
+
+## Angular HUD / v10 history
 
 Adds notched panel shells, stepped borders, warning-red accents, clipped controls, targeting-frame marks, a decorative animated meter, localized image-slice interference, stronger chromatic heading glitches and hover/focus scans. The visual HUD is labeled as non-telemetry. No new assets or dependencies; actual project images remain unchanged. FX-off and hidden-tab rules cover the new effects. The existing 100%-to-glitch intro is retained.
 
@@ -25,7 +31,7 @@ More visible low-contrast grain, more frequent rolling static, a moving discipli
 
 ## Signal foundation / v8
 
-The current presentation adds original rooftop key art, a depth-layered project globe, animated static grain, low-opacity rolling scans, chromatic text slices and orbital boot rings. Images use one charcoal/cyan/yellow visual system: shared 16:10 contained stages, consistent captions and matching vector illustration palettes. Actual CAD and application screenshot files remain unchanged and are not cropped or color-filtered.
+The v8 foundation added rooftop key art (replaced by real photography in v11), a depth-layered project globe, animated static grain, low-opacity rolling scans, chromatic text slices and orbital boot rings. Project images use shared 16:10 contained stages and consistent captions. Actual CAD and application screenshot files remain unchanged and are not cropped or color-filtered.
 
 The globe has front/back mesh depth, a point shell, curved project connections with decorative traveling points, orbital rings and stable docking labels. Rotation, drag and zoom ease into position. Keyboard focus and the pause control stop automatic motion. FX off leaves a static, manually operable globe; hidden/offscreen canvases stop rendering. Geometry, theme colors and label measurements are cached. A canvas-unavailable fallback keeps project links usable.
 
@@ -46,7 +52,7 @@ Motion throughout: staggered line-by-line hero assembly, a key-art wipe, occasio
 
 Toggle FX in the header or animations in the menu. FX off disables the intro and all motion; replay is disabled until FX is enabled. System reduced motion is respected by default, including when storage is blocked; an explicit preference overrides it. Pointer parallax only runs for a fine pointer.
 
-The current hero is an original fictional anonymous engineer, not Hrushi or his hardware. No franchise character art, trademarks or reference source code is bundled. Asset provenance and the complete built-in generation prompt: [ART-DIRECTION-V8.md](ART-DIRECTION-V8.md). Earlier original artwork and its v6 provenance are retained but not loaded.
+The current hero is a genuine licensed city photograph, not a portrait of Hrushi or a picture of his hardware. No franchise character art, trademarks or reference source code is bundled. Earlier generated artwork and [its v8 provenance](ART-DIRECTION-V8.md) are retained as historical assets, but neither active homepage loads them.
 
 Sites guidance informed the responsive presentation structure, meaningful project sections, accessibility, and clear distinction between real evidence and illustration.
 
@@ -77,6 +83,8 @@ The sphere is a conceptual map of related projects, not a map of actual location
 - index.html: shell, cinematic header, preference bootstrap, menu, native dialogs, no-JavaScript fallback.
 - city-content.js: original cinematic homepage composition and factual featured projects.
 - overdrive-content.js / overdrive.css: continuous Overdrive homepage, responsive showcase system, 100%-to-glitch transition and v9 motion refinements.
+- project-terminal.js / terminal-ui.css: v11 interactive file directory and red/yellow material system.
+- photo.js / PHOTO-CREDITS.md: shared responsive photograph metadata, visible attribution and license notes.
 - city.css: cinematic interface and responsive rules, layered over console.css (alternate explorer / shared controls).
 - city-motion.js: optional original boot controller, panel / menu / reveal / pointer effects and lifecycle cleanup.
 - city-effects.css: original boot, shutters, chromatic slices, scans, hover and ambient motion; layered over the existing interfaces.
@@ -92,6 +100,6 @@ No npm install needed:
     npm run check
     python -m http.server 8130 --bind 127.0.0.1
 
-Open http://127.0.0.1:8130/. ES modules need HTTP. The dependency-free tests in site.test.js, motion.test.js and network.test.js cover default mode, URLs, routes, search/filtering, malformed storage, escaping, both homepages, assets, panel frames, boot percentage/release/dismissal/replay/focus/timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, unsupported dialogs, finite spherical arcs, collision-free docking, embedded globe scroll passthrough, globe pause/focus/quality/visibility/FX/lifecycle behavior, canvas fallback, language aggregation, UTC dates and the legacy wrap helper. Controller tests use deterministic DOM/canvas/RAF doubles; they do not replace visual browser QA.
+Open http://127.0.0.1:8130/. ES modules need HTTP. The dependency-free tests in site.test.js, motion.test.js, network.test.js and terminal.test.js cover default mode, URLs, routes, search/filtering, malformed storage, escaping, both homepages, photo attribution, assets, file selection and keyboard navigation, panel frames, boot percentage/release/dismissal/replay/focus/timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, unsupported dialogs, finite spherical arcs, collision-free docking, embedded globe scroll passthrough, globe pause/focus/quality/visibility/FX/lifecycle behavior, canvas fallback, language aggregation, UTC dates and the legacy wrap helper. Controller tests use deterministic DOM/canvas/RAF doubles; they do not replace visual browser QA.
 
 Push main. GitHub Pages deploys main / root with .nojekyll and HTTPS. No paid service, backend, Pi, or custom domain is required. The preview server may be stopped without affecting the live site.

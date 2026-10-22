@@ -4,16 +4,16 @@ export const interfaces = {
     number: "01",
     tagline: "From code to the real world.",
     description:
-      "Official-site-inspired yellow/black cinematic landing page, original key art, clipped panels and game-inspired transitions.",
+      "Yellow/black cinematic landing page, real city photography, clipped panels and game-inspired transitions.",
     color: "#fcee0a",
   },
   blacksite: {
     name: "Overdrive",
     number: "02",
-    tagline: "Keep building. No brakes.",
+    tagline: "Code meets the physical world.",
     description:
-      "Edgerunners-inspired chartreuse and violet, a continuous scrolling workbench, animated project network and signal distortion.",
-    color: "#100c1b",
+      "An original red/yellow project terminal, real night photography, a scrolling workbench and an animated project network.",
+    color: "#0b0a0f",
   },
 };
 export function validInterface(value) {

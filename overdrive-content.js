@@ -1,5 +1,7 @@
 import { projects } from "./projects.js?v=8";
 import { escapeHTML as esc } from "./console-model.js?v=8";
+import { cityPhoto, photoCredit } from "./photo.js?v=11";
+import { projectTerminal } from "./project-terminal.js?v=11";
 
 export const overdriveSections = [
   "od-projects",
@@ -19,18 +21,21 @@ export function overdriveHome(network) {
   ];
   return `<div class="overdrive-home">
     <section class="od-hero" aria-labelledby="od-title">
-      <div class="od-hero-art" aria-hidden="true"><img src="assets/night-city-engineer-v8.png" alt="" width="1672" height="941" fetchpriority="high" /></div>
+      <div class="od-hero-art" aria-hidden="true"><img src="${cityPhoto.src}" srcset="${cityPhoto.srcset}" sizes="100vw" alt="" width="3888" height="2592" fetchpriority="high" /></div>
       <div class="od-grid" aria-hidden="true"></div>
-      <div class="hud-image-slices" aria-hidden="true"><img src="assets/night-city-engineer-v8.png" alt="" width="1672" height="941" /></div>
-      <div class="hud-frame" aria-hidden="true"><span>OVR_DRIVE // 010</span><span>VISUAL INTERFACE / NOT TELEMETRY</span><i></i><b>+<br />+<br />+<br />+</b></div>
+      <div class="hud-image-slices" aria-hidden="true"><img src="${cityPhoto.src}" srcset="${cityPhoto.srcset}" sizes="100vw" alt="" width="3888" height="2592" /></div>
+      <div class="hud-frame" aria-hidden="true"><span>OVR_DRIVE // WORKBENCH_OS.11</span><span>PERSONAL ARCHIVE / MANUAL CONTROL</span><i></i><b>+<br />+<br />+<br />+</b></div>
+      <div class="terminal-banner">
       <div class="od-hero-copy">
-        <p class="od-kicker od-enter"><i></i> HIRSU / INDEPENDENT BUILDER / 001</p>
-        <h1 id="od-title"><span class="od-title-line">KEEP</span><span class="od-title-line od-outline">BUILDING.</span><span class="od-title-line od-lime">NO BRAKES<span class="od-dot">.</span></span></h1>
-        <p class="od-intro od-enter">Software that does something. Hardware that moves.<br />I'm Hrushi. This is my workbench.</p>
-        <div class="od-actions od-enter"><a href="#od-projects" data-home-section="od-projects" class="od-button">EXPLORE THE BUILDS <span>↓</span></a><a href="https://github.com/hrushikbarani-hub" target="_blank" rel="noopener noreferrer">GITHUB ↗</a></div>
+        <p class="od-kicker od-enter"><i></i> HRUSHI / INDEPENDENT BUILDER</p>
+        <h1 id="od-title"><span class="od-title-line">HIRSU<span class="od-dot">_</span></span></h1>
+        <p class="terminal-tagline od-enter">CODE MEETS THE PHYSICAL WORLD.</p>
+        <p class="od-intro od-enter">Useful software. Custom electronics. A telescope, a home lab,<br />and whatever I can get working next.</p>
       </div>
-      <aside class="od-transmission od-enter"><span>TRANSMISSION / 10</span><strong>CODE.<br />CIRCUITS.<br />CURIOSITY.</strong><div class="hud-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>Original fictional key art.<br />Not a portrait.</p></aside>
-      <div class="od-hero-bottom od-enter"><span>07 PROJECTS / 05 REPOSITORIES</span><a href="#od-projects" data-home-section="od-projects">SCROLL TO EXPLORE <span class="od-scroll-arrow">↓</span></a><span>OVERDRIVE / PERSONAL ARCHIVE</span></div>
+      <aside class="terminal-profile od-enter" aria-label="Portfolio summary"><p>BUILDER PROFILE / HIRSU</p><div class="terminal-stats"><span><b>07</b>PROJECT FILES</span><span><b>05</b>PUBLIC REPOS</span><span><b>00</b>TRACKERS</span></div><div class="terminal-directive"><span>ONGOING WORK</span><a href="#robo-telescope">Repair Robo Telescope <b>↗</b></a><a href="#custom-keyboard">Validate the macro pad <b>↗</b></a></div></aside>
+      </div>
+      ${projectTerminal()}
+      <div class="od-hero-bottom od-enter">${photoCredit()}<a href="#od-projects" data-home-section="od-projects">SCROLL / FULL ARCHIVE <span class="od-scroll-arrow">↓</span></a></div>
     </section>
     <div class="od-ticker" aria-hidden="true"><div>${Array.from({ length: 2 }, () => `<span>PYTHON <b>×</b> JAVASCRIPT <b>×</b> ROBOTICS <b>×</b> LOCAL AI <b>×</b> RASPBERRY PI <b>×</b> OPEN SOURCE <b>×</b> `).join("")}</div></div>
     <nav class="od-jump" aria-label="Home sections"><span>SCROLL / INDEX</span>${overdriveSections.map((id, i) => `<a href="#${id}" data-home-section="${id}">0${i + 1} / ${["BUILDS", "NETWORK", "STACK", "WORKBENCH"][i]}</a>`).join("")}</nav>

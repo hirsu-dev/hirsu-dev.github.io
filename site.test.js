@@ -114,7 +114,8 @@ test("cinematic landing uses real projects, labeled media and working archive ro
     assert.ok(html.includes(escapeHTML(p.caption)));
   }
   assert.match(html, /href="#projects"/);
-  assert.match(html, /ORIGINAL FICTIONAL KEY ART \/ NOT A PORTRAIT/);
+  assert.match(html, /REAL PHOTOGRAPH/);
+  assert.match(html, /Shinjuku by Night — Fboas/);
   assert.match(html, /currently broken/);
   assert.doesNotMatch(html, /PUSH SQUARE|GAMESPOT|EUROGAMER|BUY NOW/);
 });
@@ -123,7 +124,7 @@ test("all project and cinematic image assets exist in the static checkout", () =
     p.image,
     ...(p.gallery || []).map((s) => s.image),
   ]);
-  assets.push("assets/night-city-engineer-v8.png");
+  assets.push("assets/shinjuku-night.jpg", "assets/shinjuku-night-1280.jpg");
   for (const path of assets)
     assert.ok(existsSync(new URL(path, import.meta.url)), path);
 });
