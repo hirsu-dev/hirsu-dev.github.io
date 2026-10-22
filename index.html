@@ -75,7 +75,8 @@
     <link rel="stylesheet" href="intro-variants.css?v=13" />
     <link rel="stylesheet" href="intro-scenes.css?v=13" />
     <link rel="stylesheet" href="settings.css?v=14" />
-    <script type="module" src="console.js?v=14"></script>
+    <link rel="stylesheet" href="side-channel.css?v=15" />
+    <script type="module" src="console.js?v=15"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -87,7 +88,8 @@
         <a href="#projects" data-nav="projects">PROJECTS</a
         ><a href="#stack" data-nav="stack">STACK</a
         ><a href="#network" data-nav="network">NETWORK</a
-        ><a href="#log" data-nav="log">WORKBENCH</a
+        ><a href="#lab" data-nav="lab">LAB</a
+        ><a href="#radio" data-nav="radio">RADIO</a
         ><button
           id="city-settings"
           aria-haspopup="dialog"
@@ -169,7 +171,7 @@
         >
       </nav>
       <div class="rail-bottom">
-        <span class="rail-version" aria-hidden="true">v14.0</span>
+        <span class="rail-version" aria-hidden="true">v15.0</span>
         <button
           class="rail-item"
           id="theme-button"
@@ -304,11 +306,12 @@
         <a class="city-wordmark" href="#index">hirsu<span>_</span></a>
         <p>
           INDEPENDENT PROJECTS. REAL WORK IN PROGRESS.<br /><small
-            >Original portfolio · no franchise affiliation · no tracking.</small
+            >Original portfolio · no franchise affiliation · optional external
+            radio.</small
           >
         </p>
         <nav aria-label="Footer navigation">
-          <a href="#about">ABOUT / SOURCES</a
+          <a href="#about">ABOUT / SOURCES</a><a href="#radio">RADIO</a
           ><button id="city-footer-theme">SETTINGS</button
           ><a
             href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io"
@@ -336,6 +339,7 @@
         <a href="#index">HOME</a><a href="#projects">ALL PROJECTS</a
         ><a href="#network">NETWORK</a><a href="#stack">STACK</a
         ><a href="#log">WORKBENCH</a><a href="#saved">SAVED</a
+        ><a href="#lab">SIGNAL LAB</a><a href="#radio">RADIO / MUSIC</a
         ><a href="#about">ABOUT / SOURCES</a
         ><button id="city-commands">COMMANDS / CTRL K</button>
       </nav>
@@ -425,7 +429,9 @@
             <b>Private by default</b>
             <p>
               No account, analytics or tracking. Preferences and saved projects
-              stay in this browser; they do not sync to another device.
+              stay in this browser; they do not sync to another device. Optional
+              Radio loads YouTube only after you choose to connect; Google's
+              privacy policy then applies to that player.
             </p>
           </div>
           <button class="settings-secondary" id="settings-reset">
@@ -595,7 +601,7 @@
       <footer class="settings-footer">
         <span id="settings-status" role="status"
           >Saved in this browser. No account or tracking.</span
-        ><span>HIRSU / 14</span>
+        ><span>HIRSU / 15</span>
       </footer>
     </dialog>
     <dialog id="command-dialog" aria-labelledby="command-title">
@@ -645,7 +651,8 @@
         <dd>Close the current dialog</dd>
         <dt>Network</dt>
         <dd>
-          Drag to rotate, scroll to zoom; project buttons work with a keyboard
+          Drag or use arrows to rotate; + / − zoom. Select a node to inspect
+          connections. Reset unlocks it. Wheel zoom requires canvas focus.
         </dd>
       </dl>
       <p>

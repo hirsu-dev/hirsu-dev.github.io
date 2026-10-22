@@ -57,6 +57,9 @@ export function resolveRoute(hash) {
       "about",
       "saved",
       "themes",
+      "lab",
+      "radio",
+      "archive",
     ].includes(route)
     ? route
     : "index";

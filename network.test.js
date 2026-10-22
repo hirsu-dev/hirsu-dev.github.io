@@ -65,11 +65,14 @@ function harness(
   const canvas = new Target(),
     container = new Target(),
     doc = new Target();
-  const state = { textContent: "" };
-  const labels = Array.from({ length: 7 }, () => {
+  const state = { textContent: "" },
+    inspector = { innerHTML: "" };
+  const labels = Array.from({ length: 7 }, (_, i) => {
     const label = new Target();
     label.offsetWidth = 120;
-    label.closest = (selector) => (selector === ".network-node" ? label : null);
+    label.dataset.nodeIndex = String(i);
+    label.closest = (selector) =>
+      [".network-node", "button"].includes(selector) ? label : null;
     return label;
   });
   const quality = [8, 14, 22].map((value) => {
@@ -79,6 +82,21 @@ function harness(
     return button;
   });
   const spin = new Target();
+  const reset = new Target();
+  reset.id = "network-reset";
+  reset.closest = (s) => (s === "button" ? reset : null);
+  const modes = ["orbital", "minimal"].map((mode) => {
+    const b = new Target();
+    b.dataset.networkMode = mode;
+    b.closest = (s) => (s === "button" ? b : null);
+    return b;
+  });
+  const zoom = ["-1", "1"].map((value) => {
+    const b = new Target();
+    b.dataset.zoom = value;
+    b.closest = (s) => (s === "button" ? b : null);
+    return b;
+  });
   spin.id = "spin-button";
   spin.closest = (selector) => (selector === "button" ? spin : null);
   canvas.closest = () => null;
@@ -93,11 +111,18 @@ function harness(
     contains: (target) => target === canvas || labels.includes(target),
   };
   container.querySelector = (selector) =>
-    ({ canvas, ".network-viewport": viewport, ".network-state": state })[
-      selector
-    ];
+    ({
+      canvas,
+      ".network-viewport": viewport,
+      ".network-state": state,
+      ".network-inspector": inspector,
+    })[selector];
   container.querySelectorAll = (selector) =>
-    selector === ".network-node" ? labels : quality;
+    selector === ".network-node"
+      ? labels
+      : selector === "[data-network-mode]"
+        ? modes
+        : quality;
   doc.documentElement = { dataset: { motion } };
   doc.hidden = false;
   doc.activeElement = null;
@@ -163,6 +188,10 @@ function harness(
     canvas,
     container,
     state,
+    inspector,
+    reset,
+    modes,
+    zoom,
     labels,
     quality,
     spin,
@@ -276,4 +305,77 @@ test("a missing 2D canvas degrades to accessible links without starting a loop",
   assert.equal(h.container.dataset.renderer, "unavailable");
   assert.equal(h.frames.size, 0);
   assert.equal(h.observers.length, 0);
+});
+test("node selection locks, updates meaningful inspector links, and reset resumes orbit", (t) => {
+  const h = harness(t);
+  h.tick(3);
+  h.container.emit("click", { target: h.labels[4] });
+  h.tick(150);
+  assert.equal(h.labels[4].attributes["aria-pressed"], "true");
+  assert.match(h.inspector.innerHTML, /MaintainerOS/);
+  assert.match(h.inspector.innerHTML, /Python · FastAPI · SQLite/);
+  assert.equal(h.frames.size, 0);
+  assert.equal(h.state.textContent, "NODE / LOCKED");
+  h.container.emit("click", { target: h.reset });
+  h.tick(150);
+  assert.equal(h.labels[4].attributes["aria-pressed"], "false");
+  assert.match(h.inspector.innerHTML, /Find the shared thread/);
+  assert.equal(h.frames.size, 1);
+});
+test("display layers and zoom controls work without ongoing animation", (t) => {
+  const h = harness(t, { motion: "off" });
+  h.tick();
+  const initial = h.calls.length;
+  h.container.emit("click", { target: h.modes[1] });
+  h.tick();
+  assert.equal(h.modes[1].attributes["aria-pressed"], "true");
+  assert.ok(h.calls.length < initial);
+  const before = JSON.stringify(h.calls);
+  h.container.emit("click", { target: h.zoom[1] });
+  h.tick();
+  assert.notEqual(JSON.stringify(h.calls), before);
+  assert.equal(h.frames.size, 0);
+});
+test("dedicated map wheel zoom requires focus and secondary pointers cannot steal dragging", (t) => {
+  const h = harness(t, { motion: "off" });
+  let prevented = false;
+  h.canvas.emit("wheel", {
+    deltaY: 100,
+    preventDefault() {
+      prevented = true;
+    },
+  });
+  assert.equal(prevented, false);
+  h.canvas.focus();
+  h.canvas.emit("wheel", {
+    deltaY: 100,
+    preventDefault() {
+      prevented = true;
+    },
+  });
+  assert.equal(prevented, true);
+  h.canvas.emit("pointerdown", {
+    button: 0,
+    pointerId: 1,
+    clientX: 10,
+    clientY: 10,
+  });
+  h.tick();
+  const initial = JSON.stringify(h.calls);
+  h.canvas.emit("pointerdown", {
+    button: 0,
+    pointerId: 2,
+    clientX: 90,
+    clientY: 90,
+  });
+  h.canvas.emit("pointermove", { pointerId: 2, clientX: 500, clientY: 500 });
+  h.tick();
+  assert.equal(JSON.stringify(h.calls), initial);
+  h.canvas.emit("pointerup", { pointerId: 2 });
+  h.canvas.emit("pointermove", { pointerId: 1, clientX: 50, clientY: 30 });
+  h.tick();
+  assert.notEqual(JSON.stringify(h.calls), initial);
+  h.canvas.emit("pointercancel", { pointerId: 1 });
+  h.tick();
+  assert.equal(h.frames.size, 0);
 });

@@ -10,9 +10,16 @@ import {
   findProjects,
   resolveRoute,
   escapeHTML as esc,
-} from "./console-model.js?v=14";
-import { createProjectNetwork } from "./project-network.js?v=9";
-import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=11";
+} from "./console-model.js?v=15";
+import { createProjectNetwork } from "./project-network.js?v=15";
+import { networkContent } from "./network-view.js?v=15";
+import {
+  labContent,
+  archiveContent,
+  mountSignalPage,
+} from "./signal-pages.js?v=15";
+import { radioContent, mountRadio } from "./radio.js?v=15";
+import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=15";
 import { createCityMotion } from "./city-motion.js?v=14";
 import { mountSettings } from "./settings.js?v=14";
 import {
@@ -49,6 +56,7 @@ let saved = savedIds(read("hirsu-saved-projects")),
 let expanded = new Set(),
   shots = new Map(),
   networkCleanup = null,
+  pageCleanup = null,
   toastTimer;
 const sourceLink = (p, text = "Repository ↗") =>
   p.source
@@ -65,6 +73,7 @@ function toast(text) {
   toastTimer = setTimeout(() => $("#toast").classList.remove("visible"), 2600);
 }
 function openDialog(id) {
+  radio.pause();
   document.querySelectorAll("dialog[open]").forEach((d) => d.close());
   $(id).showModal();
   cityMotion.animate(
@@ -160,6 +169,7 @@ const preferences = mountSettings({
     return write(introStorageKey, "fracture");
   },
 });
+const radio = mountRadio();
 function openSettings(tab = "general") {
   preferences.selectTab(tab);
   openDialog("#settings-dialog");
@@ -199,6 +209,7 @@ document.querySelector(".skip").addEventListener("click", (e) => {
 });
 $("#city-menu").onclick = () => openDialog("#theme-dialog");
 function replayIntro() {
+  radio.pause();
   document.querySelectorAll("dialog[open]").forEach((d) => d.close());
   // Return to a visible control after preview; a closed menu cannot receive focus.
   $("#city-settings").focus({ preventScroll: true });
@@ -418,23 +429,9 @@ function renderNetwork() {
     pageHead(
       "02",
       "The project network.",
-      "Different experiments. Shared tools. Select a node to open its project.",
+      "Different experiments. Shared tools. Lock onto a node and discover the connections.",
     ) + networkContent();
   networkCleanup = createProjectNetwork($("#network-shell"));
-}
-function networkContent() {
-  return `<section class="network-shell" id="network-shell" aria-label="Interactive project network"><div class="network-viewport"><canvas tabindex="0" aria-label="Conceptual project sphere. Drag or use arrow keys to rotate; plus and minus to zoom. Project links follow."></canvas><div class="network-crosshair" aria-hidden="true"></div><span class="network-meta"><span class="network-state">ORBIT / ACTIVE</span>07 PROJECT NODES<br />CONCEPTUAL MAP<br />NOT LIVE TELEMETRY</span><div class="network-labels">${projects.map((p) => `<a class="network-node" href="#${p.id}" aria-label="Open ${esc(p.title)}">${esc(p.title)}</a>`).join("")}</div></div><div class="network-controls"><button id="spin-button" aria-pressed="true">[ Pause rotation ]</button><button id="network-reset">[ Reset ]</button><span>DRAG rotate / + − zoom</span><div class="quality" aria-label="Wireframe detail">${[
-    [8, "LOW"],
-    [14, "MID"],
-    [22, "HIGH"],
-  ]
-    .map(
-      ([q, label]) =>
-        `<button data-quality="${q}" aria-pressed="${q === 14}" aria-label="${label.toLowerCase()} wireframe detail">${label}</button>`,
-    )
-    .join(
-      "",
-    )}</div></div></section><p class="network-legend">Lines connect related work: web tooling, personal computing, electronics, and home services. Positions are illustrative—not physical locations. Rotation pauses while keyboard focus is on the map.</p><nav class="network-index" aria-label="Accessible project list">${projects.map((p) => `<a href="#${p.id}">${esc(p.title)}<span>${esc(p.status)} →</span></a>`).join("")}</nav>`;
 }
 function renderStack() {
   const counts = languageCounts(),
@@ -495,10 +492,10 @@ function renderAbout() {
       "Hello, I'm Hrushi.",
       "Online as hirsu. I build software, experiment with electronics, and connect the two.",
     ) +
-    `<section class="panel"><h2>A small, useful corner of the internet.</h2><p>This is my project archive: a telescope that followed sky coordinates, a Pi keeping home services useful, tools for maintainers and civic records, and a few experiments that are still taking shape.</p><p>Not everything here is finished. Each project includes its actual status, source when public, and a clear distinction between an illustration, CAD, or a working app screenshot.</p><div class="facts"><span><b>7</b> projects</span><span><b>5</b> public project repos</span><span><b>0</b> trackers</span></div><a class="bracket" href="https://github.com/hrushikbarani-hub" target="_blank" rel="noopener noreferrer">[ Find me on GitHub ↗ ]</a></section>
+    `<section class="panel"><h2>A small, useful corner of the internet.</h2><p>This is my project archive: a telescope that followed sky coordinates, a Pi keeping home services useful, tools for maintainers and civic records, and a few experiments that are still taking shape.</p><p>Not everything here is finished. Each project includes its actual status, source when public, and a clear distinction between an illustration, CAD, or a working app screenshot.</p><div class="facts"><span><b>7</b> projects</span><span><b>5</b> public project repos</span><span><b>3</b> side channels</span></div><a class="bracket" href="https://github.com/hrushikbarani-hub" target="_blank" rel="noopener noreferrer">[ Find me on GitHub ↗ ]</a></section>
   <section class="panel"><h2>Colophon / visual references</h2><p>Overdrive reinterprets the angular red/yellow menu language of <a href="https://www.cyberpunk.net/us/en/" target="_blank" rel="noopener noreferrer">Cyberpunk 2077 ↗</a> as an original project terminal. Select a file, inspect its real status and preview, then scroll through the workbench. Overdrive is the sole interface; the menu selects startup sequences. No game source, character art or official branding is bundled; this independent portfolio is not affiliated with the franchise.</p><p>The earlier text-first archive and keyboard controls take inspiration from <a href="https://cyberspace.online/" target="_blank" rel="noopener noreferrer">Cyberspace ↗</a>. The supplied UI references informed geometric callouts, sliding panels, hover/focus states and chromatic distortion. The implementation and project content are original.</p><h3>A real city, photographed.</h3><p>The homepage background uses a genuine photograph of Shinjuku, Tokyo, not AI-generated artwork. The original photograph is bundled locally with a smaller responsive copy; only the display crop, dark overlay and temporary glitch slices alter its presentation.</p>${photoCredit()}<p><a href="PHOTO-CREDITS.md">Full photo attribution and license notes ↗</a></p></section>
   <section class="panel"><h2>A signal from the workbench.</h2><p>The opening takes the idea of an assembling interface from <a href="https://hancore.dev/site/#stack" target="_blank" rel="noopener noreferrer">hancore.dev ↗</a>, reinterpreted as an original short boot sequence with a reticle and chromatic slices that fracture into the page at 100%. It is a visual introduction, not a download meter or system scan. Skip or Escape dismisses it; replay is in the interface menu. FX off disables motion and the intro. System reduced motion is respected by default.</p></section>
-  <section class="panel"><h2>Local by design.</h2><p>Static files on free GitHub Pages. No Raspberry Pi hosting, accounts, analytics, backend, or API keys. Save stores project IDs in this browser. Theme and motion preferences also stay here. The network graphic is a conceptual project map, not home-network telemetry or real locations.</p><p>Project facts: five public GitHub repositories and descriptions supplied by Hrushi. The Pi lab is Pi-hole, VPN, and Tailscale; NEXUS is an experimental client for existing local AI models, not a self-trained foundation model. Images are visibly labeled. Snapshot data and provenance are documented in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io" target="_blank" rel="noopener noreferrer">site source ↗</a>.</p></section>`;
+  <section class="panel"><h2>Local by default.</h2><p>Static files on free GitHub Pages. No Raspberry Pi hosting, portfolio accounts, analytics, backend, or API keys. Saved project IDs, interface preferences and recovered fragments stay in this browser. The network graphic is a conceptual project map, not home-network telemetry or real locations.</p><p><strong>Optional music:</strong> Radio connects to YouTube only when you press Load YouTube player. Google then receives browser data and may use cookies or show ads under its <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">privacy policy</a> and <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener noreferrer">YouTube terms</a>. We do not download or host the recording, access a music account, or store listening history. Closing the deck disconnects the player. See <a href="#radio">Radio</a> for the official release links and playback limitations.</p><p>Project facts: five public GitHub repositories and descriptions supplied by Hrushi. The Pi lab is Pi-hole, VPN, and Tailscale; NEXUS is an experimental client for existing local AI models, not a self-trained foundation model. Images are visibly labeled. Snapshot data and provenance are documented in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io" target="_blank" rel="noopener noreferrer">site source ↗</a>.</p></section>`;
 }
 function renderRoute({ focus = false } = {}) {
   const requested = resolveRoute(location.hash);
@@ -513,6 +510,8 @@ function renderRoute({ focus = false } = {}) {
   }
   networkCleanup?.();
   networkCleanup = null;
+  pageCleanup?.();
+  pageCleanup = null;
   route = requested;
   root.dataset.page = route;
   syncIdentity();
@@ -531,7 +530,14 @@ function renderRoute({ focus = false } = {}) {
   } else if (route === "network") renderNetwork();
   else if (route === "stack") renderStack();
   else if (route === "log") renderLog();
-  else renderAbout();
+  else if (route === "radio") screen.innerHTML = radioContent();
+  else if (route === "lab" || route === "archive") {
+    screen.innerHTML =
+      route === "lab"
+        ? labContent()
+        : archiveContent(read("hirsu-fragments-v15"));
+    pageCleanup = mountSignalPage(screen, { read, write, toast });
+  } else renderAbout();
   $("#top-path").textContent = "/ " + (project ? project.id : route);
   document.title =
     "hirsu // " +
@@ -633,6 +639,9 @@ function commands() {
       ["log", "Workbench"],
       ["saved", "Saved projects"],
       ["about", "About / colophon"],
+      ["radio", "Radio / High Forever"],
+      ["lab", "Signal Lab / glitch CSS generator"],
+      ["archive", "Lost packets / FF:06:B5"],
     ].map(([id, label]) => ({ label, type: "PAGE", run: () => navigate(id) })),
     ...projects.map((p) => ({
       label: p.title,

@@ -1,15 +1,16 @@
 import { projects } from "./projects.js?v=8";
+import { networkLinks, networkInspector } from "./network-view.js?v=15";
 
 // A conceptual map of project relationships, not a map of devices or locations.
-export const connections = [
-  ["maintaineros", "civiclens"], // Python / FastAPI / SQLite
-  ["civiclens", "hyprland-forge"], // Python tooling
-  ["hyprland-forge", "custom-keyboard"], // personal computing
-  ["custom-keyboard", "robo-telescope"], // physical electronics
-  ["robo-telescope", "pi-homelab"], // hardware experiments
-  ["pi-homelab", "nexus-ai"], // home-service interfaces
-  ["nexus-ai", "maintaineros"], // software interfaces
-];
+export const connections = networkLinks.map(([a, b]) => [a, b]);
+export function focusAngles([x, y, z], currentAngle = 0) {
+  const target = Math.atan2(-x, z);
+  const delta = Math.atan2(
+    Math.sin(target - currentAngle),
+    Math.cos(target - currentAngle),
+  );
+  return { angle: currentAngle + delta, tilt: Math.atan2(y, Math.hypot(x, z)) };
+}
 export function spherePoints(count) {
   return Array.from({ length: count }, (_, i) => {
     const y = 1 - (2 * (i + 0.5)) / count,
@@ -106,6 +107,7 @@ function gridLines(detail) {
 }
 
 export function createProjectNetwork(container, { scrollZoom = true } = {}) {
+  container.dataset.scrollZoom = String(scrollZoom);
   const canvas = container.querySelector("canvas"),
     ctx = canvas.getContext("2d");
   const labels = [...container.querySelectorAll(".network-node")];
@@ -113,6 +115,9 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     container.dataset.renderer = "unavailable";
     const status = container.querySelector(".network-state");
     if (status) status.textContent = "PROJECT LINKS / STATIC";
+    labels.forEach((label) => {
+      label.disabled = true;
+    });
     return () => {};
   }
   let width = 0,
@@ -132,7 +137,9 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     phase = 0,
     disposed = false,
     visible = true,
-    active = -1;
+    active = -1,
+    selected = -1,
+    mode = "orbital";
   let ink = "#fcee0a",
     cyan = "#79edf0",
     grid = gridLines(quality),
@@ -191,6 +198,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     cosTilt = Math.cos(tilt);
     sinTilt = Math.sin(tilt);
     ctx.clearRect(0, 0, width, height);
+    const highlight = active >= 0 ? active : selected;
     const r = radius(),
       cx = width / 2,
       cy = height / 2;
@@ -206,7 +214,8 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     for (const star of stars)
       ctx.fillRect(star.x * width, star.y * height, star.size, star.size);
     ctx.lineWidth = 0.65;
-    const projectedGrid = grid.map((line) => line.map(project));
+    const projectedGrid =
+      mode === "orbital" ? grid.map((line) => line.map(project)) : [];
     // Batch front/back segments: a clear, translucent shell rather than a flat wire ball.
     for (const front of [false, true]) {
       ctx.strokeStyle = cyan;
@@ -223,7 +232,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
       ctx.stroke();
     }
     ctx.fillStyle = cyan;
-    for (const point of dots) {
+    for (const point of mode === "orbital" ? dots : []) {
       const p = project(point);
       if (p.z < 0) continue;
       ctx.globalAlpha = 0.12 + p.z * 0.38;
@@ -232,6 +241,19 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     orbits.forEach((orbit, i) => {
       ctx.setLineDash(i ? [2, 9] : []);
       linePath(orbit.map(project), i ? ink : cyan, i ? 0.36 : 0.22);
+      // Orbital couriers leave short, fading trails. Decorative, not live traffic.
+      for (let trail = 0; trail < 6; trail++) {
+        const step = Math.floor(
+          ((phase * 0.055 + i * 0.5 - trail * 0.007 + 10) % 1) *
+            (orbit.length - 1),
+        );
+        const p = project(orbit[step]);
+        ctx.fillStyle = i ? ink : cyan;
+        ctx.globalAlpha = (1 - trail / 6) * (p.z > 0 ? 0.8 : 0.25);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, trail ? 1.2 : 2.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
     });
     ctx.setLineDash([]);
     // Static instrument ticks remain crisp when motion is disabled.
@@ -249,21 +271,30 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     const positions = points.map(project);
     arcs.forEach((arc, i) => {
       const path = arc.points.map(project),
-        selected = active === arc.from || active === arc.to;
-      ctx.lineWidth = selected ? 1.6 : 0.85;
-      linePath(
-        path,
-        selected ? ink : cyan,
-        active < 0 ? 0.5 : selected ? 0.9 : 0.16,
-      );
+        linked = highlight === arc.from || highlight === arc.to;
+      ctx.lineWidth = linked ? 1.8 : 0.85;
+      // Depth-correct link segments make the back hemisphere recede.
+      for (const front of [false, true]) {
+        ctx.strokeStyle = linked ? ink : cyan;
+        ctx.globalAlpha =
+          (highlight < 0 ? 0.55 : linked ? 0.95 : 0.12) * (front ? 1 : 0.23);
+        ctx.beginPath();
+        for (let j = 1; j < path.length; j++) {
+          if (path[j].z + path[j - 1].z >= 0 !== front) continue;
+          ctx.moveTo(path[j - 1].x, path[j - 1].y);
+          ctx.lineTo(path[j].x, path[j].y);
+        }
+        ctx.stroke();
+      }
       const packet =
         path[
           Math.floor(((phase * 0.12 + i / arcs.length) % 1) * (path.length - 1))
         ];
       ctx.fillStyle = ink;
-      ctx.globalAlpha = 0.8;
+      ctx.globalAlpha =
+        (packet.z > 0 ? 0.85 : 0.2) * (highlight < 0 || linked ? 1 : 0.25);
       ctx.beginPath();
-      ctx.arc(packet.x, packet.y, selected ? 2.8 : 1.8, 0, Math.PI * 2);
+      ctx.arc(packet.x, packet.y, linked ? 2.8 : 1.8, 0, Math.PI * 2);
       ctx.fill();
     });
     ctx.lineWidth = 0.8;
@@ -271,22 +302,39 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
       const label = labels[i],
         { x: labelX, y: labelY, left, edge } = labelDocks[i];
       // Fixed docking rails prevent moving targets, label collisions and keyboard jitter.
-      label.dataset.active = String(active === i);
+      label.dataset.active = String(highlight === i);
       linePath(
         [p, { x: edge + (left ? 12 : -12), y: labelY }, { x: edge, y: labelY }],
-        active === i ? ink : cyan,
-        active === i ? 0.85 : 0.23,
+        highlight === i ? ink : cyan,
+        highlight === i ? 0.85 : 0.16,
       );
       ctx.fillStyle = ink;
       ctx.globalAlpha = 0.65 + (p.z + 1) * 0.175;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, active === i ? 4.5 : 3, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, highlight === i ? 4.5 : 3, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = ink;
-      ctx.globalAlpha = active === i ? 0.65 : 0.25;
+      ctx.globalAlpha = highlight === i ? 0.65 : 0.25;
       ctx.beginPath();
       ctx.arc(p.x, p.y, 8 + Math.sin(phase * 1.5 + i) * 1.5, 0, Math.PI * 2);
       ctx.stroke();
+      if (selected === i) {
+        ctx.globalAlpha = 0.75;
+        ctx.strokeStyle = cyan;
+        const s = 14;
+        for (const dx of [-1, 1])
+          for (const dy of [-1, 1]) {
+            linePath(
+              [
+                { x: p.x + dx * s, y: p.y + dy * (s - 5) },
+                { x: p.x + dx * s, y: p.y + dy * s },
+                { x: p.x + dx * (s - 5), y: p.y + dy * s },
+              ],
+              cyan,
+              0.75,
+            );
+          }
+      }
     });
     ctx.globalAlpha = 1;
   }
@@ -294,7 +342,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     raf = 0;
     if (disposed || !visible || document.hidden) return;
     const dt = Math.min(Math.max((time - last) / 1000, 0.001), 0.05);
-    const animate = motion() && spinning && !focused && !drag;
+    const animate = motion() && spinning && !focused && !drag && selected < 0;
     if (animate) {
       targetAngle += dt * 0.11;
       phase += dt;
@@ -318,9 +366,11 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
         ? "STATIC / FX OFF"
         : focused
           ? "FOCUS LOCK"
-          : spinning
-            ? "ORBIT / ACTIVE"
-            : "ORBIT / PAUSED";
+          : selected >= 0
+            ? "NODE / LOCKED"
+            : spinning
+              ? "ORBIT / ACTIVE"
+              : "ORBIT / PAUSED";
     if (!raf && !disposed && visible && !document.hidden) {
       last = performance.now();
       raf = requestAnimationFrame(frame);
@@ -346,27 +396,28 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     refresh();
   }
   const down = (e) => {
-    if (e.button !== 0) return;
-    drag = { x: e.clientX, y: e.clientY };
+    if (e.button !== 0 || drag) return;
+    drag = { x: e.clientX, y: e.clientY, id: e.pointerId };
     canvas.setPointerCapture(e.pointerId);
     canvas.focus();
   };
   const move = (e) => {
-    if (!drag) return;
+    if (!drag || drag.id !== e.pointerId) return;
     targetAngle += (e.clientX - drag.x) * 0.007;
     targetTilt = Math.max(
       -1,
       Math.min(1, targetTilt + (e.clientY - drag.y) * 0.006),
     );
-    drag = { x: e.clientX, y: e.clientY };
+    drag = { x: e.clientX, y: e.clientY, id: e.pointerId };
     refresh();
   };
-  const up = () => {
+  const up = (e) => {
+    if (drag && drag.id !== e.pointerId) return;
     drag = null;
     refresh();
   };
   const wheel = (e) => {
-    if (!scrollZoom) return;
+    if (!scrollZoom || document.activeElement !== canvas) return;
     e.preventDefault();
     targetZoom = Math.max(0.65, Math.min(1.3, targetZoom - e.deltaY * 0.0008));
     refresh();
@@ -397,6 +448,33 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
   };
   const click = (e) => {
     const button = e.target.closest("button");
+    const node = button?.dataset.nodeIndex;
+    if (node !== undefined && /^\d+$/.test(node) && points[Number(node)]) {
+      selected = Number(node);
+      const aim = focusAngles(points[selected], angle);
+      targetAngle = aim.angle;
+      targetTilt = aim.tilt;
+      labels.forEach((label, i) =>
+        label.setAttribute("aria-pressed", String(i === selected)),
+      );
+      const inspector = container.querySelector(".network-inspector");
+      if (inspector) inspector.innerHTML = networkInspector(selected);
+      refresh();
+    }
+    if (["orbital", "minimal"].includes(button?.dataset.networkMode)) {
+      mode = button.dataset.networkMode;
+      container
+        .querySelectorAll("[data-network-mode]")
+        .forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+      refresh();
+    }
+    if (["-1", "1"].includes(button?.dataset.zoom)) {
+      targetZoom = Math.max(
+        0.65,
+        Math.min(1.3, targetZoom + Number(button.dataset.zoom) * 0.1),
+      );
+      refresh();
+    }
     if (button?.id === "spin-button") {
       spinning = !spinning;
       button.setAttribute("aria-pressed", String(spinning));
@@ -415,6 +493,10 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
       refresh();
     }
     if (button?.id === "network-reset") {
+      selected = -1;
+      labels.forEach((label) => label.setAttribute("aria-pressed", "false"));
+      const inspector = container.querySelector(".network-inspector");
+      if (inspector) inspector.innerHTML = networkInspector();
       targetAngle = angle + ((0.4 - angle) % (Math.PI * 2));
       targetTilt = -0.14;
       targetZoom = 1;
@@ -426,8 +508,10 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     focused = viewport.contains(e.target);
     active = labels.indexOf(e.target.closest(".network-node"));
     if (focused) {
-      targetAngle = angle;
-      targetTilt = tilt;
+      if (selected < 0) {
+        targetAngle = angle;
+        targetTilt = tilt;
+      }
     }
     refresh();
   };

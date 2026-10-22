@@ -1,6 +1,17 @@
 # hirsu // from code to the real world
 
-Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Pages. No Raspberry Pi hosting, backend, paid domain, tracking, accounts, external fonts, or build dependencies.
+Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Pages. No Raspberry Pi hosting, backend, paid domain, portfolio analytics, accounts, external fonts, or runtime npm dependencies. Optional Radio connects to YouTube only after explicit consent. Tests use Happy DOM as a development-only dependency.
+
+## Side channels / v15
+
+- **Radio (`#radio`):** High Forever (Marlon Hoffstadt Remix), credited to Petite Meller and Marlon Hoffstadt. Source chain: [artist Linktree](https://linktr.ee/MarlonHoffstadt) → [official release](https://cyberpunk.lnk.to/highforeverremix) → official YouTube Music playlist `OLAK5uy_nfL-pYyNkwhbiJkNpkduuX9cYqygLEJ9k`. No recording is downloaded or hosted. Open the deck, explicitly load YouTube, then press Play. Volume starts at 12%; volume and mute are available. The visible player persists across internal routes. Closing destroys it; backgrounding pauses without auto-resuming. No saved consent, autoplay on arrival, account access or listening history. An error/timeout gives retry and official streaming links; availability, ads, region and browser restrictions are controlled by YouTube. Google privacy/terms links and the external-data boundary are visible before connecting.
+- **Signal Lab (`#lab`):** original glitch CSS generator. Tune text, color, displacement, cycle duration and scanlines; choose three presets; pause the live preview; copy or download the generated CSS. Values are bounded and text is rendered safely. Preview respects site motion preferences; export includes system reduced motion. No entered text is sent anywhere.
+- **Lost packets (`#archive`):** four small Cyberpunk/Edgerunners-inspired discoveries with hints and original micro-fiction, not copied shards. Find the address in the lab or command palette. Discovery IDs are validated and saved only in `hirsu-fragments-v15`; clearing discoveries does not touch project bookmarks or interface settings. No real network scanning.
+- **Project constellation:** fixed labels now select a node instead of instantly navigating away. The camera takes the shortest rotation to bring it forward; the inspector explains the related work and links to actual project pages. New depth-correct arcs, orbital courier trails, selection brackets, Orbital/Connections modes and visible zoom buttons. Node selection locks motion; Reset releases it. Wheel zoom requires focused canvas on the dedicated page, never captures homepage scrolling. Touch drag has pointer ownership/cancellation. Motion-off, offscreen/hidden suspension and canvas fallback remain supported.
+
+Primary new editing files: `radio.js`, `signal-model.js`, `signal-pages.js`, `side-channel.css`, `network-view.js`, `project-network.js`. The existing startup scenes, settings, real photographs and project status facts are retained.
+
+Validation: `npm ci && npm run check`. DOM/controller tests mock the external player and disable script/stylesheet fetching; they do not claim to verify YouTube streaming or visual layout. This release still needs a real desktop/mobile browser and live playback pass when browser automation is available.
 
 ## Compact settings / v14
 
@@ -99,7 +110,7 @@ Illustrated project images, actual CAD, and real app screenshots are labeled sep
 
 stack-data.js is the October 20, 2026 public REST snapshot. Language numbers count repositories containing a language across five project repos, not proficiency. The calendar includes 78 authored public default-branch commits across those repos plus this portfolio in the bounded April–October period. It is not a live GitHub contributions calendar. Sources: /repos/hrushikbarani-hub/{repo}/languages and /commits?per_page=100&since=2026-04-20T00:00:00Z. All six commit responses were below the limit. To refresh, paginate as needed, filter author login hrushikbarani-hub, aggregate UTC dates, and update the dated caption. Never imply capped responses are complete.
 
-The sphere is a conceptual map of related projects, not a map of actual locations, connected devices, or network telemetry. No credentials, home IPs, private contact information, or backend endpoints are published. No outbound runtime API calls.
+The sphere is a conceptual map of related projects, not a map of actual locations, connected devices, or network telemetry. No credentials, home IPs, private contact information, or backend endpoints are published. The portfolio itself makes no outbound runtime API calls; the optional, consent-gated Radio player is the explicit external-service exception.
 
 ## Edit / verify / deploy
 
@@ -120,11 +131,12 @@ The sphere is a conceptual map of related projects, not a map of actual location
 - intro-variants.js / intro-scenes.css: startup choices, scene markup, particles and v13 keyframes. Change the particle sizes/timing in `redlineParticles`; edit the `cut-*` rules for Redline's slash and split.
 - intro-variants.css: startup picker styling and the optical, data, CRT and shard foundation effects.
 
-No npm install needed:
+Serving the static site requires no npm install. For development checks, install the pinned test-only dependency first (Node 22+):
 
+    npm ci
     npm run check
     python -m http.server 8130 --bind 127.0.0.1
 
-Open http://127.0.0.1:8130/. ES modules need HTTP. The dependency-free tests in site.test.js, motion.test.js, network.test.js and terminal.test.js cover default mode, URLs, routes, search/filtering, malformed storage, escaping, both homepages, photo attribution, assets, file selection and keyboard navigation, panel frames, boot percentage/release/dismissal/replay/focus/timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, unsupported dialogs, finite spherical arcs, collision-free docking, embedded globe scroll passthrough, globe pause/focus/quality/visibility/FX/lifecycle behavior, canvas fallback, language aggregation, UTC dates and the legacy wrap helper. Controller tests use deterministic DOM/canvas/RAF doubles; they do not replace visual browser QA.
+Open http://127.0.0.1:8130/. ES modules need HTTP. Tests cover default mode, URLs, routes, search/filtering, malformed storage, escaping, both homepages, photo attribution, assets, file selection and keyboard navigation, panel frames, boot percentage/release/dismissal/replay/focus/timer cleanup, reduced-motion bootstrap with blocked storage, no-JavaScript access, unsupported dialogs, finite spherical arcs, collision-free docking, embedded globe scroll passthrough, globe pause/focus/quality/visibility/FX/lifecycle behavior, canvas fallback, language aggregation, UTC dates and the legacy wrap helper. `side-channel.test.js` adds DOM-level signal editing, clipboard failure, safe text rendering, fragment persistence, no-consent/no-provider-request assertions, player readiness/errors/cancellation, route-persistent playback and background pause. Controller tests use deterministic DOM/canvas/RAF doubles; they do not replace visual browser QA.
 
 Push main. GitHub Pages deploys main / root with .nojekyll and HTTPS. No paid service, backend, Pi, or custom domain is required. The preview server may be stopped without affecting the live site.
