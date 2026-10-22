@@ -1,12 +1,14 @@
 // Browser-local preferences only. No account, permission or device changes.
 export const settingsKey = "hirsu-settings-v14";
 export const settingOptions = Object.freeze({
+  layout: ["overdrive", "netrunner", "relic"],
   motion: ["system", "on", "off"],
   skin: ["overdrive", "icewire", "monolith"],
   fx: ["signal", "clean", "crt"],
   textSize: ["standard", "large"],
 });
 export const defaultSettings = Object.freeze({
+  layout: "overdrive",
   motion: "system",
   skin: "overdrive",
   fx: "signal",
@@ -48,6 +50,7 @@ export function motionEnabled(settings, reducedMotion) {
 export function applySettings(root, settings, reducedMotion) {
   const p = normalizeSettings(settings);
   Object.assign(root.dataset, {
+    layout: p.layout,
     motion: motionEnabled(p, reducedMotion) ? "on" : "off",
     skin: p.skin,
     fx: p.fx,

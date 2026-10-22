@@ -1,11 +1,11 @@
 {
   "name": "hirsu-workshop",
-  "version": "15.0.0",
+  "version": "16.0.0",
   "private": true,
   "type": "module",
   "description": "Hrushi's static developer and hardware portfolio",
   "scripts": {
-    "check": "node --check console.js && node --check settings.js && node --check settings-model.js && node --check city-content.js && node --check overdrive-content.js && node --check city-motion.js && node --check intro-variants.js && node --check console-model.js && node --check project-network.js && node --check network-view.js && node --check signal-model.js && node --check signal-pages.js && node --check radio.js && node --check project-terminal.js && node --check photo.js && node --check projects.js && node --check stack-data.js && node --check interfaces.js && node --test site.test.js motion.test.js network.test.js terminal.test.js intro.test.js settings.test.js side-channel.test.js"
+    "check": "node --check console.js && node --check settings.js && node --check settings-model.js && node --check city-content.js && node --check overdrive-content.js && node --check city-motion.js && node --check intro-variants.js && node --check console-model.js && node --check project-network.js && node --check network-view.js && node --check signal-model.js && node --check signal-pages.js && node --check music.js && node --check layouts.js && node --check project-terminal.js && node --check photo.js && node --check projects.js && node --check stack-data.js && node --check interfaces.js && node --test site.test.js motion.test.js network.test.js terminal.test.js intro.test.js settings.test.js side-channel.test.js"
   },
   "devDependencies": {
     "happy-dom": "21.0.4"

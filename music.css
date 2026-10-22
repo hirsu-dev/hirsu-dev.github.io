@@ -1,0 +1,155 @@
+#music-dock {
+  position: fixed;
+  z-index: 80;
+  right: 20px;
+  bottom: 48px;
+  width: min(370px, calc(100vw - 32px));
+  max-height: calc(100dvh - 120px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--accent);
+  box-shadow: 0 14px 60px #0009;
+  font: 11px/1.6 var(--mono);
+}
+#music-dock[hidden],
+#music-dock [hidden] {
+  display: none;
+}
+.music-toolbar {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.music-toolbar b {
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+.music-frequency {
+  flex: 1;
+  color: var(--muted);
+  font-size: 9px;
+}
+.music-indicator {
+  width: 5px;
+  height: 5px;
+  background: var(--muted);
+}
+#music-dock[data-playing="true"] .music-indicator {
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+}
+#music-dock button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  font: 11px var(--mono);
+  padding: 8px 12px;
+  cursor: pointer;
+}
+#music-dock button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+#music-dock button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+#music-dock [data-radio-close] {
+  border: 0;
+  font-size: 21px;
+  padding: 0 8px;
+}
+#music-dock #radio-consent {
+  padding: 4px 16px 16px;
+}
+#music-dock #radio-consent p:first-child {
+  font-size: 15px;
+  color: var(--text);
+}
+#music-dock #radio-consent p {
+  color: var(--muted);
+}
+#music-dock #radio-load {
+  width: 100%;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+#music-dock #radio-frame {
+  min-height: 152px;
+  margin: 0;
+}
+#music-dock #radio-frame iframe {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 152px;
+  border: 0;
+}
+.music-transport {
+  display: flex;
+  padding: 8px;
+  gap: 5px;
+  border-top: 1px solid var(--line);
+}
+.music-transport #radio-queue-toggle {
+  flex: 1;
+  text-align: right;
+}
+#radio-count {
+  color: var(--muted);
+  font-size: 9px;
+}
+#music-dock #radio-queue {
+  padding: 8px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+#radio-queue label {
+  display: block;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+#radio-track {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font: 12px var(--mono);
+}
+#radio-queue a {
+  color: var(--cyan);
+}
+#music-dock #radio-state {
+  margin: 0;
+  padding: 0 12px 10px;
+  color: var(--muted);
+  font-size: 10px;
+}
+/* Keep the last page links reachable above the dock, even on a short screen. */
+html[data-music="open"] body {
+  padding-bottom: min(650px, 85dvh);
+}
+html[data-contrast="high"] #music-dock {
+  background: #000;
+  border-color: #fff;
+  box-shadow: none;
+}
+html[data-text-size="large"] #music-dock :is(p, button, select, label) {
+  font-size: 14px;
+  line-height: 1.6;
+}
+@media (max-width: 600px) {
+  #music-dock {
+    right: 16px;
+    bottom: 42px;
+    max-height: calc(100dvh - 140px);
+  }
+}

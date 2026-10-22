@@ -58,7 +58,7 @@ export function createCityMotion() {
   function decorate(container) {
     container
       .querySelectorAll(
-        ".hero-line,.city-section h2,.page-head h1,.od-title-line,.od-section h2 em,.od-build h3 a",
+        ".hero-line,.city-section h2,.page-head h1,.od-title-line,.od-section h2 em,.od-build h3 a,.nr-masthead h1 em,.relic-masthead h1 em",
       )
       .forEach((element, i) => {
         if (element.classList.contains("signal-title")) return;
@@ -169,7 +169,7 @@ export function createCityMotion() {
       animate(container);
       container
         .querySelectorAll(
-          ".page-head .eyebrow,.page-head h1,.page-head p:not(.eyebrow),.network-shell,.feed-tools",
+          ".page-head .eyebrow,.page-head h1,.page-head p:not(.eyebrow),.network-shell,.feed-tools,.nr-masthead,.nr-window,.nr-dock,.relic-masthead,.relic-index,.relic-file,.relic-footnotes",
         )
         .forEach((piece, i) =>
           animate(

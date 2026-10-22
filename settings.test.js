@@ -283,6 +283,7 @@ test("all settings apply independently and defaults fully reverse them", () => {
   const custom = {
     ...defaultSettings,
     skin: "icewire",
+    layout: "relic",
     fx: "crt",
     textSize: "large",
     motion: "off",
@@ -295,6 +296,7 @@ test("all settings apply independently and defaults fully reverse them", () => {
   };
   applySettings(root, custom, false);
   assert.deepEqual(root.dataset, {
+    layout: "relic",
     motion: "off",
     skin: "icewire",
     fx: "crt",
@@ -308,6 +310,7 @@ test("all settings apply independently and defaults fully reverse them", () => {
   });
   applySettings(root, defaultSettings, false);
   assert.deepEqual(root.dataset, {
+    layout: "overdrive",
     motion: "on",
     skin: "overdrive",
     fx: "signal",
@@ -352,6 +355,7 @@ test("pre-paint preferences agree with validated current settings and system mot
       const prefs = {
         motion,
         skin: "icewire",
+        layout: "netrunner",
         fx: "clean",
         contrast: true,
         textSize: "large",
@@ -369,6 +373,7 @@ test("pre-paint preferences agree with validated current settings and system mot
         motionEnabled(prefs, reduced) ? "on" : "off",
       );
       assert.equal(document.documentElement.dataset.skin, "icewire");
+      assert.equal(document.documentElement.dataset.layout, "netrunner");
       assert.equal(document.documentElement.dataset.fx, "clean");
       assert.equal(document.documentElement.dataset.contrast, "high");
     }

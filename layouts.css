@@ -1,0 +1,798 @@
+/* Layout is independent from palette. These interfaces have different DOM,
+   information hierarchy and controls; color presets remain composable. */
+.netrunner-home,
+.relic-home {
+  color: var(--text);
+}
+.netrunner-home {
+  max-width: 1520px;
+  margin: auto;
+  padding: 44px 32px 64px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 31px,
+      color-mix(in srgb, var(--line) 15%, transparent) 32px
+    ),
+    linear-gradient(
+      transparent 31px,
+      color-mix(in srgb, var(--line) 15%, transparent) 32px
+    );
+  background-size: 32px 32px;
+}
+.nr-masthead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 36px;
+}
+.nr-masthead h1 {
+  margin: 16px 0;
+  font: 700 clamp(38px, 5.4vw, 78px)/0.94 var(--mono);
+  letter-spacing: -0.07em;
+}
+.nr-masthead h1 em {
+  display: inline-block;
+  color: var(--accent);
+  font-style: normal;
+}
+.nr-masthead p {
+  max-width: 560px;
+  color: var(--muted);
+}
+.nr-session {
+  flex-shrink: 0;
+  border-left: 2px solid var(--accent);
+  padding: 8px 0 8px 24px;
+  font: 11px/1.7 var(--mono);
+}
+.nr-session strong {
+  display: block;
+  font-size: 44px;
+  color: var(--accent);
+  line-height: 1.2;
+}
+.nr-session small {
+  font-size: 12px;
+}
+.nr-session a {
+  color: var(--cyan);
+}
+.nr-workspace {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.85fr) minmax(0, 1.65fr) minmax(
+      200px,
+      0.8fr
+    );
+  gap: 16px;
+  align-items: start;
+}
+.nr-window {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--line) 38%, transparent);
+}
+.nr-windowbar {
+  min-height: 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  font: 9px/1.4 var(--mono);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.nr-windowbar > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nr-windowbar i {
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+}
+.nr-windowbody {
+  padding: 22px;
+}
+.nr-windowbody h2 {
+  margin: 0 0 16px;
+  font: 600 23px/1.15 var(--mono);
+  letter-spacing: -0.04em;
+}
+.nr-windowbody p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.nr-search {
+  display: grid;
+  gap: 6px;
+  font: 10px var(--mono);
+  color: var(--muted);
+  margin: 24px 0 16px;
+}
+.nr-search input {
+  width: 100%;
+  min-width: 0;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--line);
+  padding: 12px;
+  font: 12px var(--mono);
+}
+.nr-file-list {
+  display: grid;
+  gap: 6px;
+}
+.nr-file-list button {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 5px 8px;
+  padding: 14px 10px;
+  text-align: left;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid transparent;
+}
+.nr-file-list button span {
+  grid-row: span 2;
+  color: var(--muted);
+  font: 10px var(--mono);
+}
+.nr-file-list button b {
+  font: 12px/1.4 var(--mono);
+  overflow-wrap: anywhere;
+}
+.nr-file-list button small {
+  color: var(--muted);
+  font: 10px var(--mono);
+}
+.nr-file-list button:hover {
+  border-color: var(--line);
+}
+.nr-file-list button[aria-pressed="true"] {
+  background: var(--accent);
+  color: #0b0a0f;
+  border-color: var(--accent);
+}
+.nr-file-list button[aria-pressed="true"] :is(span, small) {
+  color: inherit;
+}
+.nr-file-list button[hidden] {
+  display: none;
+}
+.layout-media {
+  margin: 0;
+  min-width: 0;
+}
+.layout-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/10;
+  object-fit: contain;
+  background: var(--bg);
+}
+.layout-media figcaption {
+  padding: 10px 16px;
+  border-block: 1px solid var(--line);
+  color: var(--muted);
+  font: 10px/1.5 var(--mono);
+}
+.layout-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-block: 1px solid var(--line);
+  padding: 13px 0;
+  margin: 22px 0;
+  font: 10px/1.5 var(--mono);
+}
+.layout-status strong {
+  color: var(--cyan);
+}
+.layout-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 18px 0;
+  list-style: none;
+}
+.layout-tags li {
+  color: var(--cyan);
+  border: 1px solid var(--line);
+  padding: 6px 9px;
+  font: 10px/1.4 var(--mono);
+}
+.nr-notes {
+  margin: 20px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.nr-notes summary {
+  cursor: pointer;
+  color: var(--text);
+  padding-block: 8px;
+}
+.layout-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  font: 11px/1.6 var(--mono);
+}
+.layout-links > span {
+  color: var(--muted);
+}
+.layout-primary {
+  padding: 12px 15px;
+  color: #0b0a0f;
+  background: var(--accent);
+  text-decoration: none;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 8px),
+    calc(100% - 8px) 100%,
+    0 100%
+  );
+}
+.nr-utilities {
+  display: grid;
+  gap: 16px;
+}
+.layout-action {
+  display: block;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font: 11px/1.6 var(--mono);
+  color: var(--cyan);
+}
+.nr-node-map {
+  position: relative;
+  height: 105px;
+  overflow: hidden;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 19px,
+    color-mix(in srgb, var(--line) 30%, transparent) 20px
+  );
+}
+.nr-node-map::before {
+  content: "";
+  position: absolute;
+  inset: 20px 38px 35px;
+  border: 1px solid var(--cyan);
+  transform: skewY(-13deg);
+}
+.nr-node-map i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  left: 17%;
+  top: 37%;
+}
+.nr-node-map i:nth-child(2) {
+  left: 45%;
+  top: 20%;
+}
+.nr-node-map i:nth-child(3) {
+  left: 75%;
+  top: 18%;
+}
+.nr-node-map i:nth-child(4) {
+  left: 75%;
+  top: 60%;
+}
+.nr-node-map span {
+  position: absolute;
+  bottom: 8px;
+  left: 20px;
+  font: 8px var(--mono);
+  color: var(--muted);
+}
+.nr-city {
+  margin: 0;
+}
+.nr-city > img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  display: block;
+}
+.nr-city figcaption {
+  padding: 14px;
+  font: 9px/1.6 var(--mono);
+  color: var(--muted);
+}
+.nr-city .photo-credit {
+  display: block;
+  position: static;
+  margin: 12px 0 0;
+}
+.nr-dock {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+.nr-dock > :is(a, button) {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 19px;
+  color: var(--text);
+  font: 11px/1.5 var(--mono);
+  text-decoration: none;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  white-space: nowrap;
+}
+.nr-dock b {
+  color: var(--accent);
+}
+.nr-dock > :is(a, button):hover {
+  background: var(--bg);
+}
+
+.relic-home {
+  max-width: 1540px;
+  margin: auto;
+  padding: 58px 44px 84px;
+}
+.relic-masthead > div:not(.relic-rule) {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  align-items: end;
+}
+.relic-masthead h1 {
+  margin: 22px 0 28px;
+  font: 900 clamp(54px, 8vw, 116px)/0.86 var(--display);
+  letter-spacing: -0.035em;
+}
+.relic-masthead h1 em {
+  display: inline-block;
+  font-style: normal;
+  color: var(--accent);
+}
+.relic-masthead > div > p {
+  max-width: 310px;
+  font: 15px/1.7 var(--mono);
+  padding-bottom: 18px;
+}
+.relic-masthead > div > p span {
+  display: block;
+  font-size: 11px;
+  margin-top: 18px;
+  color: var(--muted);
+}
+.relic-rule {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 4px solid var(--accent);
+  padding: 14px 0 40px;
+  font: 10px/1.5 var(--mono);
+  color: var(--muted);
+}
+.relic-dossier {
+  display: grid;
+  grid-template-columns: 205px minmax(0, 1fr);
+  gap: 30px;
+}
+.relic-index {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.relic-index button {
+  background: transparent;
+  color: var(--muted);
+  border: 0;
+  border-top: 1px solid var(--line);
+  padding: 17px 10px;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 6px;
+}
+.relic-index button span {
+  grid-row: span 2;
+  font: 12px var(--mono);
+}
+.relic-index button b {
+  overflow-wrap: anywhere;
+  font: 13px/1.4 var(--mono);
+}
+.relic-index button small {
+  font: 9px/1.5 var(--mono);
+}
+.relic-index button[aria-pressed="true"] {
+  border-top: 3px solid var(--accent);
+  color: var(--text);
+  background: var(--panel);
+}
+.relic-index button[aria-pressed="true"] span {
+  color: var(--accent);
+}
+.relic-file {
+  min-width: 0;
+  border-top: 1px solid var(--line);
+}
+.relic-filebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0 24px;
+  font: 10px var(--mono);
+  color: var(--muted);
+}
+.relic-filebar button {
+  border: 1px solid var(--line);
+  padding: 10px;
+  background: transparent;
+  color: var(--text);
+  font: 10px var(--mono);
+}
+.relic-spread {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  gap: 30px;
+}
+.relic-spread .layout-media {
+  position: sticky;
+  top: 120px;
+  align-self: start;
+  border: 1px solid var(--line);
+  padding: 8px;
+  background: var(--panel);
+}
+.relic-spread .layout-media img {
+  aspect-ratio: 4/5;
+  object-fit: contain;
+}
+.relic-spread .layout-media figcaption {
+  border-bottom: 0;
+  padding: 12px 4px 4px;
+}
+.relic-copy {
+  min-width: 0;
+}
+.relic-copy h2 {
+  font: 700 clamp(32px, 3.5vw, 58px)/0.98 var(--display);
+  margin: 16px 0;
+  overflow-wrap: anywhere;
+}
+.relic-subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.relic-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  gap: 12px;
+}
+.relic-tabs button {
+  background: none;
+  color: var(--muted);
+  border: 0;
+  padding: 12px 0;
+  font: 11px var(--mono);
+}
+.relic-tabs button[aria-selected="true"] {
+  color: var(--accent);
+  box-shadow: 0 2px var(--accent);
+}
+.relic-chapter {
+  min-height: 245px;
+  padding: 12px 0 24px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.relic-chapter ul:not(.layout-tags) {
+  padding-left: 18px;
+}
+.relic-evidence {
+  border-left: 2px solid var(--line);
+  padding-left: 14px;
+  font-size: 11px;
+}
+.relic-footnotes {
+  margin-top: 78px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-block: 1px solid var(--line);
+}
+.relic-footnotes a {
+  padding: 30px 24px;
+  color: var(--text);
+  text-decoration: none;
+  border-right: 1px solid var(--line);
+}
+.relic-footnotes a:last-child {
+  border-right: 0;
+}
+.relic-footnotes span {
+  font: 10px var(--mono);
+  color: var(--accent);
+}
+.relic-footnotes h2 {
+  font: 600 25px/1.2 var(--mono);
+  letter-spacing: -0.04em;
+}
+.relic-footnotes p {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+html[data-view="blacksite"][data-layout="netrunner"] .city-header {
+  padding-block: 10px;
+  border-bottom: 3px double var(--line);
+}
+html[data-view="blacksite"][data-layout="netrunner"] .city-wordmark {
+  font: 700 28px var(--mono);
+  transform: none;
+}
+html[data-layout="netrunner"] .city-wordmark small {
+  display: none;
+}
+html[data-layout="netrunner"] .project-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+html[data-layout="netrunner"] .project-card {
+  border: 1px solid var(--line);
+  padding: 24px;
+  background: var(--panel);
+}
+html[data-layout="relic"] .page-head {
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 32px;
+}
+html[data-layout="relic"] .project-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px 36px;
+  margin-bottom: 32px;
+}
+html[data-layout="relic"] .project-card .card-art {
+  grid-row: span 5;
+  margin: 0;
+  align-self: start;
+}
+html[data-layout="relic"] .project-card .card-art img {
+  aspect-ratio: 4/3;
+  object-fit: contain;
+}
+html[data-layout="relic"] .project-card .expanded-content {
+  grid-column: 1/-1;
+}
+.layout-picker-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.layout-choice {
+  display: block;
+  border: 1px solid var(--line);
+  padding: 12px;
+  min-width: 0;
+  cursor: pointer;
+}
+.layout-choice:has(input:checked) {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 7%, var(--panel));
+}
+.layout-choice input {
+  accent-color: var(--accent);
+}
+.layout-choice b {
+  font: 12px var(--mono);
+}
+.layout-choice small {
+  display: block;
+  color: var(--muted);
+  font: 10px/1.6 var(--mono);
+  margin-top: 8px;
+}
+.layout-schematic {
+  height: 60px;
+  display: grid;
+  gap: 4px;
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  padding: 5px;
+}
+.layout-schematic i {
+  background: var(--line);
+}
+.layout-schematic i:first-child {
+  background: var(--accent);
+}
+.scheme-overdrive {
+  grid-template-columns: 1fr 1fr;
+}
+.scheme-overdrive i:first-child {
+  grid-column: span 2;
+}
+.scheme-netrunner {
+  grid-template-columns: 0.7fr 1.5fr 0.7fr;
+}
+.scheme-relic {
+  grid-template-columns: 0.4fr 1.3fr 1fr;
+}
+.scheme-relic i:nth-child(2) {
+  grid-row: span 2;
+}
+html[data-motion="on"] .nr-node-map i {
+  animation: nr-signal 4s ease-in-out infinite;
+}
+.nr-node-map i:nth-child(2) {
+  animation-delay: 0.8s;
+}
+.nr-node-map i:nth-child(3) {
+  animation-delay: 1.6s;
+}
+.nr-node-map i:nth-child(4) {
+  animation-delay: 2.4s;
+}
+@keyframes nr-signal {
+  0%,
+  100% {
+    opacity: 0.35;
+    box-shadow: none;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 16px var(--cyan);
+  }
+}
+html[data-contrast="high"] .netrunner-home {
+  background: none;
+}
+html[data-text-size="large"]
+  :is(.nr-windowbody p, .relic-chapter, .relic-subtitle) {
+  font-size: 17px;
+}
+html[data-text-size="large"]
+  :is(
+    .nr-file-list button b,
+    .relic-index button b,
+    .relic-tabs button,
+    .nr-search input,
+    .layout-choice b,
+    .layout-links,
+    .layout-action
+  ) {
+  font-size: 14px;
+}
+html[data-text-size="large"] .layout-choice small {
+  font-size: 12px;
+}
+@media (max-width: 1180px) {
+  .nr-workspace {
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.5fr);
+  }
+  .nr-utilities {
+    grid-column: 1/-1;
+    grid-template-columns: 1fr 1fr;
+  }
+  .nr-node-map {
+    height: 75px;
+  }
+  .relic-dossier {
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: 20px;
+  }
+  .relic-spread {
+    grid-template-columns: 1fr;
+  }
+  .relic-spread .layout-media {
+    position: static;
+  }
+  .relic-spread .layout-media img {
+    aspect-ratio: 16/9;
+  }
+}
+@media (max-width: 700px) {
+  .netrunner-home,
+  .relic-home {
+    padding: 32px 18px 48px;
+  }
+  .nr-masthead {
+    display: block;
+  }
+  .nr-session {
+    display: none;
+  }
+  .nr-workspace {
+    grid-template-columns: 1fr;
+  }
+  .nr-utilities {
+    grid-template-columns: 1fr;
+  }
+  .nr-file-list {
+    grid-template-columns: 1fr 1fr;
+  }
+  .nr-windowbody {
+    padding: 18px;
+  }
+  .nr-dock > :is(a, button) {
+    flex-basis: 40%;
+    padding: 16px;
+  }
+  .relic-masthead > div:not(.relic-rule) {
+    display: block;
+  }
+  .relic-masthead > div > p {
+    max-width: none;
+  }
+  .relic-dossier {
+    display: block;
+  }
+  .relic-index {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 20px;
+  }
+  .relic-index button {
+    padding: 12px 6px;
+  }
+  .relic-footnotes {
+    grid-template-columns: 1fr;
+  }
+  .relic-footnotes a {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .relic-chapter {
+    min-height: 0;
+  }
+  .layout-picker-options {
+    grid-template-columns: 1fr;
+  }
+  .layout-schematic {
+    height: 42px;
+  }
+  .layout-choice {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 4px 8px;
+    align-items: center;
+  }
+  .layout-choice :is(small, .layout-schematic) {
+    grid-column: 2;
+  }
+  .layout-choice .layout-schematic {
+    margin: 4px 0;
+  }
+  .layout-choice small {
+    margin: 0;
+  }
+  html[data-layout="netrunner"] .project-list {
+    grid-template-columns: 1fr;
+  }
+  html[data-layout="relic"] .project-card {
+    display: block;
+  }
+  html[data-layout="relic"] .project-card .card-art {
+    margin-bottom: 20px;
+  }
+}

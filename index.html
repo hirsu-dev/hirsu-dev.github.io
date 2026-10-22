@@ -1,5 +1,11 @@
 <!doctype html>
-<html lang="en" data-view="blacksite" data-motion="on" data-page="index">
+<html
+  lang="en"
+  data-view="blacksite"
+  data-layout="overdrive"
+  data-motion="on"
+  data-page="index"
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,6 +56,7 @@
             ? "off"
             : "on";
         for (const [key, options] of Object.entries({
+          layout: ["overdrive", "netrunner", "relic"],
           skin: ["overdrive", "icewire", "monolith"],
           fx: ["signal", "clean", "crt"],
           textSize: ["standard", "large"],
@@ -75,8 +82,10 @@
     <link rel="stylesheet" href="intro-variants.css?v=13" />
     <link rel="stylesheet" href="intro-scenes.css?v=13" />
     <link rel="stylesheet" href="settings.css?v=14" />
-    <link rel="stylesheet" href="side-channel.css?v=15" />
-    <script type="module" src="console.js?v=15"></script>
+    <link rel="stylesheet" href="side-channel.css?v=16" />
+    <link rel="stylesheet" href="layouts.css?v=16" />
+    <link rel="stylesheet" href="music.css?v=16" />
+    <script type="module" src="console.js?v=16"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -171,7 +180,7 @@
         >
       </nav>
       <div class="rail-bottom">
-        <span class="rail-version" aria-hidden="true">v15.0</span>
+        <span class="rail-version" aria-hidden="true">v16.0</span>
         <button
           class="rail-item"
           id="theme-button"
@@ -430,8 +439,10 @@
             <p>
               No account, analytics or tracking. Preferences and saved projects
               stay in this browser; they do not sync to another device. Optional
-              Radio loads YouTube only after you choose to connect; Google's
-              privacy policy then applies to that player.
+              background music loads Spotify only after you enable it. Spotify
+              receives browser data and may use cookies. Full tracks or previews
+              depend on Spotify; volume is controlled by Spotify or your device.
+              Closing the mini-player disconnects playback.
             </p>
           </div>
           <button class="settings-secondary" id="settings-reset">
@@ -524,7 +535,53 @@
             Same projects. Your interface, signal and entrance.
           </p>
           <fieldset class="style-picker">
-            <legend>Interface style</legend>
+            <legend>Interface layout</legend>
+            <div class="layout-picker-options">
+              <label class="layout-choice"
+                ><input
+                  type="radio"
+                  name="layout"
+                  data-setting="layout"
+                  value="overdrive"
+                /><b>Overdrive</b
+                ><span
+                  class="layout-schematic scheme-overdrive"
+                  aria-hidden="true"
+                  ><i></i><i></i><i></i></span
+                ><small>Cinematic / scrolling workbench</small></label
+              >
+              <label class="layout-choice"
+                ><input
+                  type="radio"
+                  name="layout"
+                  data-setting="layout"
+                  value="netrunner"
+                /><b>Netrunner</b
+                ><span
+                  class="layout-schematic scheme-netrunner"
+                  aria-hidden="true"
+                  ><i></i><i></i><i></i></span
+                ><small>Desktop / searchable file explorer</small></label
+              >
+              <label class="layout-choice"
+                ><input
+                  type="radio"
+                  name="layout"
+                  data-setting="layout"
+                  value="relic"
+                /><b>Relic</b
+                ><span class="layout-schematic scheme-relic" aria-hidden="true"
+                  ><i></i><i></i><i></i><i></i></span
+                ><small>Dossier / project chapters</small></label
+              >
+            </div>
+            <p class="settings-lead">
+              Home and project browsing change structure. Music stays connected.
+              Visit Home to explore the selected interface.
+            </p>
+          </fieldset>
+          <fieldset class="style-picker">
+            <legend>Color palette</legend>
             <div class="style-options">
               <label
                 ><input

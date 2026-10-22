@@ -33,7 +33,7 @@ import {
   validInterface,
 } from "./interfaces.js";
 
-test("Overdrive is the only interface; legacy Night City URLs and storage migrate safely", () => {
+test("Overdrive shell handles legacy URLs; independent layouts live in preferences", () => {
   assert.deepEqual(Object.keys(interfaces), ["blacksite"]);
   assert.equal(interfaceFromSearch("?view=neon", "blacksite"), "blacksite");
   assert.equal(interfaceFromSearch("?view=neon", "neon"), "blacksite");

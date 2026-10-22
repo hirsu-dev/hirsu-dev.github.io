@@ -11,13 +11,13 @@ import {
   recoveredFragments,
 } from "./signal-model.js";
 import { labContent, archiveContent, mountSignalPage } from "./signal-pages.js";
+import { mountRadio, radioTracks, loadSpotifyAPI } from "./music.js";
 import {
-  mountRadio,
-  radioVolume,
-  radioRelease,
-  radioContent,
-  loadYouTubeAPI,
-} from "./radio.js";
+  netrunnerHome,
+  relicHome,
+  mountLayout,
+  layoutProjects,
+} from "./layouts.js";
 import { resolveRoute } from "./console-model.js";
 import { focusAngles, spherePoints } from "./project-network.js";
 import {
@@ -88,8 +88,11 @@ test("new routes and menus expose real pages, while the archive stays discoverab
   assert.match(html, /href="#lab"/);
   assert.match(html, /href="#radio"/);
   assert.doesNotMatch(html, /<iframe|src="https:\/\/www.youtube/);
-  assert.match(radioContent(), /12% volume/);
-  assert.match(radioContent(), /privacy/);
+  assert.equal(radioTracks.length, 7);
+  assert.equal(
+    radioTracks.filter((track) => track.type === "playlist").length,
+    1,
+  );
 });
 test("signal export bounds and sanitizes values, and includes reduced-motion fallback", () => {
   assert.deepEqual(
@@ -249,61 +252,72 @@ test("network inspector links only to actual projects and explains each connecti
     ),
   );
 });
-function radioHarness(t, { delayed = false, fail = false } = {}) {
+
+function radioHarness(
+  t,
+  {
+    delayed = false,
+    delayedController = false,
+    fail = false,
+    readyTimeout = 15000,
+  } = {},
+) {
   const h = dom(t, "<button data-radio-open>Open radio</button><main></main>");
   const calls = [],
     instances = [];
   let loads = 0,
-    resolve;
-  class Player {
-    constructor(id, options) {
-      this.options = options;
-      instances.push(this);
-    }
-    setVolume(v) {
-      calls.push(["volume", v]);
-    }
-    playVideo() {
-      calls.push(["play"]);
-    }
-    pauseVideo() {
-      calls.push(["pause"]);
-    }
-    mute() {
-      calls.push(["mute"]);
-    }
-    unMute() {
-      calls.push(["unmute"]);
-    }
-    destroy() {
-      calls.push(["destroy"]);
-    }
-    getIframe() {
-      return h.doc.createElement("iframe");
-    }
-  }
-  const loadAPI = () => {
-    loads++;
-    return fail
-      ? Promise.reject(new Error("blocked"))
-      : delayed
-        ? new Promise((r) => {
-            resolve = r;
-          })
-        : Promise.resolve({ Player });
+    resolve,
+    create;
+  const api = {
+    createController(host, options, callback) {
+      const p = {
+        options,
+        events: {},
+        addListener(event, fn) {
+          this.events[event] = fn;
+        },
+        loadEntity(uri) {
+          calls.push(["load", uri]);
+        },
+        play() {
+          calls.push(["play"]);
+        },
+        pause() {
+          calls.push(["pause"]);
+        },
+        destroy() {
+          calls.push(["destroy"]);
+        },
+      };
+      instances.push(p);
+      create = () => callback(p);
+      if (!delayedController) create();
+    },
   };
-  const radio = mountRadio({ loadAPI });
+  const radio = mountRadio({
+    readyTimeout,
+    loadAPI: () => {
+      loads++;
+      return fail
+        ? Promise.reject(new Error("blocked"))
+        : delayed
+          ? new Promise((r) => {
+              resolve = r;
+            })
+          : Promise.resolve(api);
+    },
+  });
   h.cleanup(() => radio.dispose());
   return {
     ...h,
     calls,
     instances,
     radio,
-    Player,
     get loads() {
       return loads;
     },
-    resolve: () => resolve({ Player }),
+    resolve: () => resolve(api),
+    create: () => create(),
     async load() {
       h.$("[data-radio-open]").click();
       h.$("#radio-load").click();
@@ -311,102 +325,222 @@ function radioHarness(t, { delayed = false, fail = false } = {}) {
     },
     ready() {
       const p = instances.at(-1);
-      p.options.events.onReady({ target: p });
+      p.events.ready();
       return p;
     },
   };
 }
-test("radio makes zero provider requests until consent; controls wait for readiness", async (t) => {
+
+test("music makes no provider requests until Enable, and never auto-plays on connection", async (t) => {
   const h = radioHarness(t);
   assert.equal(h.loads, 0);
-  assert.equal(h.$("#radio-deck").hidden, true);
+  assert.equal(h.$("#music-dock").hidden, true);
   h.$("[data-radio-open]").click();
   assert.equal(h.loads, 0);
   assert.equal(h.$("#radio-play").disabled, true);
   await h.load();
-  assert.equal(h.loads, 1);
   const p = h.ready();
-  assert.equal(p.options.playerVars.autoplay, 0);
-  assert.equal(p.options.playerVars.list, radioRelease.playlist);
-  assert.equal(p.options.height, "200");
-  assert.deepEqual(h.calls, [["volume", 12]]);
-  assert.equal(h.$("#radio-play").disabled, false);
+  assert.equal(p.options.uri, radioTracks[0].uri);
+  assert.equal(p.options.height, 152);
+  assert.equal(
+    h.calls.some(([name]) => name === "play"),
+    false,
+  );
   h.$("#radio-play").click();
-  assert.ok(h.calls.some(([name]) => name === "play"));
-  p.options.events.onStateChange({ data: 1 });
+  assert.deepEqual(h.calls.at(-1), ["play"]);
+  p.events.playback_update({ data: { isPaused: false } });
   assert.equal(h.$("#radio-play").textContent, "Pause");
-  h.$("#radio-mute").click();
-  assert.equal(h.$("#radio-mute").getAttribute("aria-pressed"), "true");
-  h.input(h.$("#radio-volume"), "6");
-  assert.deepEqual(h.calls.at(-1), ["volume", 6]);
-  h.$("main").innerHTML = labContent();
-  assert.equal(h.instances.length, 1);
-  h.radio.pause();
+  h.$("#radio-play").click();
   assert.deepEqual(h.calls.at(-1), ["pause"]);
+  assert.match(h.$("#radio-queue").textContent, /volume API/);
+  assert.equal(h.$("#radio-volume"), null);
+  assert.match(h.$("#radio-queue").textContent, /previews/);
   h.$("[data-radio-close]").click();
-  assert.equal(h.$("#radio-deck").hidden, true);
   assert.deepEqual(h.calls.at(-1), ["destroy"]);
-  assert.equal(h.$("#radio-play").disabled, true);
+  assert.equal(h.$("#music-dock").hidden, true);
+  assert.equal(h.doc.documentElement.dataset.music, undefined);
 });
-test("closing during API loading prevents late playback creation", async (t) => {
+
+test("six song selections and official continuous mix wrap without recreating the player", async (t) => {
+  const h = radioHarness(t);
+  await h.load();
+  h.ready();
+  h.$("#radio-prev").click();
+  assert.deepEqual(h.calls.at(-1), ["load", radioTracks.at(-1).uri]);
+  assert.equal(h.$("#radio-track").value, "6");
+  h.$("#radio-next").click();
+  assert.equal(h.$("#radio-track").value, "0");
+  h.$("#radio-track").value = "3";
+  h.$("#radio-track").dispatchEvent(
+    new h.win.Event("change", { bubbles: true }),
+  );
+  assert.deepEqual(h.calls.at(-1), ["load", radioTracks[3].uri]);
+  assert.equal(h.$(".radio-fallback").href, radioTracks[3].url);
+  assert.equal(h.instances.length, 1);
+  h.$("#radio-queue-toggle").click();
+  assert.equal(h.$("#radio-queue").hidden, false);
+  assert.equal(
+    h.$("#radio-queue-toggle").getAttribute("aria-expanded"),
+    "true",
+  );
+  h.$("#radio-queue-toggle").click();
+  assert.equal(h.$("#radio-queue").hidden, true);
+});
+
+test("closing while API or controller is pending cancels stale initialization", async (t) => {
   const h = radioHarness(t, { delayed: true });
   await h.load();
   h.$("[data-radio-close]").click();
   h.resolve();
   await Promise.resolve();
   assert.equal(h.instances.length, 0);
-  assert.equal(h.$("#radio-deck").hidden, true);
+  assert.equal(h.$("#music-dock").hidden, true);
 });
-test("blocked API and unavailable tracks offer retry and official release fallback", async (t) => {
+test("late controller is destroyed after close", async (t) => {
+  const h = radioHarness(t, { delayedController: true });
+  await h.load();
+  h.$("[data-radio-close]").click();
+  h.create();
+  assert.deepEqual(h.calls.at(-1), ["destroy"]);
+  assert.equal(h.$("#radio-play").disabled, true);
+});
+test("changing the selection during readiness loads the latest selection", async (t) => {
+  const h = radioHarness(t);
+  await h.load();
+  h.$("#radio-next").click();
+  h.ready();
+  assert.deepEqual(h.calls.at(-1), ["load", radioTracks[1].uri]);
+});
+test("blocked connection offers retry and official fallback", async (t) => {
   const h = radioHarness(t, { fail: true });
   await h.load();
   assert.equal(h.$("#radio-load").disabled, false);
   assert.match(h.$("#radio-state").textContent, /blocked/);
-  assert.equal(h.$(".radio-fallback").href, radioRelease.url);
+  assert.equal(h.$(".radio-fallback").href, radioTracks[0].url);
 });
-test("player errors destroy the failed instance and late events cannot resurrect it", async (t) => {
+test("controller timeout cleans up and late events cannot resurrect playback", async (t) => {
+  const h = radioHarness(t, { readyTimeout: 5 });
+  await h.load();
+  const p = h.instances[0];
+  await new Promise((resolve) => setTimeout(resolve, 15));
+  assert.deepEqual(h.calls.at(-1), ["destroy"]);
+  p.events.ready();
+  p.events.playback_update({ data: { isPaused: false } });
+  assert.equal(h.$("#radio-play").disabled, true);
+  assert.equal(h.$("#radio-frame").hidden, true);
+  assert.match(h.$("#radio-state").textContent, /unavailable/);
+});
+test("background music stays connected through page content changes and visibility events", async (t) => {
   const h = radioHarness(t);
   await h.load();
   const p = h.ready();
-  p.options.events.onError({ data: 150 });
-  assert.equal(h.$("#radio-frame").hidden, true);
-  p.options.events.onStateChange({ data: 1 });
-  assert.equal(h.$("#radio-play").disabled, true);
-  assert.match(h.$("#radio-state").textContent, /unavailable/);
-});
-test("backgrounding pauses music without automatic resumption", async (t) => {
-  const h = radioHarness(t);
-  await h.load();
-  h.ready();
+  p.events.playback_update({ data: { isPaused: false } });
+  const count = h.calls.length;
+  h.$("main").innerHTML = labContent();
   Object.defineProperty(h.doc, "hidden", { value: true, configurable: true });
   h.doc.dispatchEvent(new h.win.Event("visibilitychange"));
-  assert.deepEqual(h.calls.at(-1), ["pause"]);
-  const count = h.calls.length;
-  Object.defineProperty(h.doc, "hidden", { value: false, configurable: true });
-  h.doc.dispatchEvent(new h.win.Event("visibilitychange"));
   assert.equal(h.calls.length, count);
+  assert.equal(h.instances.length, 1);
+  h.radio.dispose();
+  h.radio.dispose();
+  assert.equal(h.$("#music-dock"), null);
 });
-test("radio volume clamps bad values", () => {
-  assert.equal(radioVolume(-5), 0);
-  assert.equal(radioVolume(200), 100);
-  assert.equal(radioVolume("bad"), 12);
-});
-test("actual API loader is lazy, shares pending load, and recovers after script blocking", async (t) => {
+test("Spotify API loader shares requests and recovers after a blocked script", async (t) => {
   const h = dom(t);
   let script;
   h.doc.head.append = (node) => {
     script = node;
   };
-  const first = loadYouTubeAPI();
-  const second = loadYouTubeAPI();
+  const first = loadSpotifyAPI(),
+    second = loadSpotifyAPI();
   assert.equal(first, second);
-  assert.equal(script.src, "https://www.youtube.com/iframe_api");
+  assert.equal(script.src, "https://open.spotify.com/embed/iframe-api/v1");
   script.dispatchEvent(new h.win.Event("error"));
   await assert.rejects(first);
-  const retry = loadYouTubeAPI();
-  h.win.YT = { Player: class {} };
-  h.win.onYouTubeIframeAPIReady();
-  assert.equal(await retry, h.win.YT);
+  const retry = loadSpotifyAPI();
+  const api = { createController() {} };
+  h.win.onSpotifyIframeApiReady(api);
+  assert.equal(await retry, api);
+});
+
+test("Netrunner filters real project files and keeps the inspector and source factual", (t) => {
+  const h = dom(t, netrunnerHome());
+  h.cleanup(mountLayout(h.doc.body));
+  assert.equal(h.doc.querySelectorAll("[data-layout-project]").length, 7);
+  assert.match(h.$("#layout-inspector").textContent, /MaintainerOS/);
+  h.input(h.$("#layout-search"), "telescope");
+  assert.equal(h.$("#layout-result-count").textContent, "1");
+  assert.match(h.$("#layout-inspector").textContent, /currently broken/);
+  assert.equal(
+    h.$('[data-layout-project="3"]').getAttribute("aria-pressed"),
+    "true",
+  );
+  h.input(h.$("#layout-search"), "no such project");
+  assert.equal(h.$("#layout-empty").hidden, false);
+  assert.equal(h.$("#layout-result-count").textContent, "0");
+  h.input(h.$("#layout-search"), "");
+  assert.equal(h.$("#layout-result-count").textContent, "7");
+  h.$('[data-layout-project="5"]').click();
+  assert.match(h.$("#layout-inspector").textContent, /existing models/);
+  assert.equal(h.$(".nr-notes").open, false);
+});
+test("Relic changes project files and supports keyboard chapter navigation and cleanup", (t) => {
+  const h = dom(t, relicHome());
+  const dispose = mountLayout(h.doc.body);
+  h.cleanup(dispose);
+  h.$('[data-file-step="-1"]').click();
+  assert.match(h.$("#layout-inspector-title").textContent, /Hyprland/);
+  assert.match(h.$("#relic-file-number").textContent, /07/);
+  h.$('[data-file-step="1"]').click();
+  assert.match(h.$("#layout-inspector-title").textContent, /MaintainerOS/);
+  h.$('[data-layout-project="3"]').click();
+  h.$('[data-chapter="1"]').click();
+  assert.equal(h.$("#relic-chapter-1").hidden, false);
+  assert.match(h.$("#relic-chapter-1").textContent, /currently broken/);
+  const tab = h.$('[data-chapter="1"]');
+  tab.dispatchEvent(
+    new h.win.KeyboardEvent("keydown", { key: "End", bubbles: true }),
+  );
+  assert.equal(h.doc.activeElement.id, "relic-tab-2");
+  assert.equal(h.$("#relic-chapter-2").hidden, false);
+  h.$('[data-chapter="2"]').dispatchEvent(
+    new h.win.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
+  );
+  assert.equal(h.doc.activeElement.id, "relic-tab-0");
+  dispose();
+  h.$('[data-file-step="1"]').click();
+  assert.match(h.$("#layout-inspector-title").textContent, /Telescope/);
+});
+test("both layout templates use all real project images and unique accessible targets", (t) => {
+  const h = dom(t);
+  for (const content of [netrunnerHome(), relicHome()]) {
+    h.doc.body.innerHTML = content;
+    const dispose = mountLayout(h.doc.body);
+    for (let i = 0; i < layoutProjects.length; i++) {
+      h.$('[data-layout-project="' + i + '"]').click();
+      assert.equal(
+        h.$(".layout-media img").getAttribute("src"),
+        layoutProjects[i].image,
+      );
+      assert.equal(
+        h.$(".layout-media figcaption").textContent,
+        layoutProjects[i].caption,
+      );
+      const ids = [...h.doc.querySelectorAll("[id]")].map((el) => el.id);
+      assert.equal(ids.length, new Set(ids).size);
+      for (const el of h.doc.querySelectorAll(
+        "[aria-controls], [aria-labelledby]",
+      )) {
+        for (const attr of ["aria-controls", "aria-labelledby"]) {
+          for (const id of (el.getAttribute(attr) || "")
+            .split(" ")
+            .filter(Boolean))
+            assert.ok(h.doc.getElementById(id), id);
+        }
+      }
+    }
+    dispose();
+  }
 });
 
 test("full app routes new pages, preserves the deck, and retains existing projects/settings", async (t) => {
@@ -425,20 +559,19 @@ test("full app routes new pages, preserves the deck, and retains existing projec
   );
   h.win.history.replaceState(null, "", "#lab");
   h.win.HTMLCanvasElement.prototype.getContext = () => null;
-  await import("./console.js?integration-v15");
+  await import("./console.js?integration-v16");
   assert.ok(h.$("#signal-controls"));
-  const deck = h.$("#radio-deck");
+  const deck = h.$("#music-dock");
   const go = (hash) => {
     h.win.history.replaceState(null, "", "#" + hash);
     h.win.dispatchEvent(new h.win.HashChangeEvent("hashchange"));
   };
-  go("radio");
-  assert.ok(h.$(".radio-station"));
-  h.$("[data-radio-open]").click();
+  h.$('a[href="#radio"]').click();
+  assert.ok(h.$("#signal-controls"), "opening music preserves current page");
   assert.equal(deck.hidden, false);
   go("archive");
   assert.ok(h.$("#packet-form"));
-  assert.equal(h.$("#radio-deck"), deck);
+  assert.equal(h.$("#music-dock"), deck);
   go("lab");
   h.input(h.$('[name="text"]'), "ROUTE CHECK");
   assert.equal(h.$("#signal-preview").textContent, "ROUTE CHECK");
@@ -449,16 +582,40 @@ test("full app routes new pages, preserves the deck, and retains existing projec
   assert.match(h.$("#screen").textContent, /MaintainerOS/);
   go("index");
   assert.ok(h.$(".overdrive-home"));
-  assert.equal(h.doc.querySelectorAll("#radio-deck").length, 1);
+  assert.equal(h.doc.querySelectorAll("#music-dock").length, 1);
+
+  const chooseLayout = (value) => {
+    const input = h.$('[data-setting="layout"][value="' + value + '"]');
+    input.checked = true;
+    input.dispatchEvent(new h.win.Event("change", { bubbles: true }));
+  };
+  chooseLayout("netrunner");
+  assert.ok(h.$(".netrunner-home"));
+  assert.equal(h.$("#music-dock"), deck);
+  chooseLayout("relic");
+  assert.ok(h.$(".relic-home"));
   go("projects");
   assert.equal(h.doc.querySelectorAll(".project-card").length, 7);
+  chooseLayout("overdrive");
+  assert.equal(
+    h.doc.querySelectorAll(".project-card").length,
+    7,
+    "layout selection preserves route",
+  );
+  go("index");
+  assert.ok(h.$(".overdrive-home"));
+  assert.equal(h.$("#music-dock"), deck);
+  go("radio");
+  assert.equal(h.win.location.hash, "#index");
+  assert.equal(deck.hidden, false);
   go("about");
   assert.match(h.$("#screen").textContent, /Optional music/);
   h.$("#city-settings").click();
   assert.equal(h.$("#settings-dialog").open, true);
   assert.equal(
-    h.doc.querySelectorAll('script[src="https://www.youtube.com/iframe_api"]')
-      .length,
+    h.doc.querySelectorAll(
+      'script[src="https://open.spotify.com/embed/iframe-api/v1"]',
+    ).length,
     0,
   );
 });
