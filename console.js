@@ -14,7 +14,12 @@ import {
 import { createProjectNetwork } from "./project-network.js?v=9";
 import { cityHome } from "./city-content.js?v=11";
 import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=11";
-import { createCityMotion } from "./city-motion.js?v=10";
+import { createCityMotion } from "./city-motion.js?v=12";
+import {
+  introById,
+  introOptions,
+  introStorageKey,
+} from "./intro-variants.js?v=12";
 import { mountProjectTerminal } from "./project-terminal.js?v=11";
 import { photoCredit } from "./photo.js?v=11";
 
@@ -138,8 +143,28 @@ function setMotion(on, persist = true) {
     ? "[ Pause animations ]"
     : "[ Enable animations ]";
   $("#replay-intro").disabled = !on;
+  syncIntroChoice();
   document.dispatchEvent(new Event("appearancechange"));
 }
+function syncIntroChoice() {
+  const intro = introById(root.dataset.intro);
+  $("#intro-selection").textContent =
+    `Selected: ${intro.name} · 2.9 seconds${root.dataset.motion === "on" ? "" : " · Enable animations to preview."}`;
+  $("#replay-intro").textContent = `[ Preview ${intro.name} ↗ ]`;
+}
+root.dataset.intro = introById(read(introStorageKey)).id;
+$("#intro-options").innerHTML = introOptions(root.dataset.intro);
+$("#intro-options").addEventListener("change", (event) => {
+  const input = event.target.closest('input[name="startup"]');
+  if (!input) return;
+  const intro = introById(input.value);
+  root.dataset.intro = intro.id;
+  const persisted = write(introStorageKey, intro.id);
+  syncIntroChoice();
+  announce(`${intro.name} startup selected.`);
+  if (!persisted)
+    toast("Startup selected for this session. Browser storage is unavailable.");
+});
 const mediaQuery = matchMedia("(prefers-reduced-motion: reduce)");
 mediaQuery.addEventListener("change", () => {
   if (!read("hirsu-console-motion")) setMotion(!mediaQuery.matches, false);
@@ -186,6 +211,8 @@ $("#city-menu").onclick = $("#city-footer-theme").onclick = () =>
 $("#city-motion").onclick = () => setMotion(root.dataset.motion !== "on");
 function replayIntro() {
   document.querySelectorAll("dialog[open]").forEach((d) => d.close());
+  // Return to a visible control after preview; a closed menu cannot receive focus.
+  $("#city-menu").focus({ preventScroll: true });
   cityMotion.opening({ replay: true });
 }
 $("#replay-intro").onclick = replayIntro;

@@ -1,13 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createCityMotion, bootDuration, bootPhases } from "./city-motion.js";
+import { intros } from "./intro-variants.js";
 
 // Minimal DOM/timer harness exercises the production controller without a browser dependency.
 function harness(
   t,
-  { motion = "on", hidden = false, modalError = false } = {},
+  {
+    motion = "on",
+    hidden = false,
+    modalError = false,
+    intro = "fracture",
+  } = {},
 ) {
-  const root = { dataset: { motion, view: "neon" } };
+  const root = { dataset: { motion, view: "neon", intro } };
   const doc = new EventTarget();
   doc.documentElement = root;
   doc.hidden = hidden;
@@ -28,6 +34,9 @@ function harness(
   const skip = new EventTarget(),
     boot = new EventTarget();
   const percent = { textContent: "" };
+  const art = { innerHTML: "" },
+    label = { textContent: "" },
+    description = { textContent: "" };
   boot.dataset = {};
   boot.open = false;
   boot.showModal = () => {
@@ -45,6 +54,9 @@ function harness(
       "#skip-intro": skip,
       "#main": main,
       "#boot-percent": percent,
+      "#boot-variant-art": art,
+      "#boot-sequence-label": label,
+      "#boot-description": description,
     })[selector] || null;
   let now = 0,
     next = 0;
@@ -92,6 +104,9 @@ function harness(
     skip,
     boot,
     percent,
+    art,
+    label,
+    description,
     main,
     focusTarget,
     timers,
@@ -188,4 +203,37 @@ test("unavailable dialog support leaves content accessible without a scroll lock
   assert.equal(h.controller.opening(), false);
   assert.equal(h.root.dataset.booting, undefined);
   assert.equal(h.timers.size, 0);
+});
+for (const intro of intros) {
+  test(`${intro.name}: selected artwork, 100%, completion, replay, Escape and FX cleanup`, (t) => {
+    const h = harness(t, { intro: intro.id });
+    assert.equal(h.controller.opening(), true);
+    assert.equal(h.boot.dataset.intro, intro.id);
+    assert.ok(h.label.textContent.includes(intro.name.toUpperCase()));
+    assert.equal(h.description.textContent, intro.description);
+    assert.equal(Boolean(h.art.innerHTML), intro.id !== "fracture");
+    h.tick(2250);
+    assert.equal(h.percent.textContent, "100%");
+    h.tick(650);
+    assert.equal(h.boot.open, false);
+    assert.equal(h.timers.size, 0);
+    h.controller.opening({ replay: true });
+    assert.equal(h.percent.textContent, "000%");
+    h.boot.dispatchEvent(new Event("cancel", { cancelable: true }));
+    assert.equal(h.boot.open, false);
+    assert.equal(h.root.dataset.booting, undefined);
+    assert.equal(h.timers.size, 0);
+    h.controller.opening();
+    h.root.dataset.motion = "off";
+    h.doc.dispatchEvent(new Event("appearancechange"));
+    assert.equal(h.boot.open, false);
+    assert.equal(h.timers.size, 0);
+    assert.equal(h.controller.opening(), false);
+  });
+}
+test("invalid saved startup safely uses the original sequence", (t) => {
+  const h = harness(t, { intro: "__proto__" });
+  h.controller.opening();
+  assert.equal(h.boot.dataset.intro, "fracture");
+  h.skip.dispatchEvent(new Event("click"));
 });

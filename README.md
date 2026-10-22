@@ -11,6 +11,14 @@ Switch in MENU or the footer. Mode changes preserve project, gallery shot, bookm
 
 Home is #index. The complete searchable archive is #projects. Old #project- project links, #stack, #bench, #whoami and #themes links remain supported; #work opens the archive.
 
+## Interchangeable startup sequences / v12
+
+MENU → **Startup / Select a sequence** offers six original treatments: Signal Fracture (the original eight-band glitch), Neural Link (optical rings and a radial rush), Data Rain (falling code and upward peel), Redline (diagonal split gates), Ghost Scan (CRT trace and line collapse), and Shard Assembly (six converging/scattering plates). Native radio cards provide keyboard selection and static previews. Use **Preview** to play the selected sequence; the choice is saved in `hirsu-startup-v12` independently of theme and motion. Blocked storage gives a session-only notice; unknown saved values fall back to Signal Fracture.
+
+Every treatment uses the same bounded 2.9-second controller: 100% at 2.25 seconds, exit at 2.38 seconds, completion at 2.9 seconds. No network request or asset loading controls the timer. Skip, Escape, backgrounding, FX-off and unsupported dialogs release the modal and scroll lock. Preview returns focus to the visible MENU button. FX-off disables preview without forgetting the selected sequence; system reduced motion remains respected. Decorative code is not a shell or device scan. No sound or bright full-screen strobes.
+
+`intro-variants.js` holds the validated registry, radio cards and decorative geometry; `intro-variants.css` holds the distinct compositions and transitions. `intro.test.js` and expanded `motion.test.js` cover each treatment's selection, completion and cancellation paths.
+
 ## Project terminal & real photography / v11
 
 The default homepage is now a working project directory: select any of seven files to inspect its preview, description, factual status, tools and source link. Arrow keys wrap through files, Home/End jump, and Tab reaches the preview and links. Selection uses native buttons and ARIA tabs; transitions use the existing optional motion controller. The full scrolling archive and globe remain below.

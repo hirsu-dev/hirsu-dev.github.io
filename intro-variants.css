@@ -1,0 +1,689 @@
+/* v12: localized signal effects; no audio, strobes or bright full-screen flashes. */
+#theme-dialog {
+  width: min(900px, calc(100vw - 32px));
+}
+#theme-dialog .menu-pages {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+#theme-dialog .theme-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-block: 18px;
+}
+#theme-dialog .theme-options > button {
+  padding: 14px;
+}
+.intro-picker {
+  border: 0;
+  border-top: 1px solid var(--line);
+  padding: 24px 0 0;
+  margin: 24px 0 18px;
+  min-width: 0;
+}
+.intro-picker legend {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  padding-right: 14px;
+}
+.intro-picker > p {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 18px;
+}
+.intro-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.intro-choice {
+  position: relative;
+  cursor: pointer;
+  min-width: 0;
+}
+.intro-choice input {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.intro-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--line);
+  padding: 8px;
+  background: #100e16;
+  color: #e8e2e7;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.intro-choice input:checked + .intro-card {
+  border-color: var(--accent);
+  background: #252116;
+  box-shadow: inset 0 -3px var(--accent);
+}
+.intro-choice input:focus-visible + .intro-card {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+.intro-mini {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 70px;
+  overflow: hidden;
+  background: #080c10;
+  color: #fcee0a;
+  margin-bottom: 12px;
+}
+.intro-mini b {
+  font:
+    italic 36px Impact,
+    sans-serif;
+  z-index: 1;
+}
+.intro-mini i {
+  position: absolute;
+  pointer-events: none;
+}
+.mini-fracture {
+  background: repeating-linear-gradient(
+    0deg,
+    #080c10 0 14px,
+    #fcee0a44 15px 16px
+  );
+}
+.mini-fracture b {
+  text-shadow:
+    -4px 0 #ff426e,
+    4px 0 #59f4ef;
+}
+.mini-neural {
+  color: #77eff3;
+  background: repeating-radial-gradient(
+    circle at center,
+    #080c10 0 11px,
+    #77eff355 12px 13px,
+    #080c10 14px 24px
+  );
+}
+.mini-rain {
+  color: #8bffb1;
+  background: repeating-linear-gradient(
+    90deg,
+    #080c10 0 12px,
+    #8bffb122 13px 14px
+  );
+}
+.mini-rain::after {
+  content: "01 10 01 11 10 01 10";
+  position: absolute;
+  inset: 6px;
+  font: 9px monospace;
+  letter-spacing: 4px;
+  color: #8bffb188;
+  overflow: hidden;
+}
+.mini-redline {
+  background: repeating-linear-gradient(
+    120deg,
+    #291015 0 25px,
+    #ff586555 26px 31px,
+    #080c10 32px 55px
+  );
+  color: #ff7076;
+}
+.mini-ghost {
+  color: #d3f7e7;
+  background: repeating-linear-gradient(0deg, #080c10 0 3px, #c6f8db22 4px);
+}
+.mini-shards {
+  background: conic-gradient(
+    from 30deg,
+    #080c10 0 60deg,
+    #202c39 60deg 120deg,
+    #080c10 120deg 180deg,
+    #3c2039 180deg 240deg,
+    #080c10 240deg 300deg,
+    #15333c 300deg
+  );
+  color: #d0b9ff;
+}
+.intro-name {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+.intro-name small {
+  color: #8eb8be;
+  font-size: 9px;
+}
+.intro-description {
+  font-size: 10px;
+  line-height: 1.7;
+  color: #bdb2c1;
+  padding-bottom: 8px;
+}
+#intro-selection {
+  color: var(--cyan);
+  margin: 16px 0 0;
+}
+.intro-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.intro-actions #replay-intro {
+  margin: 0;
+}
+#theme-dialog .dialog-bar {
+  position: sticky;
+  top: -28px;
+  z-index: 4;
+  background: var(--panel);
+  padding-block: 12px;
+}
+.boot-variant-art {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.intro-backdrop {
+  position: absolute;
+  inset: 0;
+  background: #080c10;
+}
+#boot-dialog:not([data-intro="fracture"]) .boot-slices,
+#boot-dialog:not([data-intro="fracture"]) .boot-orbits {
+  display: none;
+}
+#boot-dialog:not([data-intro="fracture"]) .boot-shell {
+  border-color: #91dce833;
+}
+#boot-dialog:not([data-intro="fracture"]) .boot-grid {
+  opacity: 0.09;
+}
+#boot-dialog[data-intro] .boot-top > span:last-child {
+  display: inline;
+  font-size: 9px;
+}
+/* 02 / Optical lock, five independently rotating rings and a camera-like punch-through. */
+#boot-dialog[data-intro="neural"] {
+  --boot-yellow: #9af5fb;
+  --boot-cyan: #79c5ff;
+}
+.neural-optics {
+  position: absolute;
+  width: min(82vh, 85vw);
+  aspect-ratio: 1;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}
+.optic {
+  position: absolute;
+  inset: calc(var(--n) * 6%);
+  border: 1px solid #78e4f155;
+  border-radius: 50%;
+  border-top: 3px solid #9af5fb;
+  border-bottom: 2px solid #9af5fb;
+}
+.optic:nth-child(2n) {
+  border-style: dashed;
+  border-color: #79c5ff66;
+}
+.neural-optics b {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  translate: -50% -100%;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: #9af5fb;
+}
+#boot-dialog[open] .optic {
+  animation: optic-lock 2.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--n) * 0.05s);
+}
+#boot-dialog[open][data-intro="neural"] .boot-center {
+  text-align: center;
+  background: #080c10b3;
+  animation: optic-copy 0.8s both;
+}
+#boot-dialog[open][data-intro="neural"] :is(.boot-shell, .boot-variant-art) {
+  animation: optic-release 0.5s 2.38s cubic-bezier(0.4, 0, 0.8, 1) both;
+}
+@keyframes optic-lock {
+  from {
+    transform: rotate(calc(var(--n) * 65deg - 160deg)) scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.65;
+  }
+  to {
+    transform: rotate(calc(var(--n) * 40deg)) scale(1);
+    opacity: 0.75;
+  }
+}
+@keyframes optic-copy {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes optic-release {
+  to {
+    opacity: 0;
+    transform: scale(1.65);
+  }
+}
+/* 03 / Twelve CSS-only code columns. Decorative, not a real terminal. */
+#boot-dialog[data-intro="rain"] {
+  --boot-yellow: #a0ffc0;
+  --boot-cyan: #56dca7;
+}
+.data-streams {
+  position: absolute;
+  inset: -60% 0 0;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  overflow: hidden;
+}
+.data-streams span {
+  font: 11px/2.7 var(--mono);
+  color: #76ffc7;
+  opacity: 0.22;
+  white-space: nowrap;
+  letter-spacing: 0.2em;
+}
+#boot-dialog[open] .data-streams span {
+  animation: data-fall 2.9s linear both;
+  animation-delay: calc(var(--n) * -0.14s);
+}
+#boot-dialog[data-intro="rain"] .boot-center {
+  background: #06130ff2;
+  border-left: 2px solid #a0ffc0;
+}
+#boot-dialog[data-intro="rain"] #boot-title {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: clamp(60px, 9vw, 110px);
+  letter-spacing: -0.09em;
+}
+#boot-dialog[open][data-intro="rain"] .boot-center {
+  animation: data-copy 0.85s steps(8, end) both;
+}
+#boot-dialog[open][data-intro="rain"] :is(.boot-shell, .boot-variant-art) {
+  animation: data-release 0.48s 2.38s cubic-bezier(0.6, 0, 0.2, 1) both;
+}
+@keyframes data-fall {
+  from {
+    transform: translateY(-20%);
+  }
+  to {
+    transform: translateY(70%);
+  }
+}
+@keyframes data-copy {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes data-release {
+  to {
+    clip-path: inset(0 0 100%);
+    transform: translateY(-35px);
+  }
+}
+/* 04 / Two physical-looking gates split along a diagonal seam. */
+#boot-dialog[data-intro="redline"] {
+  --boot-yellow: #ff6571;
+  --boot-cyan: #ffe45e;
+}
+.red-gate {
+  position: absolute;
+  inset: 0 auto 0 -25%;
+  width: 90%;
+  background: #170a0f;
+  border-right: 2px solid #ff6571;
+  transform: skewX(-14deg);
+}
+.gate-right {
+  left: auto;
+  right: -25%;
+  background: #0c090e;
+  border-right: 0;
+  border-left: 2px solid #ff6571;
+}
+.red-blades {
+  position: absolute;
+  inset: 0;
+}
+.blade {
+  position: absolute;
+  top: -35%;
+  left: calc(25% + var(--n) * 12%);
+  height: 170%;
+  width: 6px;
+  background: #ff6571;
+  rotate: 25deg;
+  opacity: 0.2;
+}
+#boot-dialog[open] .blade {
+  animation: blade-enter 0.9s calc(var(--n) * 0.1s)
+    cubic-bezier(0.15, 0.8, 0.2, 1) both;
+}
+#boot-dialog[data-intro="redline"] .boot-center {
+  align-self: flex-start;
+  margin-left: 8%;
+  border-left: 4px solid #ff6571;
+  background: #170a0fbb;
+}
+#boot-dialog[data-intro="redline"] #boot-title {
+  font-size: clamp(110px, 15vw, 200px);
+}
+#boot-dialog[open][data-intro="redline"] .boot-shell {
+  animation: red-copy-out 0.4s 2.38s ease-in both;
+}
+#boot-dialog[open] .gate-left {
+  animation: gate-left-out 0.5s 2.38s ease-in both;
+}
+#boot-dialog[open] .gate-right {
+  animation: gate-right-out 0.5s 2.38s ease-in both;
+}
+#boot-dialog[open] .red-blades {
+  animation: red-copy-out 0.4s 2.38s ease-in both;
+}
+#boot-dialog[open][data-intro="redline"] .intro-backdrop {
+  animation: intro-fade 0.5s 2.38s both;
+}
+@keyframes blade-enter {
+  from {
+    translate: 0 -100%;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes gate-left-out {
+  to {
+    transform: skewX(-14deg) translateX(-110%);
+  }
+}
+@keyframes gate-right-out {
+  to {
+    transform: skewX(-14deg) translateX(110%);
+  }
+}
+@keyframes red-copy-out {
+  to {
+    opacity: 0;
+    transform: translateX(-12%) skewX(-8deg);
+  }
+}
+/* 05 / A single low-luminance CRT sweep, then one line-collapse. */
+#boot-dialog[data-intro="ghost"] {
+  --boot-yellow: #d8f2e4;
+  --boot-cyan: #a4c9bc;
+}
+.ghost-trace {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 3px,
+    #9ddec30b 3px 4px
+  );
+}
+.ghost-trace i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #b5efcc66;
+  box-shadow: 0 0 40px 12px #9be2c11a;
+}
+.ghost-trace b {
+  position: absolute;
+  right: 8%;
+  top: 18%;
+  color: #9ac5b7;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+}
+#boot-dialog[open] .ghost-trace i {
+  animation: ghost-scan 2.25s linear both;
+}
+#boot-dialog[data-intro="ghost"] .boot-center {
+  text-align: center;
+}
+#boot-dialog[data-intro="ghost"] #boot-title {
+  font-style: normal;
+  text-shadow: 0 0 25px #d8f2e433;
+}
+#boot-dialog[data-intro="ghost"] .boot-echo {
+  color: #d8f2e4;
+}
+#boot-dialog[open][data-intro="ghost"] .boot-center {
+  animation: ghost-in 0.6s ease-out both;
+}
+#boot-dialog[open][data-intro="ghost"] :is(.boot-shell, .boot-variant-art) {
+  animation: ghost-out 0.5s 2.38s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+@keyframes ghost-scan {
+  to {
+    transform: translateY(100vh);
+  }
+}
+@keyframes ghost-in {
+  from {
+    transform: scaleY(0.02) scaleX(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes ghost-out {
+  65% {
+    transform: scaleY(0.003) scaleX(0.9);
+    opacity: 0.75;
+  }
+  to {
+    transform: scaleY(0.003) scaleX(0);
+    opacity: 0;
+  }
+}
+/* 06 / Six clipped plates: assemble around the name, disperse away from it. */
+#boot-dialog[data-intro="shards"] {
+  --boot-yellow: #d9bdff;
+  --boot-cyan: #6de7f2;
+}
+.shard-field {
+  position: absolute;
+  inset: 0;
+}
+.shard {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(calc(var(--n) * 50deg), #12232f, #211329);
+  clip-path: polygon(50% 50%, 0 0, 50% 0);
+}
+.shard:nth-child(2) {
+  clip-path: polygon(50% 50%, 50% 0, 100% 0);
+}
+.shard:nth-child(3) {
+  clip-path: polygon(50% 50%, 100% 0, 100% 100%);
+}
+.shard:nth-child(4) {
+  clip-path: polygon(50% 50%, 100% 100%, 50% 100%);
+}
+.shard:nth-child(5) {
+  clip-path: polygon(50% 50%, 50% 100%, 0 100%);
+}
+.shard:nth-child(6) {
+  clip-path: polygon(50% 50%, 0 100%, 0 0);
+}
+#boot-dialog[open] .shard {
+  animation: shard-in 1s calc(var(--n) * 0.08s) cubic-bezier(0.16, 1, 0.3, 1)
+    both;
+}
+#boot-dialog[data-intro="shards"] .boot-center {
+  background: #0d0b17e8;
+  clip-path: polygon(
+    0 18px,
+    18px 0,
+    calc(100% - 30px) 0,
+    100% 30px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    30px 100%,
+    0 calc(100% - 30px)
+  );
+}
+#boot-dialog[open][data-intro="shards"] .boot-shell {
+  animation: shard-copy-out 0.48s 2.38s ease-in both;
+}
+#boot-dialog[open][data-intro="shards"] .intro-backdrop {
+  animation: intro-fade 0.3s 2.38s both;
+}
+#boot-dialog[open][data-intro="shards"][data-phase="release"] .shard {
+  animation: shard-out 0.5s 0.13s cubic-bezier(0.65, 0, 0.4, 1) both;
+}
+@keyframes shard-in {
+  from {
+    transform: rotate(calc((var(--n) - 3) * 10deg)) scale(1.8);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 0.8;
+  }
+}
+@keyframes shard-out {
+  to {
+    transform: rotate(calc((var(--n) - 3) * 8deg)) scale(2.6);
+    opacity: 0;
+  }
+}
+@keyframes shard-copy-out {
+  to {
+    transform: scale(0.8) rotate(-4deg);
+    opacity: 0;
+  }
+}
+@keyframes intro-fade {
+  to {
+    opacity: 0;
+  }
+}
+@media (max-width: 650px) {
+  #theme-dialog .menu-pages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #theme-dialog .theme-options {
+    grid-template-columns: 1fr;
+  }
+  .intro-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .intro-mini {
+    height: 55px;
+  }
+  .intro-name {
+    font-size: 10px;
+  }
+  #boot-dialog[data-intro] .boot-top {
+    align-items: flex-start;
+  }
+  #boot-dialog[data-intro] .boot-top > span:last-child {
+    font-size: 8px;
+    text-align: right;
+    max-width: 110px;
+  }
+  #boot-dialog[data-intro="redline"] .boot-center {
+    margin-left: 0;
+  }
+  #boot-dialog[data-intro="redline"] #boot-title {
+    font-size: clamp(85px, 27vw, 140px);
+  }
+  .data-streams {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .data-streams span:nth-child(n + 7) {
+    display: none;
+  }
+  .ghost-trace b {
+    display: none;
+  }
+}
+@media (max-height: 520px) {
+  #boot-dialog[data-intro] .boot-shell {
+    inset: 10px;
+    padding: 12px 20px;
+  }
+  #boot-dialog[data-intro] .boot-stages {
+    display: none;
+  }
+  #boot-dialog[data-intro] .boot-center {
+    padding: 10px 25px;
+  }
+  #boot-dialog[data-intro] #boot-title {
+    font-size: 65px;
+    margin-block: 5px;
+  }
+  #boot-dialog[data-intro] #boot-description {
+    font-size: 10px;
+  }
+  #boot-dialog[data-intro] .boot-bottom {
+    flex-direction: row;
+    align-items: center;
+    font-size: 8px;
+  }
+  #boot-dialog[data-intro] .boot-track {
+    margin-top: 10px;
+  }
+}
+@media (min-height: 521px) and (max-height: 700px) {
+  #boot-dialog[data-intro] .boot-center {
+    padding-block: 20px;
+  }
+  #boot-dialog[data-intro] #boot-title {
+    font-size: 80px;
+  }
+  #boot-dialog[data-intro] .boot-stages {
+    margin-top: 16px;
+    gap: 8px;
+  }
+  #boot-dialog[data-intro] .boot-meter {
+    margin-top: 10px;
+  }
+}
+/* This file is last in the cascade: explicitly preserve the global pause rules. */
+html[data-motion="off"] #boot-dialog *,
+html[data-motion="off"] .intro-card {
+  animation: none !important;
+  transition: none !important;
+}
+html[data-visibility="hidden"] #boot-dialog * {
+  animation-play-state: paused !important;
+}

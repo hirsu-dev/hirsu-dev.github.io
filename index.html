@@ -50,7 +50,8 @@
     <link rel="stylesheet" href="overdrive.css?v=9" />
     <link rel="stylesheet" href="cyber-hud.css?v=10" />
     <link rel="stylesheet" href="terminal-ui.css?v=11" />
-    <script type="module" src="console.js?v=11"></script>
+    <link rel="stylesheet" href="intro-variants.css?v=12" />
+    <script type="module" src="console.js?v=12"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -339,10 +340,21 @@
           >
         </button>
       </div>
-      <button class="bracket" id="dialog-motion">[ Pause animations ]</button>
-      <button class="bracket" id="replay-intro">
-        [ Replay opening sequence ↗ ]
-      </button>
+      <fieldset class="intro-picker" aria-describedby="intro-help">
+        <legend>STARTUP / SELECT A SEQUENCE</legend>
+        <p id="intro-help">
+          Six visual sequences. Select one to use on your next visit, or preview
+          it now. Your choice stays in this browser.
+        </p>
+        <div id="intro-options" class="intro-options"></div>
+        <p id="intro-selection" aria-live="polite"></p>
+      </fieldset>
+      <div class="intro-actions">
+        <button class="bracket" id="replay-intro">
+          [ Preview Signal Fracture ↗ ]
+        </button>
+        <button class="bracket" id="dialog-motion">[ Pause animations ]</button>
+      </div>
       <p class="fineprint">
         Preferences and bookmarks are stored only in this browser. System
         reduced-motion preference is respected by default.
@@ -411,10 +423,16 @@
       <div class="boot-slices" aria-hidden="true">
         <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
+      <div
+        id="boot-variant-art"
+        class="boot-variant-art"
+        aria-hidden="true"
+      ></div>
       <div class="boot-static" aria-hidden="true"></div>
       <div class="boot-shell">
         <div class="boot-top">
-          <span>HIRSU / PERSONAL PROJECT NETWORK</span><span>SEQUENCE_01</span>
+          <span>HIRSU / PERSONAL PROJECT NETWORK</span
+          ><span id="boot-sequence-label">01 / SIGNAL FRACTURE</span>
         </div>
         <div class="boot-center">
           <div class="boot-orbits" aria-hidden="true">
@@ -430,9 +448,13 @@
           </h2>
           <p id="boot-description">A signal from the workbench.</p>
           <div class="boot-stages" aria-hidden="true">
-            <span>01 <b>FORM THE SIGNAL</b><i>READY</i></span
-            ><span>02 <b>ASSEMBLE THE INTERFACE</b><i>READY</i></span
-            ><span>03 <b>OPEN THE WORKBENCH</b><i>READY</i></span>
+            <span>01 <b id="boot-stage-1">FORM THE SIGNAL</b><i>READY</i></span
+            ><span
+              >02 <b id="boot-stage-2">ASSEMBLE THE INTERFACE</b
+              ><i>READY</i></span
+            ><span
+              >03 <b id="boot-stage-3">OPEN THE WORKBENCH</b><i>READY</i></span
+            >
           </div>
           <div class="boot-meter" aria-hidden="true">
             <span>VISUAL SEQUENCE</span><b id="boot-percent">000%</b>

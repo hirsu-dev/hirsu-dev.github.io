@@ -1,4 +1,5 @@
 // Original, optional HUD motion. Boot stages are presentation, not network work.
+import { introById, introArtwork } from "./intro-variants.js?v=12";
 export const panelFrames = [
   {
     opacity: 0,
@@ -232,6 +233,19 @@ export function createCityMotion() {
     returnFocus = replay ? document.activeElement : null;
     bootActive = true;
     bootReleasing = false;
+    const intro = introById(root.dataset.intro);
+    boot.dataset.intro = intro.id;
+    const art = document.querySelector("#boot-variant-art");
+    if (art) art.innerHTML = introArtwork(intro.id);
+    const label = document.querySelector("#boot-sequence-label");
+    if (label)
+      label.textContent = `${intro.code} / ${intro.name.toUpperCase()}`;
+    const description = document.querySelector("#boot-description");
+    if (description) description.textContent = intro.description;
+    intro.stages.forEach((text, index) => {
+      const stage = document.querySelector(`#boot-stage-${index + 1}`);
+      if (stage) stage.textContent = text;
+    });
     root.dataset.booting = "true";
     boot.dataset.phase = "init";
     if (bootPercent) bootPercent.textContent = "000%";
