@@ -179,7 +179,7 @@ export function createCityMotion() {
       animate(container);
       container
         .querySelectorAll(
-          ".page-head .eyebrow,.page-head h1,.page-head p:not(.eyebrow),.sky-shell,.feed-tools,.nr-masthead,.nr-window,.nr-dock,.relic-masthead,.relic-index,.relic-file,.relic-footnotes,.sb-masthead,.sb-console,.sb-patchbay,.sb-exits",
+          ".page-head .eyebrow,.page-head h1,.page-head p:not(.eyebrow),.sky-shell,.feed-tools,.nr-masthead,.nr-window,.nr-dock,.relic-masthead,.relic-index,.relic-file,.relic-footnotes,.sb-masthead,.sb-console,.sb-patchbay,.sb-exits,.bl-tabs,.bl-panel:not([hidden])",
         )
         .forEach((piece, i) =>
           animate(

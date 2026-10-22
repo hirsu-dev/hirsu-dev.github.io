@@ -82,13 +82,14 @@
     <link rel="stylesheet" href="intro-variants.css?v=13" />
     <link rel="stylesheet" href="intro-scenes.css?v=13" />
     <link rel="stylesheet" href="settings.css?v=14" />
-    <link rel="stylesheet" href="side-channel.css?v=16" />
+    <link rel="stylesheet" href="side-channel.css?v=19" />
     <link rel="stylesheet" href="layouts.css?v=16" />
-    <link rel="stylesheet" href="music.css?v=16" />
+    <link rel="stylesheet" href="music.css?v=19" />
     <link rel="stylesheet" href="constellation.css?v=17" />
     <link rel="stylesheet" href="motion-upgrade.css?v=18" />
     <link rel="stylesheet" href="switchboard.css?v=18" />
-    <script type="module" src="console.js?v=18"></script>
+    <link rel="stylesheet" href="build-lab.css?v=19" />
+    <script type="module" src="console.js?v=19"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -100,7 +101,7 @@
         <a href="#projects" data-nav="projects">PROJECTS</a
         ><a href="#stack" data-nav="stack">STACK</a
         ><a href="#network" data-nav="network">NIGHT SKY</a
-        ><a href="#lab" data-nav="lab">LAB</a
+        ><a href="#lab" data-nav="lab">BUILD LAB</a
         ><a href="#radio" data-nav="radio">RADIO</a
         ><button
           id="city-settings"
@@ -183,7 +184,7 @@
         >
       </nav>
       <div class="rail-bottom">
-        <span class="rail-version" aria-hidden="true">v18.0</span>
+        <span class="rail-version" aria-hidden="true">v19.0</span>
         <button
           class="rail-item"
           id="theme-button"
@@ -351,7 +352,7 @@
         <a href="#index">HOME</a><a href="#projects">ALL PROJECTS</a
         ><a href="#network">NETWORK</a><a href="#stack">STACK</a
         ><a href="#log">WORKBENCH</a><a href="#saved">SAVED</a
-        ><a href="#lab">SIGNAL LAB</a><a href="#radio">RADIO / MUSIC</a
+        ><a href="#lab">BUILD LAB</a><a href="#radio">RADIO / MUSIC</a
         ><a href="#about">ABOUT / SOURCES</a
         ><button id="city-commands">COMMANDS / CTRL K</button>
       </nav>
@@ -445,7 +446,8 @@
               background music loads Spotify only after you enable it. Spotify
               receives browser data and may use cookies. Full tracks or previews
               depend on Spotify; volume is controlled by Spotify or your device.
-              Closing the mini-player disconnects playback.
+              The × hides controls without stopping music. Use Stop &amp;
+              disconnect to end playback.
             </p>
           </div>
           <button class="settings-secondary" id="settings-reset">

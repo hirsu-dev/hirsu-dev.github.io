@@ -39,7 +39,7 @@ export function overdriveHome(network) {
     </section>
     <div class="od-ticker" aria-hidden="true"><div>${Array.from({ length: 2 }, () => `<span>PYTHON <b>×</b> JAVASCRIPT <b>×</b> ROBOTICS <b>×</b> LOCAL AI <b>×</b> RASPBERRY PI <b>×</b> OPEN SOURCE <b>×</b> `).join("")}</div></div>
     <nav class="od-jump" aria-label="Home sections"><span>SCROLL / INDEX</span>${overdriveSections.map((id, i) => `<a href="#${id}" data-home-section="${id}">0${i + 1} / ${["BUILDS", "NIGHT SKY", "STACK", "WORKBENCH"][i]}</a>`).join("")}</nav>
-    <nav class="channel-links od-section" aria-label="Side channels"><a href="#lab">SIGNAL LAB / MAKE AN EFFECT ↗</a><a href="#radio">RADIO / AFTER HOURS ↗</a><a href="#archive">FF:06:B5 / UNKNOWN PACKETS ↗</a></nav>
+    <nav class="channel-links od-section" aria-label="Side channels"><a href="#lab">BUILD LAB / TRY MY PROJECTS ↗</a><a href="#radio">RADIO / AFTER HOURS ↗</a><a href="#log">BUILD LOG / MY WORKBENCH ↗</a></nav>
     <section id="od-projects" class="od-section" aria-labelledby="od-projects-title">
       <header class="od-section-head" data-reveal><p class="od-kicker">01 / SELECTED SIGNALS</p><div><h2 id="od-projects-title">BUILT TO<br /><em>DO SOMETHING.</em></h2><p>Useful tools. Physical experiments. Unfinished ideas worth pursuing. Every project includes its actual current state.</p></div></header>
       <div class="od-builds">${order

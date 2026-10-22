@@ -44,6 +44,7 @@ export function resolveRoute(hash) {
     whoami: "about",
     themes: "themes",
     settings: "themes",
+    archive: "lab",
   };
   if (Object.hasOwn(aliases, route)) return aliases[route];
   if (route.startsWith("project-")) route = route.slice(8);
@@ -59,7 +60,6 @@ export function resolveRoute(hash) {
       "themes",
       "lab",
       "radio",
-      "archive",
     ].includes(route)
     ? route
     : "index";

@@ -95,7 +95,8 @@ export function loadSpotifyAPI() {
 }
 
 // Outside #screen: route changes, settings and layout switches preserve playback.
-// Spotify's native audio embed remains visible at its supported compact height.
+// Minimizing keeps the same consented player/controller mounted. Only Stop
+// or disposal disconnects it; opening controls never starts playback by itself.
 export function mountRadio({
   loadAPI = loadSpotifyAPI,
   readyTimeout = 15000,
@@ -104,17 +105,24 @@ export function mountRadio({
   deck.id = "music-dock";
   deck.hidden = true;
   deck.setAttribute("aria-label", "Background music controls");
-  deck.innerHTML = `<header class="music-toolbar"><span class="music-indicator" aria-hidden="true"></span><b>H / FM</b><span class="music-frequency">AFTER HOURS</span><button data-radio-close aria-label="Stop music and close player">×</button></header>
+  deck.innerHTML = `<header class="music-toolbar"><span class="music-indicator" aria-hidden="true"></span><b>H / FM</b><span class="music-frequency">AFTER HOURS</span><button data-radio-close aria-label="Minimize controls; keep music playing" title="Minimize — music keeps playing">×</button></header>
     <div id="radio-consent"><p>A soundtrack while you explore.</p><p>Enable Spotify, then press Play. Spotify receives browser data and may use cookies. Nothing connects before you enable it.</p><button id="radio-load">Enable background music ↗</button></div>
     <div id="radio-frame" hidden></div>
     <div class="music-transport"><button id="radio-prev" aria-label="Previous music selection">←</button><button id="radio-play" disabled>Play</button><button id="radio-next" aria-label="Next music selection">→</button><button id="radio-queue-toggle" aria-expanded="false" aria-controls="radio-queue">Tracks <span id="radio-count">01 / 07</span></button></div>
     <div id="radio-queue" hidden><label for="radio-track">Choose a frequency</label><select id="radio-track">${radioTracks.map((track, i) => `<option value="${i}">${esc(track.title)}</option>`).join("")}</select><p id="radio-credit"></p><p>Choose the continuous mix for playlist playback. Individual selections can be changed with ← / →.</p><p>Full songs or previews depend on Spotify, sign-in and region. Use Spotify or your device for volume; this embed has no volume API.</p><p><a href="https://www.spotify.com/legal/privacy-policy/" target="_blank" rel="noopener noreferrer">Spotify privacy ↗</a> · <a class="radio-fallback" target="_blank" rel="noopener noreferrer">Open selection in Spotify ↗</a></p></div>
-    <p id="radio-state" role="status">Music off. Enable to listen; use a low device volume.</p>`;
+    <div class="music-stop-row"><span>× hides controls. Music stays connected.</span><button data-radio-stop>Stop & disconnect</button></div><p id="radio-state" role="status">Music off. Enable to listen; use a low device volume.</p>`;
   document.body.append(deck);
+  const mini = document.createElement("aside");
+  mini.id = "music-mini";
+  mini.hidden = true;
+  mini.setAttribute("aria-label", "Minimized background radio");
+  mini.innerHTML = `<button data-radio-open class="music-reopen" aria-label="Expand background radio controls" aria-controls="music-dock"><span class="music-indicator" aria-hidden="true"></span><span><small id="radio-mini-state">RADIO</small><b id="radio-mini-title"></b></span><span aria-hidden="true">↗</span></button><button id="radio-mini-play" disabled>Play</button><button data-radio-stop aria-label="Stop background music and disconnect">Stop</button>`;
+  document.body.append(mini);
   const $ = (selector) => deck.querySelector(selector);
   let player = null,
     ready = false,
     playing = false,
+    enabled = false,
     index = 0,
     generation = 0,
     timeout = 0,
@@ -127,6 +135,20 @@ export function mountRadio({
     $("#radio-play").disabled = !ready;
     $("#radio-play").textContent = playing ? "Pause" : "Play";
     deck.dataset.playing = String(playing);
+    mini.dataset.playing = String(playing);
+    mini.querySelector("#radio-mini-play").disabled = !ready;
+    mini.querySelector("#radio-mini-play").textContent = playing
+      ? "Pause"
+      : "Play";
+    mini.querySelector("#radio-mini-state").textContent = playing
+      ? "PLAYING / H·FM"
+      : ready
+        ? "PAUSED / H·FM"
+        : "CONNECTING / H·FM";
+    mini.hidden = !deck.hidden || !enabled;
+    if (!deck.hidden) document.documentElement.dataset.music = "open";
+    else if (enabled) document.documentElement.dataset.music = "background";
+    else delete document.documentElement.dataset.music;
   };
   const describe = () => {
     $("#radio-track").value = String(index);
@@ -134,13 +156,15 @@ export function mountRadio({
       `${String(index + 1).padStart(2, "0")} / 07`;
     $("#radio-credit").textContent = radioTracks[index].artist;
     $(".radio-fallback").href = radioTracks[index].url;
+    mini.querySelector("#radio-mini-title").textContent =
+      radioTracks[index].title;
   };
   const disconnect = () => {
     generation++;
     clearTimeout(timeout);
     const old = player;
     player = null;
-    ready = playing = false;
+    ready = playing = enabled = false;
     try {
       old?.destroy();
     } catch {
@@ -155,18 +179,35 @@ export function mountRadio({
   const open = (source) => {
     if (disposed) return;
     opener = source || document.activeElement;
-    if (opener?.closest("dialog"))
+    if (opener?.closest("dialog, #music-mini, #music-dock"))
       opener = document.querySelector("#city-menu");
     deck.hidden = false;
-    document.documentElement.dataset.music = "open";
+    controls();
     (ready ? $("#radio-play") : $("#radio-load")).focus();
   };
   const close = () => {
-    disconnect();
+    if (disposed) return;
     deck.hidden = true;
-    delete document.documentElement.dataset.music;
+    controls();
+    if (enabled)
+      status(
+        "Controls minimized. Playback stays connected; reopen RADIO or use the small playback strip.",
+      );
+    returnFocus();
+  };
+  function returnFocus() {
+    const target = opener?.isConnected
+      ? opener
+      : document.querySelector(
+          '.city-nav a[href="#radio"], [data-radio-open]:not(#music-mini button)',
+        );
+    target?.focus();
+  }
+  const stop = () => {
+    if (disposed) return;
+    disconnect();
     status("Music off. Player disconnected.");
-    if (opener?.isConnected) opener.focus();
+    if (deck.hidden) returnFocus();
   };
   const choose = (next) => {
     if (!Number.isInteger(next)) return;
@@ -190,6 +231,8 @@ export function mountRadio({
   };
   async function load() {
     disconnect();
+    enabled = true;
+    controls();
     const token = generation;
     $("#radio-load").disabled = true;
     status("Connecting to Spotify…");
@@ -257,8 +300,9 @@ export function mountRadio({
       return;
     }
     const button = event.target.closest("button");
-    if (!button || !deck.contains(button)) return;
+    if (!button || (!deck.contains(button) && !mini.contains(button))) return;
     if (button.hasAttribute("data-radio-close")) close();
+    if (button.hasAttribute("data-radio-stop")) stop();
     if (button.id === "radio-load") load();
     if (button.id === "radio-prev") choose(index - 1);
     if (button.id === "radio-next") choose(index + 1);
@@ -266,7 +310,7 @@ export function mountRadio({
       $("#radio-queue").hidden = !$("#radio-queue").hidden;
       button.setAttribute("aria-expanded", String(!$("#radio-queue").hidden));
     }
-    if (button.id === "radio-play" && ready) {
+    if (["radio-play", "radio-mini-play"].includes(button.id) && ready) {
       try {
         if (playing) player.pause();
         else {
@@ -285,13 +329,22 @@ export function mountRadio({
   const change = (event) => {
     if (event.target.id === "radio-track") choose(Number(event.target.value));
   };
+  const key = (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      close();
+    }
+  };
   document.addEventListener("click", click);
   deck.addEventListener("change", change);
+  deck.addEventListener("keydown", key);
   describe();
   controls();
   return {
     open,
     close,
+    stop,
     dispose() {
       if (disposed) return;
       disposed = true;
@@ -299,7 +352,9 @@ export function mountRadio({
       delete document.documentElement.dataset.music;
       document.removeEventListener("click", click);
       deck.removeEventListener("change", change);
+      deck.removeEventListener("keydown", key);
       deck.remove();
+      mini.remove();
     },
   };
 }

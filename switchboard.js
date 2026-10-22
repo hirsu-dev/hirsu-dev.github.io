@@ -10,7 +10,7 @@ import {
   visibleProjects,
   compareProjects,
   wirePath,
-} from "./switchboard-model.js?v=18";
+} from "./switchboard-model.js?v=19";
 
 const byId = (id) => boardProjects.find((p) => p.id === id);
 const number = (i) => String(i + 1).padStart(2, "0");
@@ -48,7 +48,7 @@ export function switchboardHome() {
       </div>
     </section>
     <section class="sb-patchbay" aria-labelledby="sb-compare-title"><header><div><p class="sb-kicker">03 / PATCH BAY</p><h2 id="sb-compare-title">TWO BUILDS.<br /><em>ONE CONNECTION?</em></h2></div><p>Patch a project into each socket.<br />Compare actual tools, status and related work.<br /><span>No rankings. No made-up compatibility scores.</span></p></header><div class="sb-sockets">${["A", "B"].map((slot, i) => `<label><span class="sb-socket-letter">${slot}</span><span>PROJECT INPUT ${slot}<select data-sb-socket="${i}" aria-label="Project socket ${slot}">${boardProjects.map((p) => `<option value="${p.id}">${esc(p.title)}</option>`).join("")}</select></span></label>`).join("")}<button id="sb-swap" aria-label="Swap projects in sockets A and B">A ⇄ B</button></div><div id="sb-comparison" aria-live="polite"></div></section>
-    <nav class="sb-exits" aria-label="Continue exploring"><a href="#network"><span>04 / AFTER DARK</span>Night-sky atlas <b>↗</b></a><a href="#lab"><span>05 / PLAYGROUND</span>Signal Lab <b>↗</b></a><a href="#projects"><span>06 / ALL FILES</span>Project archive <b>↗</b></a></nav>
+    <nav class="sb-exits" aria-label="Continue exploring"><a href="#network"><span>04 / AFTER DARK</span>Night-sky atlas <b>↗</b></a><a href="#lab"><span>05 / MY WORKBENCH</span>Build Lab <b>↗</b></a><a href="#projects"><span>06 / ALL FILES</span>Project archive <b>↗</b></a></nav>
     <p class="sb-local-note">Your arrangement and patch pair stay in this browser. Repositioning a card never changes a project or connects to a device. On small screens, the map becomes a touch-friendly file grid.</p>
   </div>`;
 }

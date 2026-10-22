@@ -1,5 +1,5 @@
 import { projects } from "./projects.js?v=8";
-import { networkLinks, networkInspector } from "./network-view.js?v=17";
+import { networkLinks, networkInspector } from "./network-view.js?v=19";
 import {
   skyObjects,
   skyPoints,

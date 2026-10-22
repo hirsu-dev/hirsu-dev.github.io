@@ -2,15 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { Window } from "happy-dom";
-import {
-  signalPresets,
-  signalSettings,
-  signalCSS,
-  fragments,
-  decodeFragment,
-  recoveredFragments,
-} from "./signal-model.js";
-import { labContent, archiveContent, mountSignalPage } from "./signal-pages.js";
+import { buildLabContent } from "./build-lab.js";
 import { mountRadio, radioTracks, loadSpotifyAPI } from "./music.js";
 import {
   netrunnerHome,
@@ -81,9 +73,10 @@ function dom(t, html = "", extraGlobals = () => ({})) {
   };
 }
 test("new routes and menus expose real pages, while the archive stays discoverable", () => {
-  for (const route of ["lab", "radio", "archive"])
+  for (const route of ["lab", "radio"])
     assert.equal(resolveRoute("#" + route), route);
   assert.equal(resolveRoute("#radio/../../"), "index");
+  assert.equal(resolveRoute("#archive"), "lab");
   const html = readFileSync(new URL("index.html", import.meta.url), "utf8");
   assert.match(html, /href="#lab"/);
   assert.match(html, /href="#radio"/);
@@ -93,133 +86,6 @@ test("new routes and menus expose real pages, while the archive stays discoverab
     radioTracks.filter((track) => track.type === "playlist").length,
     1,
   );
-});
-test("signal export bounds and sanitizes values, and includes reduced-motion fallback", () => {
-  assert.deepEqual(
-    signalSettings({
-      color: "red;url(bad)",
-      offset: Infinity,
-      speed: -90,
-      lines: false,
-    }),
-    { color: "#fcee0a", offset: 4, speed: 1.5, lines: false },
-  );
-  for (const preset of Object.values(signalPresets)) {
-    const css = signalCSS(preset);
-    assert.match(css, /prefers-reduced-motion/);
-    assert.doesNotMatch(css, /url\(|@import/);
-  }
-  assert.match(signalCSS({ offset: 300, speed: 900 }), /12px/);
-  assert.match(signalCSS({ offset: 300, speed: 900 }), /6s/);
-});
-test("Signal Lab edits preview safely, switches presets, pauses and exports live CSS", async (t) => {
-  const h = dom(t, labContent()),
-    toasts = [];
-  const dispose = mountSignalPage(h.doc.body, {
-    read: () => null,
-    write: () => true,
-    toast: (s) => toasts.push(s),
-  });
-  h.cleanup(dispose);
-  h.input(h.$('[name="text"]'), '<img src=x onerror="bad">');
-  assert.equal(h.$("#signal-preview").children.length, 0);
-  assert.match(h.$("#signal-preview").textContent, /<img/);
-  h.$('[data-preset="ice"]').click();
-  assert.equal(h.$('[name="color"]').value, "#79edf0");
-  assert.equal(h.$('[name="lines"]').checked, false);
-  assert.match(h.$("#signal-source").value, /4.8s/);
-  h.$("#signal-pause").click();
-  assert.equal(h.$("#signal-preview").dataset.paused, "true");
-  h.$("#signal-pause").click();
-  h.doc.documentElement.dataset.motion = "off";
-  h.doc.dispatchEvent(new h.win.Event("appearancechange"));
-  assert.equal(h.$("#signal-mode").textContent, "STATIC PREVIEW");
-  let copied;
-  navigator.clipboard.writeText = async (value) => {
-    copied = value;
-  };
-  h.$("#signal-copy").click();
-  await Promise.resolve();
-  assert.equal(copied, h.$("#signal-source").value);
-  assert.equal(toasts[0], "CSS copied.");
-  h.input(h.$('[name="color"]'), "#ff06b5");
-  assert.match(h.$("#signal-status").textContent, /FF:06:B5/);
-  dispose();
-  h.input(h.$('[name="text"]'), "AFTER DISPOSE");
-  assert.doesNotMatch(h.$("#signal-preview").textContent, /AFTER DISPOSE/);
-});
-test("clipboard failure keeps generated CSS selectable without losing it", async (t) => {
-  const h = dom(t, labContent()),
-    toasts = [];
-  const dispose = mountSignalPage(h.doc.body, {
-    read: () => null,
-    write: () => true,
-    toast: (s) => toasts.push(s),
-  });
-  h.cleanup(dispose);
-  navigator.clipboard.writeText = async () => {
-    throw new Error("blocked");
-  };
-  h.$("#signal-copy").click();
-  await Promise.resolve();
-  assert.equal(h.doc.activeElement.id, "signal-source");
-  assert.match(toasts[0], /manually/);
-});
-test("all recovery codes normalize safely; saved fragments are validated", () => {
-  assert.equal(decodeFragment(" FF:06:B5 ").id, "magenta");
-  for (const f of fragments)
-    assert.equal(decodeFragment(f.code.toUpperCase()).id, f.id);
-  assert.equal(decodeFragment("<script>"), null);
-  assert.deepEqual([...recoveredFragments('["cat","bad","cat"]')], ["cat"]);
-  assert.equal(recoveredFragments('{"cat":true}').size, 0);
-  assert.equal(recoveredFragments("bad").size, 0);
-});
-test("archive decodes, persists, restores, and clears only its own discoveries", (t) => {
-  const store = new Map(),
-    h = dom(t, archiveContent(null));
-  const dispose = mountSignalPage(h.doc.body, {
-    read: (key) => store.get(key),
-    write: (key, value) => {
-      store.set(key, value);
-      return true;
-    },
-    toast() {},
-  });
-  h.cleanup(dispose);
-  for (const f of fragments) {
-    h.$("#packet-code").value = f.code;
-    h.$("#packet-form").dispatchEvent(
-      new h.win.Event("submit", { bubbles: true, cancelable: true }),
-    );
-  }
-  assert.match(h.$("#packet-status").textContent, /4 \/ 4/);
-  assert.equal(h.doc.querySelectorAll('[data-found="true"]').length, 4);
-  assert.match(
-    archiveContent(store.get("hirsu-fragments-v15")),
-    /LUNAR UPLINK/,
-  );
-  h.$("#packet-reset").click();
-  assert.equal(h.doc.querySelectorAll('[data-found="true"]').length, 0);
-  assert.deepEqual([...store.keys()], ["hirsu-fragments-v15"]);
-});
-test("blocked fragment storage is announced and unknown codes are harmless", (t) => {
-  const h = dom(t, archiveContent(null));
-  const dispose = mountSignalPage(h.doc.body, {
-    read: () => null,
-    write: () => false,
-    toast() {},
-  });
-  h.cleanup(dispose);
-  h.$("#packet-code").value = "moon";
-  h.$("#packet-form").dispatchEvent(
-    new h.win.Event("submit", { bubbles: true, cancelable: true }),
-  );
-  assert.match(h.$("#packet-status").textContent, /session only/);
-  h.$("#packet-code").value = "<script>";
-  h.$("#packet-form").dispatchEvent(
-    new h.win.Event("submit", { bubbles: true, cancelable: true }),
-  );
-  assert.match(h.$("#packet-status").textContent, /No match/);
 });
 test("night sky focuses project constellations with a flat pan-and-zoom camera", () => {
   for (const point of skyPoints(720, 590)) {
@@ -350,9 +216,15 @@ test("music makes no provider requests until Enable, and never auto-plays on con
   assert.match(h.$("#radio-queue").textContent, /volume API/);
   assert.equal(h.$("#radio-volume"), null);
   assert.match(h.$("#radio-queue").textContent, /previews/);
+  const beforeClose = h.calls.length;
   h.$("[data-radio-close]").click();
-  assert.deepEqual(h.calls.at(-1), ["destroy"]);
+  assert.equal(h.calls.length, beforeClose);
   assert.equal(h.$("#music-dock").hidden, true);
+  assert.equal(h.$("#music-mini").hidden, false);
+  assert.equal(h.doc.documentElement.dataset.music, "background");
+  h.$("#music-mini [data-radio-stop]").click();
+  assert.deepEqual(h.calls.at(-1), ["destroy"]);
+  assert.equal(h.$("#music-mini").hidden, true);
   assert.equal(h.doc.documentElement.dataset.music, undefined);
 });
 
@@ -382,19 +254,21 @@ test("six song selections and official continuous mix wrap without recreating th
   assert.equal(h.$("#radio-queue").hidden, true);
 });
 
-test("closing while API or controller is pending cancels stale initialization", async (t) => {
+test("Stop while API or controller is pending cancels stale initialization", async (t) => {
   const h = radioHarness(t, { delayed: true });
   await h.load();
   h.$("[data-radio-close]").click();
+  h.$("#music-mini [data-radio-stop]").click();
   h.resolve();
   await Promise.resolve();
   assert.equal(h.instances.length, 0);
   assert.equal(h.$("#music-dock").hidden, true);
 });
-test("late controller is destroyed after close", async (t) => {
+test("late controller is destroyed after Stop", async (t) => {
   const h = radioHarness(t, { delayedController: true });
   await h.load();
   h.$("[data-radio-close]").click();
+  h.$("#music-mini [data-radio-stop]").click();
   h.create();
   assert.deepEqual(h.calls.at(-1), ["destroy"]);
   assert.equal(h.$("#radio-play").disabled, true);
@@ -430,8 +304,9 @@ test("background music stays connected through page content changes and visibili
   await h.load();
   const p = h.ready();
   p.events.playback_update({ data: { isPaused: false } });
+  h.$("[data-radio-close]").click();
   const count = h.calls.length;
-  h.$("main").innerHTML = labContent();
+  h.$("main").innerHTML = buildLabContent();
   Object.defineProperty(h.doc, "hidden", { value: true, configurable: true });
   h.doc.dispatchEvent(new h.win.Event("visibilitychange"));
   assert.equal(h.calls.length, count);
@@ -439,6 +314,81 @@ test("background music stays connected through page content changes and visibili
   h.radio.dispose();
   h.radio.dispose();
   assert.equal(h.$("#music-dock"), null);
+  assert.equal(h.$("#music-mini"), null);
+});
+test("minimize and reopen retain the same playing controller, track and host", async (t) => {
+  const h = radioHarness(t);
+  await h.load();
+  const p = h.ready();
+  h.$("#radio-next").click();
+  p.events.playback_update({ data: { isPaused: false } });
+  const host = h.$("#radio-frame").firstElementChild,
+    calls = h.calls.length;
+  h.$("[data-radio-close]").click();
+  assert.equal(h.$("#music-mini").dataset.playing, "true");
+  assert.equal(h.$("#radio-mini-title").textContent, radioTracks[1].title);
+  assert.equal(h.$("#radio-mini-play").textContent, "Pause");
+  h.$("#music-mini [data-radio-open]").click();
+  assert.equal(h.$("#radio-frame").firstElementChild, host);
+  assert.equal(h.$("#music-dock").hidden, false);
+  assert.equal(h.$("#music-mini").hidden, true);
+  assert.equal(h.loads, 1);
+  assert.equal(h.instances.length, 1);
+  assert.equal(h.calls.length, calls);
+  h.$("[data-radio-close]").click();
+  h.$("#radio-mini-play").click();
+  assert.deepEqual(h.calls.at(-1), ["pause"]);
+  p.events.playback_update({ data: { isPaused: true } });
+  h.$("#radio-mini-play").click();
+  assert.deepEqual(h.calls.at(-1), ["play"]);
+});
+test("minimizing pending initialization preserves consent, without starting playback", async (t) => {
+  const h = radioHarness(t, { delayed: true });
+  await h.load();
+  h.$("[data-radio-close]").click();
+  assert.equal(h.$("#music-mini").hidden, false);
+  h.resolve();
+  await Promise.resolve();
+  h.ready();
+  assert.equal(h.instances.length, 1);
+  assert.equal(h.$("#radio-mini-play").disabled, false);
+  assert.equal(h.$("#music-dock").hidden, true);
+  assert.equal(h.calls.length, 0);
+});
+test("closing before Enable makes no provider request and leaves no mini player", (t) => {
+  const h = radioHarness(t);
+  h.radio.open();
+  h.$("[data-radio-close]").click();
+  assert.equal(h.loads, 0);
+  assert.equal(h.$("#music-mini").hidden, true);
+  assert.equal(h.$("#music-dock").hidden, true);
+});
+test("minimized player accepts a late controller without rebuilding or destroying it", async (t) => {
+  const h = radioHarness(t, { delayedController: true });
+  await h.load();
+  h.$("[data-radio-close]").click();
+  h.create();
+  h.ready();
+  assert.equal(h.instances.length, 1);
+  assert.equal(h.$("#music-mini").hidden, false);
+  assert.equal(h.$("#radio-mini-play").disabled, false);
+  assert.equal(h.calls.length, 0);
+});
+test("Escape minimizes and returns focus without stopping the current session", async (t) => {
+  const h = radioHarness(t);
+  await h.load();
+  h.ready();
+  const count = h.calls.length;
+  h.$("#music-dock").dispatchEvent(
+    new h.win.KeyboardEvent("keydown", {
+      key: "Escape",
+      bubbles: true,
+      cancelable: true,
+    }),
+  );
+  assert.equal(h.calls.length, count);
+  assert.equal(h.$("#music-dock").hidden, true);
+  assert.equal(h.doc.activeElement, h.$("[data-radio-open]"));
 });
 test("Spotify API loader shares requests and recovers after a blocked script", async (t) => {
   const h = dom(t);
@@ -555,8 +505,8 @@ test("full app routes new pages, preserves the deck, and retains existing projec
   h.win.localStorage.setItem("hirsu-startup-v12", "fracture");
   h.win.history.replaceState(null, "", "#lab");
   h.win.HTMLCanvasElement.prototype.getContext = () => null;
-  await import("./console.js?integration-v18");
-  assert.ok(h.$("#signal-controls"));
+  await import("./console.js?integration-v19");
+  assert.ok(h.$(".build-lab"));
   assert.equal(h.doc.documentElement.dataset.intro, "redline");
   assert.equal(h.$('input[name="startup"]:checked').value, "redline");
   const deck = h.$("#music-dock");
@@ -565,14 +515,15 @@ test("full app routes new pages, preserves the deck, and retains existing projec
     h.win.dispatchEvent(new h.win.HashChangeEvent("hashchange"));
   };
   h.$('a[href="#radio"]').click();
-  assert.ok(h.$("#signal-controls"), "opening music preserves current page");
+  assert.ok(h.$(".build-lab"), "opening music preserves current page");
   assert.equal(deck.hidden, false);
   go("archive");
-  assert.ok(h.$("#packet-form"));
+  assert.ok(h.$(".build-lab"));
+  assert.equal(h.$("#packet-form"), null);
   assert.equal(h.$("#music-dock"), deck);
   go("lab");
-  h.input(h.$('[name="text"]'), "ROUTE CHECK");
-  assert.equal(h.$("#signal-preview").textContent, "ROUTE CHECK");
+  h.input(h.$("#aim-az"), "150");
+  assert.equal(h.$("#aim-az-value").textContent, "150°");
   go("network");
   assert.ok(h.$(".network-inspector"));
   assert.equal(h.$("#network-shell").dataset.renderer, "unavailable");

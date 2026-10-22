@@ -13,7 +13,7 @@ export const networkLinks = [
 export function networkInspector(index = -1) {
   const p = projects[index];
   if (!p)
-    return `<div><p class="eyebrow">STAR ATLAS / 07 CONSTELLATIONS</p><h3>Every build leaves a light.</h3><p>Choose a constellation to drift toward it. Each bright star represents a project; its neighboring stars form a small, original pattern.</p></div><div><p class="eyebrow">ILLUSTRATED NIGHT SKY</p><p>An imaginary sky for real projects—not astronomical coordinates or live telemetry. The thin links between constellations describe shared tools and related work.</p><a href="#lab">Explore the Signal Lab ↗</a></div>`;
+    return `<div><p class="eyebrow">STAR ATLAS / 07 CONSTELLATIONS</p><h3>Every build leaves a light.</h3><p>Choose a constellation to drift toward it. Each bright star represents a project; its neighboring stars form a small, original pattern.</p></div><div><p class="eyebrow">ILLUSTRATED NIGHT SKY</p><p>An imaginary sky for real projects—not astronomical coordinates or live telemetry. The thin links between constellations describe shared tools and related work.</p><a href="#lab">Explore my Build Lab ↗</a></div>`;
   const neighbors = networkLinks
     .filter(([a, b]) => a === p.id || b === p.id)
     .map(([a, b, why]) => ({
