@@ -1,4 +1,11 @@
-import { projects } from "./projects.js?v=8";
+import { projects } from "./projects.js?v=22";
+import {
+  workbenchContent,
+  mountWorkbench,
+  entryContent,
+  statusPanel,
+  experimentsContent,
+} from "./workbench.js?v=22";
 import { snapshot, languageCounts, calendarDays } from "./stack-data.js";
 import {
   interfaces,
@@ -10,7 +17,7 @@ import {
   findProjects,
   resolveRoute,
   escapeHTML as esc,
-} from "./console-model.js?v=19";
+} from "./console-model.js?v=22";
 import { createProjectNetwork } from "./project-network.js?v=21";
 import { networkContent } from "./network-view.js?v=21";
 import { buildLabContent, mountBuildLab } from "./build-lab.js?v=21";
@@ -401,7 +408,7 @@ function renderProject(p) {
   const images = gallery(p),
     at = shots.get(p.id) || 0;
   screen.innerHTML = `<a class="back-link" href="#projects">← Back to all projects</a><header class="page-head"><div><p class="eyebrow">PROJECT / ${String(projects.indexOf(p) + 1).padStart(2, "0")} / ${esc(p.category)}</p><h1>${esc(p.title)}</h1><p>${esc(p.subtitle)}</p><div class="detail-links">${sourceLink(p, "[ Source & setup ↗ ]")}<button class="bracket" data-save="${p.id}" aria-pressed="${saved.has(p.id)}" aria-label="${saved.has(p.id) ? "Unsave" : "Save"} ${esc(p.title)}">[ ${saved.has(p.id) ? "Saved" : "Save project"} ]</button></div></div><span class="project-badge ${p.statusClass || ""}">${esc(p.status)}</span></header>
-  <div class="detail-layout"><section class="panel"><h2>01 / The idea</h2><p>${esc(p.overview)}</p></section><section class="panel"><h2>02 / What it does</h2><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section><section class="panel"><h2>03 / Current state</h2><p class="status-note">${esc(p.progress)}</p></section>
+  <div class="detail-layout"><section class="panel"><h2>01 / The idea</h2><p>${esc(p.overview)}</p></section><section class="panel"><h2>02 / What it does</h2><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section><section class="panel"><h2>03 / Current state</h2><p class="status-note">${esc(p.progress)}</p>${statusPanel(p)}</section>
   <figure class="project-media"><button class="media-open" data-preview="${p.id}" aria-label="Enlarge ${esc(p.title)} image"><img id="project-image" src="${images[at].image}" alt="${esc(images[at].alt)}" /></button><figcaption id="project-caption">${esc(images[at].caption)}</figcaption>${images.length > 1 ? `<div class="gallery-controls"><button data-shot="-1" aria-label="Previous project image">←</button><span id="shot-position">${at + 1} / ${images.length}</span><button data-shot="1" aria-label="Next project image">→</button></div>` : ""}</figure>
   <p class="detail-evidence">SOURCE NOTE / ${esc(p.evidence)}</p></div>`;
 }
@@ -472,44 +479,8 @@ function renderStack() {
   <section class="panel" style="margin-top:18px"><h2>Public commit snapshot / 78 authored commits</h2><div class="calendar" role="img" aria-label="78 authored public default-branch commits in the bounded April to October 20, 2026 snapshot. Highest recorded day: 38 commits on October 7.">${days.map((d) => `<span data-level="${d.count > 10 ? 3 : d.count > 2 ? 2 : d.count > 0 ? 1 : 0}" data-future="${d.future}" title="${d.date}: ${d.count} commits"></span>`).join("")}</div><p class="fineprint">Snapshot: ${snapshot.date}. Five public project repositories plus this portfolio. Not a live GitHub contribution calendar. Repository language counts exclude the portfolio. Public REST sources and refresh instructions are in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io#grounded-content--data" target="_blank" rel="noopener noreferrer">README ↗</a>.</p></section>`;
 }
 function renderLog() {
-  screen.innerHTML =
-    pageHead(
-      "04",
-      "On the workbench.",
-      "Current states, not a manufactured activity feed. Snapshot: October 2026.",
-    ) +
-    `<section class="panel"><h2>Build notes / open loops</h2>${[
-      [
-        "robo-telescope",
-        "Get the telescope moving again.",
-        "The coordinate-to-motor build used to work. It is currently broken and needs repair before another pointing test.",
-      ],
-      [
-        "custom-keyboard",
-        "From nominal fit to physical fit.",
-        "PCB, firmware, and enclosure design are prepared. Assembly, clearances, and real component fit are unverified.",
-      ],
-      [
-        "hyprland-forge",
-        "A desktop still taking shape.",
-        "The Arch / Hyprland shell and tooling are in development. Daily-use readiness still needs real-hardware validation.",
-      ],
-      [
-        "nexus-ai",
-        "Keep the backend boundary clear.",
-        "The mobile interface is experimental. It needs signing and the corresponding local services; selecting a model does not train one.",
-      ],
-      [
-        "maintaineros",
-        "Useful tools you can run locally.",
-        "MaintainerOS and CivicLens v0.3 are published with setup instructions. The screenshots contain labeled fictional demo data.",
-      ],
-    ]
-      .map(
-        ([id, title, body], i) =>
-          `<article class="log-entry"><span>${String(i + 1).padStart(2, "0")}</span><div><h3>${title}</h3><p>${body}</p><a href="#${id}">Open project →</a></div></article>`,
-      )
-      .join("")}</section>`;
+  screen.innerHTML = workbenchContent();
+  pageCleanup = mountWorkbench(screen);
 }
 function renderAbout() {
   screen.innerHTML =
@@ -563,6 +534,9 @@ function renderRoute({ focus = false } = {}) {
   } else if (route === "network") renderNetwork();
   else if (route === "stack") renderStack();
   else if (route === "log") renderLog();
+  else if (route.startsWith("entry-"))
+    screen.innerHTML = entryContent(route.slice(6));
+  else if (route === "experiments") screen.innerHTML = experimentsContent();
   else if (route === "lab") {
     screen.innerHTML = buildLabContent();
     pageCleanup = mountBuildLab(screen);
@@ -578,7 +552,9 @@ function renderRoute({ focus = false } = {}) {
           ? "all projects"
           : route);
   document.querySelectorAll("[data-nav]").forEach((a) => {
-    const current = a.dataset.nav === (project ? "projects" : route);
+    const current =
+      a.dataset.nav ===
+      (project ? "projects" : route.startsWith("entry-") ? "log" : route);
     if (current) a.setAttribute("aria-current", "page");
     else a.removeAttribute("aria-current");
   });
@@ -666,7 +642,8 @@ function commands() {
       ["projects", "All projects / archive"],
       ["network", "Night sky / project constellations"],
       ["stack", "Technology stack"],
-      ["log", "Workbench"],
+      ["log", "Build logs & project status"],
+      ["experiments", "Experiments / planned tools"],
       ["saved", "Saved projects"],
       ["about", "About / colophon"],
       ["lab", "Build Lab / telescope, home lab & macro pad"],

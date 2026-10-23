@@ -28,6 +28,11 @@ The portfolio labels illustrations, CAD previews, screenshots, and demos so they
 - Use keyboard controls and accessibility options such as reduced motion, larger text, and high contrast.
 - Open the **Build Lab** to orbit a solid 3D telescope, inspect its parts, extend the focuser, try wireframe or explode the assembly. Azimuth/elevation previews move the model, never real hardware. The Pi and macro-pad demos are still available.
 - **Radio** attempts low-volume startup playback and offers Retry when blocked. × hides every floating player control while music continues; reopen Radio from the menu. Volume, mute, seek, track selection and Stop & unload remain available.
+- **Build logs / status** has a manually reviewed status board, dated notes, project/date/search filters, and a separate link for each note. **Experiments** lists planned work with its next step.
+
+## Adding build notes
+
+Edit `workbench-data.js` for status, next steps, notes and planned experiments. Review dates describe the content review, not a new hardware test. Each note has a goal, change, limitation, takeaway, next step and a labeled image. Its link is `#entry-<id>`; all notes are at `#log`. See [the phased roadmap](ROADMAP.md) for the next apps and content instructions.
 
 The site makes no runtime API calls for portfolio data. Radio loads the current same-origin track when attempting startup playback or after Play/Retry. Audio files are supplied by the owner. See [the audio credits and usage notice](assets/audio/README.md). The site's code license does not give visitors permission to reuse the music.
 
@@ -51,7 +56,7 @@ npx http-server . -p 8130 -a 127.0.0.1 -c-1
 
 Then open [http://127.0.0.1:8130/](http://127.0.0.1:8130/). The site uses JavaScript modules, so serve it over HTTP instead of opening `index.html` directly. The preview server supports HTTP range requests so full-song seeking works.
 
-All 133 automated checks pass, covering project data, routes, settings, keyboard controls, animations, 3D geometry, audio lifecycle, and interactive demos. Browser checks also covered desktop/mobile telescope controls, real Stellarium rendering, atlas filtering, blocked-autoplay fallback, and playback continuing after closing both panels. They do not replace checking the site in a real browser. Mobile Safari and lock-screen audio behavior have not been fully tested.
+All 136 automated checks pass, covering project data, routes, settings, keyboard controls, animations, 3D geometry, audio lifecycle, interactive demos, and build-note filters. Earlier browser checks covered desktop/mobile telescope controls, real Stellarium rendering, atlas filtering, blocked-autoplay fallback, and playback continuing after closing both panels. The v22 build-note and status pages passed DOM integration and HTTP checks; visual browser checks were unavailable in the development environment. Mobile Safari and lock-screen audio behavior have not been fully tested.
 
 ## Main files
 

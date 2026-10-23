@@ -1,11 +1,11 @@
 {
   "name": "hirsu-workshop",
-  "version": "21.0.0",
+  "version": "22.0.0",
   "private": true,
   "type": "module",
   "description": "Hrushi's static developer and hardware portfolio",
   "scripts": {
-    "check": "node --check space-math.js && node --check atlas-model.js && node --check telescope-3d.js && node --check console.js && node --check settings.js && node --check settings-model.js && node --check city-content.js && node --check overdrive-content.js && node --check city-motion.js && node --check intro-variants.js && node --check console-model.js && node --check project-network.js && node --check sky-model.js && node --check network-view.js && node --check build-lab-model.js && node --check build-lab.js && node --check audio-output.js && node --check music.js && node --check layouts.js && node --check switchboard.js && node --check switchboard-model.js && node --check project-terminal.js && node --check photo.js && node --check projects.js && node --check stack-data.js && node --check interfaces.js && node --test site.test.js motion.test.js network.test.js terminal.test.js intro.test.js settings.test.js side-channel.test.js switchboard.test.js build-lab.test.js music.test.js observatory.test.js"
+    "check": "node --check space-math.js && node --check atlas-model.js && node --check telescope-3d.js && node --check console.js && node --check settings.js && node --check settings-model.js && node --check city-content.js && node --check overdrive-content.js && node --check city-motion.js && node --check intro-variants.js && node --check console-model.js && node --check project-network.js && node --check sky-model.js && node --check network-view.js && node --check build-lab-model.js && node --check build-lab.js && node --check audio-output.js && node --check music.js && node --check layouts.js && node --check switchboard.js && node --check switchboard-model.js && node --check project-terminal.js && node --check photo.js && node --check projects.js && node --check stack-data.js && node --check interfaces.js && node --check workbench-data.js && node --check workbench.js && node --test site.test.js motion.test.js network.test.js terminal.test.js intro.test.js settings.test.js side-channel.test.js switchboard.test.js build-lab.test.js music.test.js observatory.test.js workbench.test.js"
   },
   "devDependencies": {
     "happy-dom": "21.0.4"

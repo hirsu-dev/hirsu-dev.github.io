@@ -1,3 +1,5 @@
+import { projectStatus } from "./workbench-data.js?v=22";
+
 export const projects = [
   {
     id: "robo-telescope",
@@ -204,4 +206,4 @@ export const projects = [
     evidence:
       "Public hyprland-forge description, project.json, and repository contents.",
   },
-];
+].map((project) => ({ ...project, lifecycle: projectStatus[project.id] }));
