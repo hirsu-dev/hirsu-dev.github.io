@@ -1,10 +1,15 @@
 import { projects } from "./projects.js?v=8";
-import { networkLinks, networkInspector } from "./network-view.js?v=19";
+import { networkLinks, networkInspector } from "./network-view.js?v=21";
+import {
+  atlasPoints,
+  atlasProject,
+  atlasCamera,
+  atlasFocus,
+  atlasHubs,
+  atlasDust,
+} from "./atlas-model.js?v=21";
 import {
   skyObjects,
-  skyPoints,
-  projectStar,
-  focusStar,
   starfield,
   nearestStar,
   meteorAt,
@@ -13,7 +18,7 @@ import {
 
 export const connections = networkLinks.map(([a, b]) => [a, b]);
 
-// A flat, illustrated night sky. No sphere projection, globe mesh or rotation.
+// A perspective volume of projects and their shared tools, not a globe.
 export function createProjectNetwork(container, { scrollZoom = true } = {}) {
   const canvas = container.querySelector("canvas"),
     ctx = canvas.getContext("2d");
@@ -22,7 +27,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
   const inspector = container.querySelector(".network-inspector");
   const listeners = [];
   container.dataset.scrollZoom = String(scrollZoom);
-  container.dataset.renderer = ctx ? "night-sky" : "unavailable";
+  container.dataset.renderer = ctx ? "night-sky-3d" : "unavailable";
   let width = 0,
     height = 0,
     phase = 0,
@@ -37,7 +42,9 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
   let selected = -1,
     hover = -1,
     mode = "atlas",
-    quality = 14;
+    quality = 14,
+    filter = "all";
+  let dust = atlasDust(560);
   let points = [],
     positions = [],
     stars = starfield(),
@@ -45,7 +52,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
   let ink = "#fcee0a",
     cyan = "#9ccee5",
     contrast = false;
-  const camera = { x: 0, y: 0, zoom: 1 },
+  const camera = atlasCamera(),
     target = { ...camera };
   const motion = () => document.documentElement.dataset.motion !== "off";
   const ambience = () => motion() && !paused && !focused && !drag;
@@ -57,7 +64,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     node.addEventListener(name, fn, options);
     listeners.push([node, name, fn]);
   };
-  const project = (p) => projectStar(p, camera, width, height);
+  const project = (p) => atlasProject(p, camera, width, height);
   const line = (a, b, color, alpha, weight = 1, progress = 1) => {
     ctx.strokeStyle = color;
     ctx.globalAlpha = alpha;
@@ -86,21 +93,18 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
         ctx.fillRect(0, 0, width, height);
       }
     }
+    if (!contrast)
+      for (const speck of dust) {
+        const p = project(speck);
+        if (p.visible) star(p.x, p.y, speck.size, "#9baec9", speck.alpha);
+      }
     for (const s of stars) {
-      const x =
-        (((s.x * width +
-          camera.x * width * s.depth * 0.15 +
-          Math.sin(phase * 0.035 + s.phase) * 3) %
-          width) +
-          width) %
-        width;
-      const y =
-        (((s.y * height +
-          camera.y * height * s.depth * 0.15 +
-          Math.cos(phase * 0.026 + s.phase) * 2) %
-          height) +
-          height) %
-        height;
+      const projected = project({
+        position: [(s.x - 0.5) * 20, (0.5 - s.y) * 14, -3 - s.depth * 6],
+      });
+      if (!projected.visible) continue;
+      const x = projected.x,
+        y = projected.y;
       const brightness =
         s.brightness * (0.82 + 0.18 * Math.sin(phase * 0.55 + s.phase));
       star(x, y, s.size, s.depth > 0.75 ? "#e8d9c2" : "#b7d5ee", brightness);
@@ -124,14 +128,46 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     positions = points.map(project);
     const active = hover >= 0 ? hover : selected;
     if (mode === "atlas") {
-      // Cross-project connections are faint; the actual small constellations lead.
+      const activeId = skyObjects[active]?.id;
+      for (const hub of atlasHubs.filter(
+        (h) => filter === "all" || h.kind === filter,
+      )) {
+        const node = project(hub),
+          linked = !!activeId && hub.members.includes(activeId);
+        for (const id of hub.members) {
+          const i = skyObjects.findIndex((p) => p.id === id);
+          line(
+            positions[i],
+            node,
+            hub.kind === "language" ? "#d7b982" : cyan,
+            (linked ? 0.55 : activeId ? 0.06 : 0.22) * reveal,
+            linked ? 1.2 : 0.65,
+          );
+        }
+        star(
+          node.x,
+          node.y,
+          linked ? 3.5 : 2.2,
+          hub.kind === "language" ? "#edcb92" : "#9bd6db",
+          reveal * (activeId && !linked ? 0.25 : 0.9),
+        );
+        if (!activeId || linked) {
+          ctx.font = "10px monospace";
+          ctx.textAlign = "center";
+          ctx.fillStyle = linked ? ink : "#a7bace";
+          ctx.globalAlpha = reveal;
+          ctx.fillText(hub.label, node.x, node.y + 15);
+        }
+      }
+      // Theme links remain secondary to the explicit technology hubs.
       for (const [a, b] of edges) {
+        if (filter !== "all" && filter !== "theme") continue;
         const linked = active === a || active === b;
         line(
           positions[a],
           positions[b],
           linked ? ink : cyan,
-          (linked ? 0.55 : 0.09) * reveal,
+          (linked ? 0.3 : 0.045) * reveal,
           linked ? 1.1 : 0.6,
           reveal,
         );
@@ -173,8 +209,9 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
             ),
           );
       }
-      const alpha = reveal * (activeStar ? 1 : 0.85),
-        size = activeStar ? 4 : 2.8;
+      const alpha =
+          reveal * (activeStar ? 1 : Math.max(0.5, 1 - main.depth / 16)),
+        size = activeStar ? 4 : Math.max(2.1, 17 / main.depth);
       star(main.x, main.y, size * 3.8, activeStar ? ink : cyan, alpha * 0.045);
       star(main.x, main.y, size * 2, activeStar ? ink : cyan, alpha * 0.12);
       star(main.x, main.y, size, "#eef5ff", alpha);
@@ -245,12 +282,15 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     if (ambience()) phase += dt;
     reveal = motion() ? Math.min(1, reveal + dt / 1.25) : 1;
     const ease = motion() ? 1 - Math.exp(-dt * (drag ? 18 : 7)) : 1;
-    for (const key of ["x", "y", "zoom"])
+    for (const key of ["x", "y", "z", "yaw", "pitch", "zoom"])
       camera[key] += (target[key] - camera[key]) * ease;
     const settling =
       Math.abs(target.x - camera.x) +
         Math.abs(target.y - camera.y) +
-        Math.abs(target.zoom - camera.zoom) >
+        Math.abs(target.zoom - camera.zoom) +
+        Math.abs(target.z - camera.z) +
+        Math.abs(target.yaw - camera.yaw) +
+        Math.abs(target.pitch - camera.pitch) >
       0.0001;
     draw();
     if (ambience() || settling || reveal < 1)
@@ -284,7 +324,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     if (!skyObjects[index]) return;
     selected = index;
     hover = -1;
-    if (points[index]) Object.assign(target, focusStar(points[index]));
+    if (points[index]) Object.assign(target, atlasFocus(points[index]));
     labels.forEach((label, i) => {
       label.setAttribute("aria-pressed", String(index === i));
       label.dataset.active = String(index === i);
@@ -304,7 +344,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    points = skyPoints(width, height);
+    points = atlasPoints();
     glows =
       width && height
         ? [
@@ -325,7 +365,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
             return glow;
           })
         : [];
-    if (selected >= 0) Object.assign(target, focusStar(points[selected]));
+    if (selected >= 0) Object.assign(target, atlasFocus(points[selected]));
     refresh();
   }
   const coordinate = (e) => {
@@ -358,15 +398,11 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
       return;
     }
     if (drag.id !== e.pointerId) return;
-    target.x = clamp(
-      target.x + (e.clientX - drag.x) / Math.max(1, width) / camera.zoom,
-      -0.65,
-      0.65,
-    );
-    target.y = clamp(
-      target.y + (e.clientY - drag.y) / Math.max(1, height) / camera.zoom,
-      -0.65,
-      0.65,
+    target.yaw += (e.clientX - drag.x) * 0.006;
+    target.pitch = clamp(
+      target.pitch + (e.clientY - drag.y) * 0.005,
+      -1.1,
+      1.1,
     );
     drag.moved ||=
       Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > 6;
@@ -409,10 +445,12 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
       return;
     e.preventDefault();
     e.stopPropagation();
-    if (e.key === "ArrowLeft") target.x = clamp(target.x + 0.06, -0.65, 0.65);
-    if (e.key === "ArrowRight") target.x = clamp(target.x - 0.06, -0.65, 0.65);
-    if (e.key === "ArrowUp") target.y = clamp(target.y + 0.06, -0.65, 0.65);
-    if (e.key === "ArrowDown") target.y = clamp(target.y - 0.06, -0.65, 0.65);
+    if (e.key === "ArrowLeft") target.yaw -= 0.12;
+    if (e.key === "ArrowRight") target.yaw += 0.12;
+    if (e.key === "ArrowUp")
+      target.pitch = clamp(target.pitch - 0.1, -1.1, 1.1);
+    if (e.key === "ArrowDown")
+      target.pitch = clamp(target.pitch + 0.1, -1.1, 1.1);
     if (e.key === "+" || e.key === "=")
       target.zoom = clamp(target.zoom + 0.15, 0.7, 2.1);
     if (e.key === "-") target.zoom = clamp(target.zoom - 0.15, 0.7, 2.1);
@@ -421,7 +459,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
   };
   function reset() {
     selected = hover = -1;
-    Object.assign(target, { x: 0, y: 0, zoom: 1 });
+    Object.assign(target, atlasCamera());
     labels.forEach((label) => {
       label.setAttribute("aria-pressed", "false");
       label.dataset.active = "false";
@@ -456,6 +494,7 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     if (["8", "14", "22"].includes(button.dataset.quality)) {
       quality = Number(button.dataset.quality);
       stars = starfield(quality * 30);
+      dust = atlasDust(quality * 40);
       container
         .querySelectorAll("[data-quality]")
         .forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
@@ -535,6 +574,15 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
     listen(canvas, name, fn);
   listen(canvas, "wheel", wheel, { passive: !scrollZoom });
   listen(container, "click", click);
+  listen(container, "change", (e) => {
+    if (
+      e.target.id === "atlas-filter" &&
+      ["all", "language", "stack", "theme"].includes(e.target.value)
+    ) {
+      filter = e.target.value;
+      refresh();
+    }
+  });
   listen(container, "focusin", focusIn);
   listen(container, "focusout", focusOut);
   listen(document, "visibilitychange", visibility);

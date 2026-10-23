@@ -1,5 +1,5 @@
 import { escapeHTML as esc } from "./console-model.js?v=19";
-import { createAudioOutput } from "./audio-output.js?v=20";
+import { createAudioOutput } from "./audio-output.js?v=21";
 
 // Owner supplied these recordings and confirmed public hosting/streaming permission.
 export const radioTracks = Object.freeze(
@@ -31,10 +31,11 @@ export function formatTime(value) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
-// Outside the route outlet. Minimizing never unloads audio. No src before Play.
+// Outside the route outlet. Dismissing every control never unloads audio.
 export function mountRadio({
   createAudio = () => document.createElement("audio"),
   createOutput = createAudioOutput,
+  autoplay = true,
 } = {}) {
   const deck = document.createElement("aside");
   deck.id = "music-dock";
@@ -73,7 +74,25 @@ export function mountRadio({
     generation = 0,
     playRequest = 0,
     disposed = false,
-    opener = null;
+    opener = null,
+    dismissed = false;
+  deck
+    .querySelector("[data-radio-close]")
+    .setAttribute("aria-label", "Close all radio controls; keep music playing");
+  deck.querySelector("[data-radio-close]").title =
+    "Close controls — reopen from Radio in the menu";
+  $("#radio-consent p:last-of-type").textContent =
+    "Five full recordings hosted here. The site tries to start quietly; if your browser blocks it, press Play. No account or video player.";
+  $(".music-stop-row span").textContent =
+    "× hides all controls. Reopen from Radio in the menu.";
+  const miniClose = document.createElement("button");
+  miniClose.setAttribute("data-radio-close", "");
+  miniClose.setAttribute(
+    "aria-label",
+    "Close all radio controls; keep music playing",
+  );
+  miniClose.textContent = "×";
+  mini.querySelector(".music-mini-top").append(miniClose);
   function status(message) {
     $("#radio-state").textContent = message;
     mini.querySelector("#radio-mini-message").textContent = message;
@@ -92,9 +111,12 @@ export function mountRadio({
           ? "PLAYING / H·FM"
           : "PAUSED / H·FM";
     $("#radio-consent").hidden = enabled;
-    mini.hidden = !deck.hidden || !enabled;
+    mini.hidden = dismissed || !deck.hidden || !enabled;
     if (!deck.hidden) document.documentElement.dataset.music = "open";
-    else if (enabled) document.documentElement.dataset.music = "background";
+    else if (enabled)
+      document.documentElement.dataset.music = dismissed
+        ? "hidden"
+        : "background";
     else delete document.documentElement.dataset.music;
   }
   function syncVolume() {
@@ -222,7 +244,7 @@ export function mountRadio({
     controls();
     status(message);
   }
-  async function play() {
+  async function play(startup = false) {
     if (disposed) return;
     if (!audio || failed) loadTrack();
     const token = ++playRequest,
@@ -232,7 +254,7 @@ export function mountRadio({
     controls();
     status(`Starting ${radioTracks[index].title}…`);
     try {
-      await output.play();
+      await output.play({ autoplay: startup });
       if (disposed || token !== playRequest || current !== audio) return;
       if (!current.paused) {
         playing = true;
@@ -244,7 +266,7 @@ export function mountRadio({
       if (disposed || token !== playRequest || current !== audio) return;
       playbackError(
         error?.name === "NotAllowedError"
-          ? "Your browser blocked playback. Press Retry to allow audio."
+          ? "Your browser blocked startup audio. Sound is ready at low volume—press Retry to start."
           : "Playback failed. Press Retry or choose another track.",
       );
     }
@@ -270,11 +292,13 @@ export function mountRadio({
   function returnFocus() {
     const target = opener?.isConnected
       ? opener
-      : document.querySelector('.city-nav a[href="#radio"]');
+      : document.querySelector("#city-menu") ||
+        document.querySelector('.city-nav a[href="#radio"]');
     target?.focus();
   }
   function open(source) {
     if (disposed) return;
+    dismissed = false;
     opener = source || document.activeElement;
     if (opener?.closest("dialog, #music-mini, #music-dock"))
       opener = document.querySelector("#city-menu");
@@ -284,6 +308,7 @@ export function mountRadio({
   }
   function close() {
     if (disposed) return;
+    dismissed = true;
     deck.hidden = true;
     controls();
     returnFocus();
@@ -367,6 +392,7 @@ export function mountRadio({
   controls();
   syncVolume();
   timeline();
+  if (autoplay) void play(true);
   return {
     open,
     close,

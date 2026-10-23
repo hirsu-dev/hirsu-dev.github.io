@@ -5,7 +5,10 @@ import { Window } from "happy-dom";
 import { mountRadio, radioTracks, formatTime } from "./music.js";
 import { createAudioOutput } from "./audio-output.js";
 
-function harness(t, { deferred = false, reject = false } = {}) {
+function harness(
+  t,
+  { deferred = false, reject = false, autoplay = false } = {},
+) {
   const win = new Window({
     url: "https://portfolio.test/",
     settings: {
@@ -32,6 +35,7 @@ function harness(t, { deferred = false, reject = false } = {}) {
   const instances = [],
     calls = [];
   const radio = mountRadio({
+    autoplay,
     createAudio() {
       const a = win.document.createElement("audio");
       for (const [key, value] of Object.entries({
@@ -122,6 +126,39 @@ test("catalog includes exactly the five full supplied MP3 files and the correct 
   }
 });
 
+test("startup attempts playback quietly without opening the full deck or moving focus", async (t) => {
+  const h = harness(t, { autoplay: true });
+  await Promise.resolve();
+  assert.equal(h.instances.length, 1);
+  assert.equal(h.current.volume, 0.15);
+  assert.equal(h.current.paused, false);
+  assert.equal(h.$("#music-dock").hidden, true);
+  assert.equal(h.$("#music-mini").hidden, false);
+  assert.equal(h.doc.activeElement, h.doc.body);
+});
+test("closing startup controls stays dismissed through a blocked attempt and route changes", async (t) => {
+  const h = harness(t, { autoplay: true, reject: true });
+  h.$("#music-mini [data-radio-close]").click();
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(h.$("#music-mini").hidden, true);
+  assert.equal(h.$("#music-dock").hidden, true);
+  h.$("[data-radio-open]").click();
+  assert.equal(h.$("#music-dock").hidden, false);
+  assert.equal(h.$("#radio-play").textContent, "Retry");
+});
+test("closing all controls never interrupts startup playback or reappears on auto-next", async (t) => {
+  const h = harness(t, { autoplay: true });
+  await Promise.resolve();
+  h.$("#music-mini [data-radio-close]").click();
+  assert.equal(h.current.paused, false);
+  h.current.ended = true;
+  h.event("ended");
+  await Promise.resolve();
+  assert.equal(h.$("#music-mini").hidden, true);
+  assert.equal(h.$("#music-dock").hidden, true);
+  assert.equal(h.current.getAttribute("src"), radioTracks[1].src);
+});
+
 test("opening, selecting, changing volume and minimizing do not load media before Play", (t) => {
   const h = harness(t);
   h.radio.open();
@@ -183,9 +220,9 @@ test("minimize, route replacement, visibility and reopen preserve exact audio an
   h.$("[data-radio-close]").click();
   h.$("main").innerHTML = "<h1>Another page</h1>";
   h.doc.dispatchEvent(new h.win.Event("visibilitychange"));
-  assert.equal(h.$("#music-mini").hidden, false);
-  assert.equal(h.doc.documentElement.dataset.music, "background");
-  h.$("#music-mini [data-radio-open]").click();
+  assert.equal(h.$("#music-mini").hidden, true);
+  assert.equal(h.doc.documentElement.dataset.music, "hidden");
+  h.$("[data-radio-open]").click();
   assert.equal(h.current, a);
   assert.equal(h.$("#radio-audio-host audio"), a);
   assert.equal(a.currentTime, 57);

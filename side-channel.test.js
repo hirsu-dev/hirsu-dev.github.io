@@ -11,7 +11,12 @@ import {
   layoutProjects,
 } from "./layouts.js";
 import { resolveRoute } from "./console-model.js";
-import { skyPoints, projectStar, focusStar } from "./sky-model.js";
+import {
+  atlasPoints,
+  atlasProject,
+  atlasFocus,
+  atlasCamera,
+} from "./atlas-model.js";
 import {
   networkContent,
   networkInspector,
@@ -87,11 +92,16 @@ test("new routes and menus expose real pages, while the archive stays discoverab
     0,
   );
 });
-test("night sky focuses project constellations with a flat pan-and-zoom camera", () => {
-  for (const point of skyPoints(720, 590)) {
-    const p = projectStar(point, focusStar(point), 720, 590);
-    assert.equal(p.x, 360);
-    assert.equal(p.y, 295);
+test("night sky focuses project constellations with a perspective orbit camera", () => {
+  for (const point of atlasPoints()) {
+    const p = atlasProject(
+      point,
+      { ...atlasCamera(), ...atlasFocus(point) },
+      720,
+      590,
+    );
+    assert.ok(p.x > 120 && p.x < 600);
+    assert.ok(p.y > 70 && p.y < 520);
   }
 });
 

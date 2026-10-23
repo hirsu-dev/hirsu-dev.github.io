@@ -1,4 +1,40 @@
-/* A wide, quiet astronomical composition, not a re-skinned globe. */
+/* A wide, perspective star volume: shared tools connect the project stars. */
+.atlas-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 24px;
+  background: #0a111d;
+  border-bottom: 1px solid #303b50;
+  font: 10px var(--mono);
+  color: #aabdd1;
+}
+.atlas-filter-row select {
+  padding: 9px 12px;
+  background: #142034;
+  color: #d9e5f4;
+  border: 1px solid #43526b;
+  font: 11px var(--mono);
+  max-width: 100%;
+}
+.atlas-filter-row span {
+  margin-left: auto;
+  color: #8ba1b9;
+  font-size: 8px;
+}
+.atlas-shared {
+  border-top: 1px solid #303b50;
+  margin-top: 18px;
+  padding-top: 14px;
+}
+.atlas-shared > b {
+  font: 9px var(--mono);
+  color: #d8c69c;
+}
+.atlas-shared p {
+  font-size: 11px;
+}
 html[data-view="blacksite"] .sky-shell {
   padding: 0;
   clip-path: none;

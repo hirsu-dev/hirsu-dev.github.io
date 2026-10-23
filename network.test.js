@@ -1,7 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createProjectNetwork } from "./project-network.js";
-import { skyPoints, projectStar } from "./sky-model.js";
+import {
+  atlasPoints,
+  atlasProject,
+  atlasCamera,
+  atlasFocus,
+} from "./atlas-model.js";
 
 // Exercise the real renderer/controller with deterministic canvas, focus and RAF
 // boundaries. This checks lifecycle behavior; it is not a visual browser test.
@@ -57,7 +62,8 @@ function harness(
     ctx[name] = (...args) => {
       for (const arg of args)
         if (typeof arg === "number") assert.ok(Number.isFinite(arg), name);
-      if (name === "moveTo" || name === "arc") calls.push([name, ...args]);
+      if (name === "moveTo" || name === "arc")
+        calls.push([name, ...args, ctx.globalAlpha]);
     };
   }
   ctx.clearRect = () => {
@@ -386,12 +392,7 @@ test("dedicated map wheel zoom requires focus and secondary pointers cannot stea
 test("a bright-star click selects its project; dragging does not trigger selection", (t) => {
   const h = harness(t, { motion: "off" });
   h.tick();
-  const p = projectStar(
-    skyPoints(720, 460)[0],
-    { x: 0, y: 0, zoom: 1 },
-    720,
-    460,
-  );
+  const p = atlasProject(atlasPoints()[0], atlasCamera(), 720, 460);
   h.canvas.emit("pointerdown", {
     button: 0,
     pointerId: 1,
@@ -422,19 +423,25 @@ test("a bright-star click selects its project; dragging does not trigger selecti
   assert.equal(h.frames.size, 0);
 });
 
-test("portrait resize keeps the selected constellation centered and never creates invalid geometry", (t) => {
+test("portrait resize keeps the selected constellation framed and never creates invalid geometry", (t) => {
   const h = harness(t, { motion: "off" });
   h.container.emit("click", { target: h.labels[4] });
   h.tick();
   h.canvas.getBoundingClientRect = () => ({ width: 320, height: 560 });
   h.observers[0].callback();
   h.tick();
+  const p = atlasProject(
+    atlasPoints()[4],
+    { ...atlasCamera(), ...atlasFocus(atlasPoints()[4]) },
+    320,
+    560,
+  );
   assert.ok(
     h.calls.some(
       ([method, x, y, r]) =>
         method === "arc" &&
-        Math.abs(x - 160) < 0.001 &&
-        Math.abs(y - 280) < 0.001 &&
+        Math.abs(x - p.x) < 0.001 &&
+        Math.abs(y - p.y) < 0.001 &&
         r === 4,
     ),
   );

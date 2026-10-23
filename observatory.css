@@ -1,0 +1,212 @@
+/* Original orbital workbench. Project facts stay outside the illustrative model. */
+.scope-3d {
+  position: relative;
+  background: #070c15;
+  border: 1px solid #334559;
+  overflow: hidden;
+  margin-top: 20px;
+}
+#scope-canvas {
+  display: block;
+  width: 100%;
+  height: 480px;
+  touch-action: pan-y;
+  cursor: grab;
+}
+#scope-canvas:active {
+  cursor: grabbing;
+}
+#scope-canvas:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+.scope-hud {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #96aabf;
+  font: 8px/1.5 var(--mono);
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+.scope-hud-bottom {
+  top: auto;
+  bottom: 18px;
+  color: #73899f;
+  font-size: 7px;
+}
+.scope-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.scope-tools button,
+.scope-parts button,
+.planetarium button {
+  border: 1px solid #43566c;
+  color: #c7d7e7;
+  background: #0d1826;
+  padding: 10px 12px;
+  font: 10px/1.4 var(--mono);
+  min-height: 40px;
+}
+.scope-tools button[aria-pressed="true"],
+.scope-parts button[aria-pressed="true"] {
+  color: #07101b;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.scope-tools label {
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  font: 10px/1.5 var(--mono);
+  color: #b0c3d5;
+}
+.scope-tools input {
+  min-width: 0;
+  width: 100%;
+  accent-color: var(--accent);
+  min-height: 28px;
+}
+.scope-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.scope-detail {
+  border-left: 2px solid var(--accent);
+  padding: 14px 16px;
+  margin: 16px 0;
+  background: #101e2b;
+  min-height: 98px;
+}
+.scope-detail b {
+  color: #dce8f4;
+  font: 12px var(--mono);
+}
+.scope-detail p,
+.scope-fallback {
+  color: #9fb5ca;
+  font: 10px/1.8 var(--mono);
+  margin-bottom: 0;
+}
+.scope-aim-map {
+  border-top: 1px solid #334559;
+  margin-top: 18px;
+  padding-top: 15px;
+  color: #a9bed1;
+  font: 10px var(--mono);
+}
+.scope-aim-map summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.scope-aim-map .aim-mount {
+  display: none;
+}
+.scope-aim-map #aim-map {
+  width: 220px;
+}
+.bl-sky .bl-readout {
+  margin-top: 15px;
+}
+.planetarium {
+  margin-top: 24px;
+  padding: 30px;
+  border: 1px solid #3c4c60;
+  background: #0a111d;
+}
+.planetarium header {
+  display: flex;
+  gap: 30px;
+  justify-content: space-between;
+  align-items: start;
+}
+.planetarium h2 {
+  font: 600 clamp(24px, 3vw, 36px)/1.15 var(--display);
+  margin: 12px 0;
+}
+.planetarium p {
+  max-width: 780px;
+  color: #a2b6ca;
+  font: 11px/1.9 var(--mono);
+}
+.planetarium a {
+  color: var(--accent);
+  font: 11px/1.6 var(--mono);
+}
+.planetarium-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+.planetarium-actions button:first-child {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.planetarium iframe {
+  display: block;
+  width: 100%;
+  height: 620px;
+  border: 1px solid #41546a;
+  background: #03070c;
+}
+.planetarium.expanded iframe {
+  height: 85vh;
+  min-height: 600px;
+}
+.planetarium footer {
+  margin-top: 20px;
+  color: #8fa1b5;
+  font: 9px/1.9 var(--mono);
+}
+.planetarium footer a {
+  font-size: 9px;
+}
+.planetarium [hidden],
+.scope-3d [hidden] {
+  display: none !important;
+}
+html[data-contrast="high"]
+  :is(.scope-hud, .scope-hud-bottom, .scope-detail p, .planetarium p) {
+  color: #eee;
+}
+html[data-text-size="large"]
+  :is(.scope-tools, .scope-detail, .planetarium)
+  :is(p, button, label, a) {
+  font-size: 14px;
+}
+@media (max-width: 600px) {
+  #scope-canvas {
+    height: 390px;
+  }
+  .scope-hud {
+    font-size: 7px;
+    left: 12px;
+    right: 12px;
+  }
+  .scope-hud-bottom {
+    font-size: 6px;
+  }
+  .planetarium {
+    padding: 20px 14px;
+  }
+  .planetarium header {
+    display: block;
+  }
+  .planetarium iframe {
+    height: 560px;
+  }
+  .scope-detail {
+    min-height: 120px;
+  }
+}

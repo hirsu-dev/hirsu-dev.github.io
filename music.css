@@ -236,6 +236,11 @@ html[data-fx="off"] .music-bars i {
   align-items: center;
   gap: 5px;
 }
+#music-mini [data-radio-close] {
+  flex-shrink: 0;
+  min-width: 36px;
+  font-size: 18px;
+}
 .music-volume {
   display: flex;
   align-items: center;

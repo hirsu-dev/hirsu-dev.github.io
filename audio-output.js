@@ -20,7 +20,7 @@ export function createAudioOutput(
   setVolume(volume);
   return {
     setVolume,
-    async play() {
+    async play({ autoplay = false } = {}) {
       if (disposed) return;
       if (!context && Context) {
         context = new Context();
@@ -34,7 +34,30 @@ export function createAudioOutput(
       // Both calls occur within the gesture, not after an await.
       const resumed =
         context?.state !== "running" ? context?.resume() : undefined;
-      await Promise.all([resumed, audio.play()]);
+      let timer;
+      try {
+        const playback = Promise.all([resumed, audio.play()]);
+        // Some browsers leave resume() pending instead of rejecting autoplay.
+        // Bound that attempt so the player can offer a real gesture-driven retry.
+        if (autoplay)
+          await Promise.race([
+            playback,
+            new Promise((_, reject) => {
+              timer = setTimeout(
+                () =>
+                  reject(
+                    Object.assign(new Error("Gesture required"), {
+                      name: "NotAllowedError",
+                    }),
+                  ),
+                1500,
+              );
+            }),
+          ]);
+        else await playback;
+      } finally {
+        clearTimeout(timer);
+      }
     },
     pause() {
       audio.pause();

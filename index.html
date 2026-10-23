@@ -84,12 +84,13 @@
     <link rel="stylesheet" href="settings.css?v=14" />
     <link rel="stylesheet" href="side-channel.css?v=19" />
     <link rel="stylesheet" href="layouts.css?v=16" />
-    <link rel="stylesheet" href="music.css?v=20" />
-    <link rel="stylesheet" href="constellation.css?v=17" />
+    <link rel="stylesheet" href="music.css?v=21" />
+    <link rel="stylesheet" href="constellation.css?v=21" />
     <link rel="stylesheet" href="motion-upgrade.css?v=18" />
     <link rel="stylesheet" href="switchboard.css?v=18" />
     <link rel="stylesheet" href="build-lab.css?v=19" />
-    <script type="module" src="console.js?v=20"></script>
+    <link rel="stylesheet" href="observatory.css?v=21" />
+    <script type="module" src="console.js?v=21"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -184,7 +185,7 @@
         >
       </nav>
       <div class="rail-bottom">
-        <span class="rail-version" aria-hidden="true">v20.0</span>
+        <span class="rail-version" aria-hidden="true">v21.0</span>
         <button
           class="rail-item"
           id="theme-button"
@@ -441,12 +442,15 @@
           <div class="settings-note">
             <b>Private by default</b>
             <p>
-              No account, analytics or tracking. Preferences and saved projects
-              stay in this browser; they do not sync to another device. Optional
-              background music plays five owner-supplied recordings from this
-              site after you press Play. No third-party music player or account
-              is used. Volume starts at 15% and is adjustable. The × minimizes
-              without stopping playback; Stop &amp; unload ends it.
+              No portfolio account or first-party analytics. Preferences and
+              saved projects stay in this browser; they do not sync to another
+              device. Optional background music plays five owner-supplied
+              recordings from this site, with a quiet startup attempt and a
+              click-to-play fallback. No third-party music player or account is
+              used. Volume starts at 15% and is adjustable. The × hides all
+              controls without stopping playback; Stop &amp; unload ends it. The
+              optional Stellarium embed loads only on request and uses its own
+              servers and analytics.
             </p>
           </div>
           <button class="settings-secondary" id="settings-reset">

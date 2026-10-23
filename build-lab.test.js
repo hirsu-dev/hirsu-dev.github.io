@@ -19,6 +19,7 @@ function harness(t) {
     url: "https://portfolio.test/",
     settings: {
       disableJavaScriptFileLoading: true,
+      disableIframePageLoading: true,
       enableCSSFileLoading: false,
     },
   });
@@ -323,4 +324,34 @@ test("automatic Pi steps preserve focused controls and disposal cancels a pendin
   t.mock.timers.tick(2000);
   assert.match(h.$("#pi-step-count").textContent, /02 OF 03/);
   assert.equal(h.$("#pi-flow").dataset.tracing, undefined);
+});
+
+test("Stellarium loads only on request, is separately attributed, expands and unloads on tab change", (t) => {
+  const h = harness(t);
+  assert.equal(h.$("iframe"), null);
+  h.$("#stellarium-load").click();
+  assert.equal(h.$("iframe").src, "https://stellarium-web.org/");
+  assert.equal(h.$("iframe").getAttribute("allow"), "fullscreen");
+  assert.equal(h.$("iframe").referrerPolicy, "no-referrer");
+  assert.match(
+    h.$(".planetarium").textContent,
+    /not every feature of desktop Stellarium/,
+  );
+  h.$("#stellarium-expand").click();
+  assert.equal(h.$(".planetarium").classList.contains("expanded"), true);
+  h.$("#bl-tab-home").click();
+  assert.equal(h.$("iframe"), null);
+  h.$("#bl-tab-scope").click();
+  h.$("#stellarium-load").click();
+  h.$("#stellarium-close").click();
+  assert.equal(h.$("iframe"), null);
+});
+test("component descriptions and assembly controls work without canvas support", (t) => {
+  const h = harness(t);
+  h.$('[data-scope-part="focus"]').click();
+  assert.equal(h.$("#scope-part-title").textContent, "Focuser");
+  h.$("#scope-explode").click();
+  assert.equal(h.$("#scope-explode").getAttribute("aria-pressed"), "true");
+  h.$("#scope-wire").click();
+  assert.equal(h.$("#scope-wire").getAttribute("aria-pressed"), "true");
 });
