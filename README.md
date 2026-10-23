@@ -1,8 +1,18 @@
 # hirsu // from code to the real world
 
-Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Pages. No Raspberry Pi hosting, backend, paid domain, portfolio analytics, accounts, external fonts, or runtime npm dependencies. Optional background radio connects to Spotify only after explicit consent. Tests use Happy DOM as a development-only dependency.
+Live: https://hrushikbarani-hub.github.io/. Static portfolio on free GitHub Pages. No Raspberry Pi hosting, backend, paid domain, portfolio analytics, accounts, external fonts, or runtime npm dependencies. Optional background radio plays owner-supplied MP3s from this site only after Play. Tests use Happy DOM as a development-only dependency.
 
-## Personal Build Lab and background radio / v19
+## Full-file audio radio / v20
+
+- Replaces the Spotify preview embed with five complete owner-supplied MP3s. Public hosting/streaming permission was confirmed by the owner on October 22, 2026; no recordings were fetched or extracted by the implementation. See [credits and usage notice](assets/audio/README.md). Music rights are separate from site code and are not licensed to visitors by this repository.
+- Includes High Forever (Marlon Hoffstadt Remix), I Really Want to Stay at Your House, Let You Down, **Never Fade Away (SAMURAI Cover) by P.T. Adamczyk / Olga Jankowska**, and Night City. Chippin' In was not supplied. Originals are unchanged; downloads on the owner's computer are untouched.
+- Starts at **15% each visit**. Volume and mute controls in both sizes stay synchronized across tracks, routes and layout switches. Web Audio gain controls volume on supported browsers, with a native media-volume fallback when Web Audio is unavailable. Device volume still applies.
+- Seek through full recordings, choose a track, skip forward/back, or enable continuous playback (on by default, wraps at the last track). No artificial duration limit, provider account, video or third-party audio requests. Only the current track loads, after an explicit Play click; changing a selection while stopped does not download it.
+- × preserves the same audio and position. Pause can cancel a pending Play. Stop unloads the file. Rejections, failed files and stale events provide retry without resurrecting a stopped session. A reload or closing the browser ends the session; background/lock-screen behavior remains subject to browser/OS restrictions.
+- Edit `music.js` (catalog/UI), `audio-output.js` (native playback/gain), `music.css`, and `music.test.js`. All previous portfolio features remain unchanged.
+- Verification: 124 automated tests pass. Real Chromium-browser checks loaded and played all five MP3s (approximately 3:49, 4:06, 3:47, 4:46 and 3:13), including playback beyond 30 seconds, minimized/page-persistent playback, volume-slider synchronization, seeking with HTTP range support, automatic next-track playback, stop-at-end and unloading. Narrow and desktop layouts were inspected; no browser console warnings/errors were reported. Mobile Safari and lock-screen behavior were not tested.
+
+## Personal Build Lab and background radio / v19 history (provider replaced in v20)
 
 - **Radio × now minimizes, not disconnects.** The same consented Spotify controller and iframe remain mounted; the selected track and playback state survive hiding/reopening controls, page navigation and layout changes. A small strip offers Play/Pause, expand and **Stop**. Stop & disconnect explicitly destroys the player, including pending initialization. Opening or minimizing never starts playback by itself. Spotify/browser/sign-in/preview limits still apply; closing the browser page ends this site session.
 - **Build Lab (`#lab`) replaces the generic glitch/CSS editor and fan-fiction Lost Packets page.** Old `#archive` links resolve to Build Lab. The retired generator and fiction modules/styles have been removed from the current source; Git history retains them. Existing fragment storage is left untouched but is no longer read or written.

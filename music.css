@@ -48,9 +48,7 @@
   z-index: 80;
   right: 20px;
   bottom: 48px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display: block;
   width: min(390px, calc(100vw - 32px));
   padding: 8px;
   border: 1px solid var(--line);
@@ -123,7 +121,7 @@
   padding: 8px;
 }
 html[data-music="background"] body {
-  padding-bottom: 100px;
+  padding-bottom: 190px;
 }
 html[data-text-size="large"] #music-mini :is(button, b) {
   font-size: 13px;
@@ -173,16 +171,155 @@ html[data-contrast="high"] #music-mini {
   border-color: var(--accent);
   color: var(--accent);
 }
-#music-dock #radio-frame {
-  min-height: 152px;
-  margin: 0;
+.music-now {
+  padding: 20px 16px 12px;
+  background: linear-gradient(125deg, #162a3099, transparent);
 }
-#music-dock #radio-frame iframe {
-  display: block;
+.music-format {
+  color: var(--cyan);
+  font: 8px var(--mono);
+  letter-spacing: 0.16em;
+}
+.music-now h2 {
+  margin: 14px 0 7px;
+  font: 600 20px/1.25 var(--display);
+  overflow-wrap: anywhere;
+}
+.music-now p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 10px;
+}
+.music-bars {
+  display: flex;
+  align-items: end;
+  gap: 4px;
+  height: 22px;
+  margin-top: 16px;
+}
+.music-bars i {
+  width: 4px;
+  height: 14px;
+  background: var(--accent);
+  transform: scaleY(0.2);
+  transform-origin: bottom;
+}
+#music-dock[data-playing="true"] .music-bars i {
+  animation: radio-level 1.4s ease-in-out infinite alternate;
+}
+.music-bars i:nth-child(2n) {
+  animation-delay: -0.4s !important;
+  height: 22px;
+}
+.music-bars i:nth-child(3n) {
+  animation-delay: -0.8s !important;
+  height: 18px;
+}
+@keyframes radio-level {
+  to {
+    transform: scaleY(1);
+  }
+}
+html[data-motion="off"] .music-bars i,
+html[data-fx="off"] .music-bars i {
+  animation: none !important;
+  transform: scaleY(0.5);
+}
+@media (prefers-reduced-motion: reduce) {
+  .music-bars i {
+    animation: none !important;
+    transform: scaleY(0.5);
+  }
+}
+.music-mini-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.music-volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line);
+  font: 10px var(--mono);
+}
+.music-volume input {
+  flex: 1;
+  min-width: 40px;
   width: 100%;
-  min-width: 0;
-  height: 152px;
-  border: 0;
+}
+.music-volume output {
+  min-width: 4ch;
+  text-align: right;
+  color: var(--cyan);
+}
+.music-volume label {
+  font-size: 10px;
+}
+#music-mini .music-volume {
+  padding: 8px 2px 0;
+  margin-top: 6px;
+}
+#music-mini .music-volume button {
+  min-height: 30px;
+}
+#radio-mini-message {
+  font: 9px/1.6 var(--mono);
+  color: var(--muted);
+  margin: 6px 3px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.music-timeline {
+  padding: 12px 16px 0;
+}
+.music-timeline > div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--muted);
+}
+.music-timeline input {
+  width: 100%;
+}
+:is(#music-dock, #music-mini) input[type="range"] {
+  accent-color: var(--accent);
+  min-height: 28px;
+  cursor: pointer;
+  margin: 4px 0;
+}
+:is(#music-dock, #music-mini)
+  :is(input, button, select, summary, a):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.music-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+#radio-queue .radio-continue {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--text);
+  margin-top: 16px;
+}
+#radio-queue summary {
+  cursor: pointer;
+  color: var(--cyan);
+  padding: 8px 0;
+}
+#radio-queue ul {
+  padding-left: 16px;
+}
+#radio-queue li {
+  margin-bottom: 12px;
 }
 .music-transport {
   display: flex;
