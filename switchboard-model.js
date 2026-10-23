@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=8";
-import { networkLinks } from "./network-view.js?v=19";
+import { projects } from "./projects.js?v=23";
+import { networkLinks } from "./network-view.js?v=23";
 
 export const boardKey = "hirsu-switchboard-v18";
 export const boardProjects = projects;
@@ -7,21 +7,23 @@ export const boardLinks = networkLinks;
 const ids = new Set(projects.map((p) => p.id));
 export const bound = (value, min, max) => Math.max(min, Math.min(max, value));
 export function boardArrangement(mode = "circuit") {
-  const circuit = [
-    [0.16, 0.23],
-    [0.5, 0.17],
-    [0.83, 0.26],
-    [0.24, 0.65],
-    [0.51, 0.48],
-    [0.8, 0.72],
-    [0.49, 0.84],
-  ];
+  const cols = 4,
+    rows = Math.ceil(projects.length / cols);
   return Object.fromEntries(
     projects.map((p, i) => [
       p.id,
       mode === "rows"
-        ? { x: 0.17 + (i % 3) * 0.33, y: 0.19 + Math.floor(i / 3) * 0.31 }
-        : { x: circuit[i][0], y: circuit[i][1] },
+        ? {
+            x: 0.14 + (i % cols) * 0.24,
+            y: 0.18 + (Math.floor(i / cols) * 0.64) / Math.max(1, rows - 1),
+          }
+        : {
+            x:
+              0.14 +
+              (Math.floor(i / cols) % 2 ? cols - 1 - (i % cols) : i % cols) *
+                0.24,
+            y: 0.2 + (Math.floor(i / cols) * 0.6) / Math.max(1, rows - 1),
+          },
     ]),
   );
 }

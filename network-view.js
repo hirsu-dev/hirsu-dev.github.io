@@ -1,7 +1,7 @@
-import { relatedHubs } from "./atlas-model.js?v=21";
-import { skyObjects } from "./sky-model.js?v=17";
-import { projects } from "./projects.js?v=8";
-import { escapeHTML as esc } from "./console-model.js?v=15";
+import { relatedHubs } from "./atlas-model.js?v=23";
+import { skyObjects } from "./sky-model.js?v=23";
+import { projects } from "./projects.js?v=23";
+import { escapeHTML as esc } from "./console-model.js?v=23";
 export const networkLinks = [
   ["maintaineros", "civiclens", "Python · FastAPI · SQLite"],
   ["civiclens", "hyprland-forge", "Python tooling"],
@@ -10,11 +10,46 @@ export const networkLinks = [
   ["robo-telescope", "pi-homelab", "Hardware experiments"],
   ["pi-homelab", "nexus-ai", "Home-service interfaces"],
   ["nexus-ai", "maintaineros", "Software interfaces"],
+  [
+    "robo-telescope",
+    "observatory-planner",
+    "Observing sessions and approximate sky geometry",
+  ],
+  [
+    "robo-telescope",
+    "coordinate-motor-simulator",
+    "Computer coordinates to simulated mount movement",
+  ],
+  [
+    "pi-homelab",
+    "homelab-health",
+    "Private service health and synthetic public demo",
+  ],
+  [
+    "pi-homelab",
+    "network-privacy-auditor",
+    "Pi-hole data and aggregate-only reports",
+  ],
+  [
+    "robo-telescope",
+    "accessible-star-map",
+    "Astronomy with an equivalent text workflow",
+  ],
+  [
+    "custom-keyboard",
+    "repair-parts-tracker",
+    "Electronics, parts and repair records",
+  ],
+  [
+    "hyprland-forge",
+    "offline-project-notebook",
+    "Project notes and local tools",
+  ],
 ];
 export function networkInspector(index = -1) {
   const p = projects[index];
   if (!p)
-    return `<div><p class="eyebrow">STAR ATLAS / 07 CONSTELLATIONS</p><h3>Every build leaves a light.</h3><p>Orbit a three-dimensional web of my projects. Bright stars are builds; smaller labeled nodes are shared languages, tools and services. Choose a project to trace its connections.</p></div><div><p class="eyebrow">3D PROJECT UNIVERSE</p><p>A depth-filled, original night sky—not astronomical coordinates or live telemetry. Warm nodes mark language families; cool nodes mark tools and services. Physical builds is a related-work theme, not a shared coding language.</p><a href="#lab">Explore my Build Lab ↗</a></div>`;
+    return `<div><p class="eyebrow">STAR ATLAS / ${projects.length} CONSTELLATIONS</p><h3>Every build leaves a light.</h3><p>Orbit a three-dimensional web of my projects. Bright stars are builds; smaller labeled nodes are shared languages, tools and services. Choose a project to trace its connections.</p></div><div><p class="eyebrow">3D PROJECT UNIVERSE</p><p>A depth-filled, original night sky—not astronomical coordinates or live telemetry. Warm nodes mark language families; cool nodes mark tools and services. Physical builds is a related-work theme, not a shared coding language.</p><a href="#lab">Explore my Build Lab ↗</a></div>`;
   const neighbors = networkLinks
     .filter(([a, b]) => a === p.id || b === p.id)
     .map(([a, b, why]) => ({
@@ -41,8 +76,8 @@ export function networkInspector(index = -1) {
 export function networkContent() {
   return `<section class="network-shell sky-shell" id="network-shell" aria-label="Interactive night-sky constellations">
     <div class="network-toolbar"><span>AFTER DARK <b>/</b> PROJECT ATLAS</span><div aria-label="Sky display"><button data-sky-control data-network-mode="atlas" aria-pressed="true">3D CONNECTIONS</button><button data-sky-control data-network-mode="ambient" aria-pressed="false">STARFIELD</button></div></div>
-    <div class="atlas-filter-row"><label for="atlas-filter">Trace a connection</label><select id="atlas-filter"><option value="all">All connections</option><option value="language">Coding languages</option><option value="stack">Tools &amp; services</option><option value="theme">Related physical builds</option></select><span>WARM / LANGUAGES &nbsp; COOL / TOOLS</span></div><div class="sky-layout"><div class="network-viewport"><div class="sky-caption" aria-hidden="true"><span>07 LIGHTS / ONE WORKBENCH</span><b>Different builds. Shared DNA.</b></div><canvas tabindex="0" aria-label="Three-dimensional night sky with seven project constellations and shared technology nodes. Drag or use arrow keys to orbit. Plus and minus zoom. Select a bright star or use the project buttons beside the sky. Home resets the view."></canvas><span class="sky-horizon" aria-hidden="true">AN ORIGINAL SKY / NOT ASTRONOMY DATA</span><p class="sky-fallback">The animated sky is unavailable. Choose a project from the constellation index; all project details still work.</p></div>
-    <nav class="sky-sidebar" aria-label="Constellation index"><p>FOLLOW A CONSTELLATION <span>↓</span></p><div class="network-labels">${skyObjects
+    <div class="atlas-filter-row"><label for="atlas-filter">Trace a connection</label><select id="atlas-filter"><option value="all">All connections</option><option value="language">Coding languages</option><option value="stack">Tools &amp; services</option><option value="theme">Related work themes</option></select><span>WARM / LANGUAGES &nbsp; COOL / TOOLS</span></div><div class="sky-layout"><div class="network-viewport"><div class="sky-caption" aria-hidden="true"><span>${projects.length} LIGHTS / ONE WORKBENCH</span><b>Different builds. Shared DNA.</b></div><canvas tabindex="0" aria-label="Three-dimensional night sky with ${projects.length} project constellations and shared technology nodes. Drag or use arrow keys to orbit. Plus and minus zoom. Select a bright star or use the project buttons beside the sky. Home resets the view."></canvas><span class="sky-horizon" aria-hidden="true">AN ORIGINAL SKY / NOT ASTRONOMY DATA</span><p class="sky-fallback">The animated sky is unavailable. Choose a project from the constellation index; all project details still work.</p></div>
+    <nav class="sky-sidebar" aria-label="Constellation index"><label class="sky-index-search">Search project names<input id="atlas-index-search" type="search" maxlength="100" placeholder="Name, language, tool…" /></label><p class="sky-search-status" role="status"></p><p>FOLLOW A CONSTELLATION <span>↓</span></p><div class="network-labels">${skyObjects
       .map((object, i) => {
         const p = projects.find((p) => p.id === object.id);
         return `<button class="network-node" data-node-index="${i}" aria-pressed="false" aria-controls="sky-inspector" aria-label="Inspect ${esc(p.title)} constellation"><span>${String(i + 1).padStart(2, "0")}</span><b>${esc(p.title)}</b><small>${esc(p.status)}</small><i aria-hidden="true">↗</i></button>`;

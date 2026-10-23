@@ -79,12 +79,18 @@ test("legacy circular navigation helper wraps correctly", () => {
 });
 
 test("project filters and multi-word search compose without mutating content", () => {
-  assert.equal(findProjects().length, 7);
+  assert.equal(findProjects().length, 14);
   assert.deepEqual(
     findProjects({ category: "software", query: "python SQLite" }).map(
       (p) => p.id,
     ),
-    ["maintaineros", "civiclens"],
+    [
+      "maintaineros",
+      "civiclens",
+      "observatory-planner",
+      "homelab-health",
+      "network-privacy-auditor",
+    ],
   );
   assert.deepEqual(
     findProjects({ category: "homelab", query: "TAILSCALE" }).map((p) => p.id),
@@ -148,7 +154,7 @@ test("all project and cinematic image assets exist in the static checkout", () =
   for (const path of assets)
     assert.ok(existsSync(new URL(path, import.meta.url)), path);
 });
-test("Overdrive has a continuous, accessible home for all seven real builds", () => {
+test("Overdrive has a continuous, accessible home for all all real builds", () => {
   const html = overdriveHome('<div id="network-shell"></div>');
   for (const p of projects) {
     assert.ok(html.includes(`href="#${p.id}"`));
@@ -228,8 +234,8 @@ test("boot is closed without JavaScript; real content is not made inert or hidde
 test("HTML escaping covers user-supplied query attribute delimiters", () => {
   assert.equal(escapeHTML('<a x="&">\''), "&lt;a x=&quot;&amp;&quot;&gt;&#39;");
 });
-test("seven original constellations map exactly to real project data", () => {
-  assert.equal(skyObjects.length, 7);
+test("all original constellations map exactly to real project data", () => {
+  assert.equal(skyObjects.length, 14);
   const ids = new Set(projects.map((p) => p.id));
   assert.deepEqual(new Set(skyObjects.map((p) => p.id)), ids);
   for (const pair of connections) for (const id of pair) assert.ok(ids.has(id));

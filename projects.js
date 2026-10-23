@@ -1,4 +1,5 @@
-import { projectStatus } from "./workbench-data.js?v=22";
+import { projectStatus } from "./workbench-data.js?v=23";
+import { newProjects } from "./new-projects.js?v=23";
 
 export const projects = [
   {
@@ -206,4 +207,9 @@ export const projects = [
     evidence:
       "Public hyprland-forge description, project.json, and repository contents.",
   },
-].map((project) => ({ ...project, lifecycle: projectStatus[project.id] }));
+]
+  .concat(newProjects)
+  .map((project) => ({ ...project, lifecycle: projectStatus[project.id] }));
+
+export const projectCount = projects.length;
+export const publicRepoCount = projects.filter((p) => p.source).length;

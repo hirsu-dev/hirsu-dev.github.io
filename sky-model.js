@@ -1,5 +1,6 @@
 // An original, illustrated star atlas. Positions are project composition, not
 // celestial coordinates or a map of anybody's devices/location.
+import { newProjects } from "./new-projects.js?v=23";
 export const skyObjects = Object.freeze(
   [
     {
@@ -103,7 +104,25 @@ export const skyObjects = Object.freeze(
         [0.095, 0.015],
       ],
     },
-  ].map(Object.freeze),
+  ]
+    .concat(
+      newProjects.map((p, i) => ({
+        id: p.id,
+        label: p.title.split(" / ")[0].toUpperCase(),
+        wide: [0.15 + (i % 4) * 0.23, 0.15 + Math.floor(i / 4) * 0.65],
+        tall: [0.2 + (i % 2) * 0.6, 0.1 + Math.floor(i / 2) * 0.24],
+        shape: [
+          [0, 0],
+          [-0.045, -0.035],
+          [-0.075, 0.02],
+          [-0.02, 0.06],
+          [0.04, 0.02],
+          [0.065, -0.04],
+          [0, 0],
+        ],
+      })),
+    )
+    .map(Object.freeze),
 );
 export const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 export function skyPoints(width, height) {

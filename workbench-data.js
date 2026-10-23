@@ -1,3 +1,4 @@
+import { newProjects } from "./new-projects.js?v=23";
 // Editorial review dates, not claims of new physical builds or hardware tests.
 export const statusTypes = Object.freeze({
   published: {
@@ -23,6 +24,41 @@ export const statusTypes = Object.freeze({
 });
 
 export const projectStatus = Object.freeze({
+  "observatory-planner": {
+    state: "prototype",
+    reviewed: "2026-10-23",
+    next: "Gather observing feedback and add validated backup import and epoch transformations.",
+  },
+  "coordinate-motor-simulator": {
+    state: "prototype",
+    reviewed: "2026-10-23",
+    next: "Use measured mount constraints and independent astronomy references before any hardware-control design.",
+  },
+  "homelab-health": {
+    state: "prototype",
+    reviewed: "2026-10-23",
+    next: "Gather local deployment feedback and add service-specific checks without exposing private endpoints.",
+  },
+  "network-privacy-auditor": {
+    state: "prototype",
+    reviewed: "2026-10-23",
+    next: "Validate additional Pi-hole backup schemas and gather feedback on aggregate-report usefulness.",
+  },
+  "accessible-star-map": {
+    state: "prototype",
+    reviewed: "2026-10-23",
+    next: "Gather screen-reader feedback and add a validated horizon view while keeping the text interface complete.",
+  },
+  "repair-parts-tracker": {
+    state: "prototype",
+    reviewed: "2026-10-23",
+    next: "Gather repair-workflow feedback and add multiple part types per entry and optional image attachments.",
+  },
+  "offline-project-notebook": {
+    state: "prototype",
+    reviewed: "2026-10-23",
+    next: "Verify offline reload and storage quotas on real devices before designing conflict-aware cloud sync.",
+  },
   "robo-telescope": {
     state: "repair",
     reviewed: "2026-10-23",
@@ -61,6 +97,26 @@ export const projectStatus = Object.freeze({
 });
 
 export const buildEntries = Object.freeze([
+  {
+    id: "seven-tools-first-release",
+    date: "2026-10-23",
+    project: "observatory-planner",
+    kind: "Software milestone",
+    title: "Seven useful tools, connected to the workshop.",
+    summary:
+      "The roadmap's seven ideas now have version 0.1 repositories and browser editions.",
+    goal: "Turn the telescope, home-lab and electronics interests into useful software people can run.",
+    changed:
+      "Published the observing planner, motion simulator, service dashboard, privacy auditor, accessible star catalog, repair ledger and offline notebook.",
+    constraint:
+      "Visual browser QA was unavailable. Astronomy is approximate, the public service demo is synthetic, and real offline-reload testing remains unverified.",
+    learned:
+      "Local-data tools need clear backup, privacy and missing-data behavior as much as a useful main screen.",
+    next: "Collect real usage feedback, inspect the interfaces on actual devices and improve the most useful workflow next.",
+    image: "assets/apps/observatory-planner.svg",
+    alt: "Original diagram for the observing planner",
+    caption: "Original app diagram. No browser screenshot is implied.",
+  },
   {
     id: "telescope-digital-workbench",
     date: "2026-10-23",
@@ -125,77 +181,102 @@ export const buildEntries = Object.freeze([
 ]);
 export const buildEntryIds = new Set(buildEntries.map((entry) => entry.id));
 
-export const experiments = Object.freeze([
-  {
-    id: "observatory-planner",
-    title: "Observatory Planner",
-    state: "Planned",
-    project: "robo-telescope",
-    purpose:
-      "Plan observing sessions, rank visible targets and keep an observation log.",
-    next: "Build a Python API, a local database and a JavaScript planning interface.",
-    tags: ["Python", "JavaScript", "Astronomy"],
-  },
-  {
-    id: "homelab-health",
-    title: "Homelab Health Dashboard",
-    state: "Planned",
-    project: "pi-homelab",
-    purpose:
-      "Understand service health and incident history in a private home lab.",
-    next: "Start with a synthetic demo, then add a private local checker.",
-    tags: ["Python", "Networking", "Raspberry Pi"],
-  },
-  {
-    id: "motor-simulator",
-    title: "Coordinate-to-Motor Simulator",
-    state: "Planned",
-    project: "robo-telescope",
-    purpose:
-      "Preview a telescope movement, limits and possible collision zones.",
-    next: "Define coordinate conventions and verify reference calculations.",
-    tags: ["Simulation", "Robotics"],
-  },
-  {
-    id: "privacy-auditor",
-    title: "Local Network Privacy Auditor",
-    state: "Planned",
-    project: "pi-homelab",
-    purpose: "Summarize DNS blocking without retaining raw browsing histories.",
-    next: "Design an aggregate-only import and retention policy.",
-    tags: ["Privacy", "Python"],
-  },
-  {
-    id: "accessible-sky",
-    title: "Accessible Star Map",
-    state: "Planned",
-    project: "robo-telescope",
-    purpose:
-      "Explore constellations through keyboard controls and equivalent text descriptions.",
-    next: "Choose a licensed dataset and build an accessible list first.",
-    tags: ["Accessibility", "Astronomy"],
-  },
-  {
-    id: "repair-tracker",
-    title: "Repair Log & Parts Tracker",
-    state: "Planned",
-    project: "custom-keyboard",
-    purpose:
-      "Keep parts, costs, repair notes and results together across electronics builds.",
-    next: "Model projects, repair entries and a simple parts inventory.",
-    tags: ["Electronics", "Local tools"],
-  },
-  {
-    id: "project-notebook",
-    title: "Offline Project Notebook",
-    state: "Planned",
-    project: "hyprland-forge",
-    purpose:
-      "Keep build notes, diagrams and tasks available without a connection.",
-    next: "Ship reliable local storage, search and export before adding sync.",
-    tags: ["Offline", "JavaScript"],
-  },
-]);
+const experimentProjectIds = {
+  "motor-simulator": "coordinate-motor-simulator",
+  "privacy-auditor": "network-privacy-auditor",
+  "accessible-sky": "accessible-star-map",
+  "repair-tracker": "repair-parts-tracker",
+  "project-notebook": "offline-project-notebook",
+};
+export const experiments = Object.freeze(
+  [
+    {
+      id: "observatory-planner",
+      title: "Observatory Planner",
+      state: "Prototype · v0.1",
+      source: "https://github.com/hrushikbarani-hub/observatory-planner",
+      demo: "https://hrushikbarani-hub.github.io/observatory-planner/",
+      project: "robo-telescope",
+      purpose:
+        "Plan observing sessions, rank visible targets and keep an observation log.",
+      next: "Gather observing feedback and add validated backup import and epoch transformations.",
+      tags: ["Python", "JavaScript", "Astronomy"],
+    },
+    {
+      id: "homelab-health",
+      title: "Homelab Health Dashboard",
+      state: "Planned",
+      project: "pi-homelab",
+      purpose:
+        "Understand service health and incident history in a private home lab.",
+      next: "Start with a synthetic demo, then add a private local checker.",
+      tags: ["Python", "Networking", "Raspberry Pi"],
+    },
+    {
+      id: "motor-simulator",
+      title: "Coordinate-to-Motor Simulator",
+      state: "Planned",
+      project: "robo-telescope",
+      purpose:
+        "Preview a telescope movement, limits and possible collision zones.",
+      next: "Define coordinate conventions and verify reference calculations.",
+      tags: ["Simulation", "Robotics"],
+    },
+    {
+      id: "privacy-auditor",
+      title: "Local Network Privacy Auditor",
+      state: "Planned",
+      project: "pi-homelab",
+      purpose:
+        "Summarize DNS blocking without retaining raw browsing histories.",
+      next: "Design an aggregate-only import and retention policy.",
+      tags: ["Privacy", "Python"],
+    },
+    {
+      id: "accessible-sky",
+      title: "Accessible Star Map",
+      state: "Planned",
+      project: "robo-telescope",
+      purpose:
+        "Explore constellations through keyboard controls and equivalent text descriptions.",
+      next: "Choose a licensed dataset and build an accessible list first.",
+      tags: ["Accessibility", "Astronomy"],
+    },
+    {
+      id: "repair-tracker",
+      title: "Repair Log & Parts Tracker",
+      state: "Planned",
+      project: "custom-keyboard",
+      purpose:
+        "Keep parts, costs, repair notes and results together across electronics builds.",
+      next: "Model projects, repair entries and a simple parts inventory.",
+      tags: ["Electronics", "Local tools"],
+    },
+    {
+      id: "project-notebook",
+      title: "Offline Project Notebook",
+      state: "Planned",
+      project: "hyprland-forge",
+      purpose:
+        "Keep build notes, diagrams and tasks available without a connection.",
+      next: "Ship reliable local storage, search and export before adding sync.",
+      tags: ["Offline", "JavaScript"],
+    },
+  ].map((e) => {
+    const p = newProjects.find(
+      (p) => p.id === (experimentProjectIds[e.id] || e.id),
+    );
+    return p
+      ? {
+          ...e,
+          state: p.status,
+          source: p.source,
+          demo: p.demo,
+          next: projectStatus[p.id].next,
+        }
+      : e;
+  }),
+);
 
 export function filterEntries({
   project = "all",

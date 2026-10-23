@@ -8,7 +8,13 @@ import {
   filterEntries,
   statusTypes,
 } from "./workbench-data.js";
-import { workbenchContent, mountWorkbench, entryContent } from "./workbench.js";
+import {
+  workbenchContent,
+  mountWorkbench,
+  entryContent,
+  experimentsContent,
+  mountExperiments,
+} from "./workbench.js";
 import { resolveRoute } from "./console-model.js";
 
 test("status and log records link to real projects and valid deep routes", () => {
@@ -30,6 +36,32 @@ test("status and log records link to real projects and valid deep routes", () =>
   assert.equal(resolveRoute("#experiments"), "experiments");
   for (const e of experiments)
     assert.ok(projects.some((p) => p.id === e.project));
+});
+
+test("runnable experiments have verified project/demo links and filters retain an accessible empty state", () => {
+  const window = new Window(),
+    host = window.document.createElement("main");
+  host.innerHTML = experimentsContent();
+  const dispose = mountExperiments(host);
+  assert.equal(experiments.length, 7);
+  assert.ok(
+    experiments.every(
+      (e) => e.demo && e.source && e.state.includes("Prototype"),
+    ),
+  );
+  const state = host.querySelector("#experiment-state");
+  state.value = "planned";
+  state.dispatchEvent(new window.Event("input", { bubbles: true }));
+  assert.equal(host.querySelector("#experiment-empty").hidden, false);
+  state.value = "runnable";
+  state.dispatchEvent(new window.Event("input", { bubbles: true }));
+  assert.equal(host.querySelector("#experiment-empty").hidden, true);
+  assert.equal(
+    host.querySelectorAll("[data-experiment]:not([hidden])").length,
+    7,
+  );
+  dispose();
+  window.happyDOM.abort();
 });
 test("build-note search composes project/date/query filters", () => {
   assert.equal(

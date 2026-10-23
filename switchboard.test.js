@@ -144,7 +144,7 @@ test("Switchboard validates local positions, IDs and distinct socket pairs", () 
   assert.deepEqual(dirty.positions["nexus-ai"], boardArrangement()["nexus-ai"]);
   assert.equal(dirty.selected, "maintaineros");
   assert.deepEqual(dirty.sockets, ["maintaineros", "civiclens"]);
-  assert.equal(Object.keys(dirty.positions).length, 7);
+  assert.equal(Object.keys(dirty.positions).length, 14);
 });
 test("both map arrangements and every wire stay finite and bounded", () => {
   for (const mode of ["circuit", "rows"]) {
@@ -158,18 +158,18 @@ test("both map arrangements and every wire stay finite and bounded", () => {
       );
     assert.equal(
       new Set(Object.values(points).map((p) => JSON.stringify(p))).size,
-      7,
+      14,
     );
   }
 });
 test("filtering and isolation use real project metadata", () => {
-  assert.equal(visibleProjects().length, 7);
+  assert.equal(visibleProjects().length, 14);
   assert.deepEqual(
     visibleProjects({ query: "python fastapi" }).map((p) => p.id),
-    ["maintaineros", "civiclens"],
+    ["maintaineros", "civiclens", "observatory-planner", "homelab-health"],
   );
   assert.equal(visibleProjects({ category: "hardware" }).length, 2);
-  assert.equal(visibleProjects({ query: "not a project" }).length, 0);
+  assert.equal(visibleProjects({ query: "qzx-no-project" }).length, 0);
   assert.equal(connectedIds("maintaineros").size, 3);
   assert.equal(
     visibleProjects({ isolated: true, selected: "maintaineros" }).length,
@@ -185,9 +185,9 @@ test("comparison reports documented shared tools without invented relationships"
   assert.equal(compareProjects("x", "civiclens"), null);
   assert.equal(compareProjects("civiclens", "civiclens"), null);
 });
-test("Switchboard renders seven working files with factual imagery and accessible targets", (t) => {
+test("Switchboard renders all working files with factual imagery and accessible targets", (t) => {
   const h = harness(t);
-  assert.equal(h.win.document.querySelectorAll("[data-sb-node]").length, 7);
+  assert.equal(h.win.document.querySelectorAll("[data-sb-node]").length, 14);
   for (const p of boardProjects) {
     h.$(`[data-sb-select="${p.id}"]`).click();
     assert.equal(h.$("#sb-file-title").textContent, p.title);
@@ -214,7 +214,7 @@ test("search, category, isolate and empty-state recovery compose", (t) => {
   assert.equal(h.$("#sb-empty").hidden, false);
   h.$("#sb-clear").click();
   assert.equal(h.$("#sb-empty").hidden, true);
-  assert.match(h.$("#sb-count").textContent, /07/);
+  assert.match(h.$("#sb-count").textContent, /14/);
   assert.equal(h.$("#sb-isolate").getAttribute("aria-pressed"), "false");
 });
 test("socket pinning, selectors and swap keep distinct projects and persist", (t) => {
@@ -272,7 +272,7 @@ test("Escape, cancellation and viewport resize restore an unfinished move", (t) 
     cancel();
     assert.equal(
       h.$('[data-sb-node="maintaineros"]').style.getPropertyValue("--node-x"),
-      "51%",
+      `${boardArrangement().maintaineros.x * 100}%`,
     );
     assert.equal(h.$(grip).captured, null);
     assert.equal(h.frames.size, 0);
@@ -282,9 +282,15 @@ test("keyboard movement, Home and Align are genuine alternatives to dragging", (
   const h = harness(t),
     grip = '[data-sb-grip="maintaineros"]';
   h.key(grip, "ArrowRight");
-  assert.equal(h.saved().positions.maintaineros.x, 0.53);
+  assert.equal(
+    h.saved().positions.maintaineros.x,
+    Math.min(0.88, boardArrangement().maintaineros.x + 0.02),
+  );
   h.key(grip, "ArrowDown", { shiftKey: true });
-  assert.equal(h.saved().positions.maintaineros.y, 0.54);
+  assert.equal(
+    h.saved().positions.maintaineros.y,
+    Math.min(0.86, boardArrangement().maintaineros.y + 0.06),
+  );
   h.key(grip, "Home");
   assert.deepEqual(
     h.saved().positions.maintaineros,

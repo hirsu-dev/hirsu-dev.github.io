@@ -1,4 +1,4 @@
-import { projects } from "./projects.js?v=8";
+import { projects } from "./projects.js?v=23";
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 export function aim(value = {}) {
   const az = Number(value.az),
@@ -125,8 +125,16 @@ export const macroLayers = Object.freeze({
     "civiclens",
     "nexus-ai",
     "hyprland-forge",
-    "custom-keyboard",
-    "pi-homelab",
+    "offline-project-notebook",
+    "observatory-planner",
+  ].map(project),
+  tools: [
+    "coordinate-motor-simulator",
+    "homelab-health",
+    "network-privacy-auditor",
+    "accessible-star-map",
+    "repair-parts-tracker",
+    "observatory-planner",
   ].map(project),
 });
 export const macroLabels = Object.freeze({
@@ -137,4 +145,11 @@ export const macroLabels = Object.freeze({
   "hyprland-forge": "FORGE",
   maintaineros: "MAINT",
   civiclens: "CIVIC",
+  "offline-project-notebook": "NOTES",
+  "observatory-planner": "PLAN",
+  "coordinate-motor-simulator": "MOTION",
+  "homelab-health": "HEALTH",
+  "network-privacy-auditor": "PRIVACY",
+  "accessible-star-map": "SKY",
+  "repair-parts-tracker": "REPAIR",
 });

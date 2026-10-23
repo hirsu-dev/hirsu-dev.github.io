@@ -1,11 +1,12 @@
-import { projects } from "./projects.js?v=22";
+import { projects } from "./projects.js?v=23";
 import {
   workbenchContent,
   mountWorkbench,
   entryContent,
   statusPanel,
   experimentsContent,
-} from "./workbench.js?v=22";
+  mountExperiments,
+} from "./workbench.js?v=23";
 import { snapshot, languageCounts, calendarDays } from "./stack-data.js";
 import {
   interfaces,
@@ -17,14 +18,14 @@ import {
   findProjects,
   resolveRoute,
   escapeHTML as esc,
-} from "./console-model.js?v=22";
-import { createProjectNetwork } from "./project-network.js?v=21";
-import { networkContent } from "./network-view.js?v=21";
-import { buildLabContent, mountBuildLab } from "./build-lab.js?v=21";
+} from "./console-model.js?v=23";
+import { createProjectNetwork } from "./project-network.js?v=23";
+import { networkContent } from "./network-view.js?v=23";
+import { buildLabContent, mountBuildLab } from "./build-lab.js?v=23";
 import { mountRadio } from "./music.js?v=21";
-import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=19";
-import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=19";
-import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=19";
+import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=23";
+import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=23";
+import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=23";
 import { createCityMotion } from "./city-motion.js?v=19";
 import { mountSettings } from "./settings.js?v=18";
 import {
@@ -33,7 +34,7 @@ import {
   introOptions,
   introStorageKey,
 } from "./intro-variants.js?v=17";
-import { mountProjectTerminal } from "./project-terminal.js?v=11";
+import { mountProjectTerminal } from "./project-terminal.js?v=23";
 import { photoCredit } from "./photo.js?v=11";
 
 const $ = (s) => document.querySelector(s);
@@ -329,7 +330,7 @@ function renderCards() {
       ? "Your saved projects · stored on this browser"
       : "What's on the workbench?";
   $("#result-count").textContent =
-    `${String(results.length).padStart(2, "0")} / 07 projects`;
+    `${String(results.length).padStart(2, "0")} / ${projects.length} projects`;
   $("#project-list").innerHTML = results.length
     ? results.map(card).join("")
     : `<div class="empty"><h3>${category === "saved" && !saved.size ? "Nothing saved. Yet." : "No matching signals."}</h3><p>${category === "saved" && !saved.size ? "Use [S] Save on a project to keep it here. No account needed." : "Try another category or a shorter search."}</p><button class="bracket" data-reset-feed>[ Back to all projects ]</button></div>`;
@@ -407,7 +408,7 @@ function gallery(p) {
 function renderProject(p) {
   const images = gallery(p),
     at = shots.get(p.id) || 0;
-  screen.innerHTML = `<a class="back-link" href="#projects">← Back to all projects</a><header class="page-head"><div><p class="eyebrow">PROJECT / ${String(projects.indexOf(p) + 1).padStart(2, "0")} / ${esc(p.category)}</p><h1>${esc(p.title)}</h1><p>${esc(p.subtitle)}</p><div class="detail-links">${sourceLink(p, "[ Source & setup ↗ ]")}<button class="bracket" data-save="${p.id}" aria-pressed="${saved.has(p.id)}" aria-label="${saved.has(p.id) ? "Unsave" : "Save"} ${esc(p.title)}">[ ${saved.has(p.id) ? "Saved" : "Save project"} ]</button></div></div><span class="project-badge ${p.statusClass || ""}">${esc(p.status)}</span></header>
+  screen.innerHTML = `<a class="back-link" href="#projects">← Back to all projects</a><header class="page-head"><div><p class="eyebrow">PROJECT / ${String(projects.indexOf(p) + 1).padStart(2, "0")} / ${esc(p.category)}</p><h1>${esc(p.title)}</h1><p>${esc(p.subtitle)}</p><div class="detail-links">${p.demo ? `<a class="bracket" href="${esc(p.demo)}">[ Open working prototype ↗ ]</a>` : ""}${sourceLink(p, "[ Source & setup ↗ ]")}<button class="bracket" data-save="${p.id}" aria-pressed="${saved.has(p.id)}" aria-label="${saved.has(p.id) ? "Unsave" : "Save"} ${esc(p.title)}">[ ${saved.has(p.id) ? "Saved" : "Save project"} ]</button></div></div><span class="project-badge ${p.statusClass || ""}">${esc(p.status)}</span></header>
   <div class="detail-layout"><section class="panel"><h2>01 / The idea</h2><p>${esc(p.overview)}</p></section><section class="panel"><h2>02 / What it does</h2><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section><section class="panel"><h2>03 / Current state</h2><p class="status-note">${esc(p.progress)}</p>${statusPanel(p)}</section>
   <figure class="project-media"><button class="media-open" data-preview="${p.id}" aria-label="Enlarge ${esc(p.title)} image"><img id="project-image" src="${images[at].image}" alt="${esc(images[at].alt)}" /></button><figcaption id="project-caption">${esc(images[at].caption)}</figcaption>${images.length > 1 ? `<div class="gallery-controls"><button data-shot="-1" aria-label="Previous project image">←</button><span id="shot-position">${at + 1} / ${images.length}</span><button data-shot="1" aria-label="Next project image">→</button></div>` : ""}</figure>
   <p class="detail-evidence">SOURCE NOTE / ${esc(p.evidence)}</p></div>`;
@@ -462,7 +463,7 @@ function renderNetwork() {
     pageHead(
       "02",
       "A sky full of projects.",
-      "Seven original constellations. Follow a star, explore a build, and find the ideas that connect them.",
+      "A growing sky of project constellations. Follow a star, explore a build, and find the ideas that connect them.",
     ) + networkContent();
   networkCleanup = createProjectNetwork($("#network-shell"));
 }
@@ -475,7 +476,7 @@ function renderStack() {
       "Tools, not skill bars.",
       "What actually appears in the public projects. Counts are repositories, not self-rated proficiency.",
     ) +
-    `<div class="stack-grid"><section class="panel"><h2>Languages / 5 project repos</h2>${counts.map(([name, count]) => `<div class="language-row"><span>${esc(name)}</span><div class="language-bar" aria-hidden="true"><i style="width:${(count / 5) * 100}%"></i></div><span>${count} / 5</span></div>`).join("")}</section><section class="panel"><h2>Software ↔ physical world</h2><p>Python / FastAPI / SQLite for local tools. JavaScript for the web. SwiftUI for a personal iOS interface.</p><p>KiCad and CAD for electronics. CircuitPython for USB HID. QML / Quickshell for a custom Linux desktop.</p><p>Raspberry Pi, Pi-hole, VPN, and Tailscale for home services. Existing local language models behind the NEXUS interface.</p><p class="fineprint">These are project tools, not certifications or claims of expertise. Hardware validation is still pending where noted.</p></section></div>
+    `<div class="stack-grid"><section class="panel"><h2>Languages / 5 original repos / dated snapshot</h2>${counts.map(([name, count]) => `<div class="language-row"><span>${esc(name)}</span><div class="language-bar" aria-hidden="true"><i style="width:${(count / 5) * 100}%"></i></div><span>${count} / 5</span></div>`).join("")}</section><section class="panel"><h2>Software ↔ physical world</h2><p>Python / FastAPI / SQLite for local tools. JavaScript for the web. SwiftUI for a personal iOS interface.</p><p>KiCad and CAD for electronics. CircuitPython for USB HID. QML / Quickshell for a custom Linux desktop.</p><p>Raspberry Pi, Pi-hole, VPN, and Tailscale for home services. Existing local language models behind the NEXUS interface.</p><p class="fineprint">These are project tools, not certifications or claims of expertise. Hardware validation is still pending where noted.</p></section></div>
   <section class="panel" style="margin-top:18px"><h2>Public commit snapshot / 78 authored commits</h2><div class="calendar" role="img" aria-label="78 authored public default-branch commits in the bounded April to October 20, 2026 snapshot. Highest recorded day: 38 commits on October 7.">${days.map((d) => `<span data-level="${d.count > 10 ? 3 : d.count > 2 ? 2 : d.count > 0 ? 1 : 0}" data-future="${d.future}" title="${d.date}: ${d.count} commits"></span>`).join("")}</div><p class="fineprint">Snapshot: ${snapshot.date}. Five public project repositories plus this portfolio. Not a live GitHub contribution calendar. Repository language counts exclude the portfolio. Public REST sources and refresh instructions are in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io#grounded-content--data" target="_blank" rel="noopener noreferrer">README ↗</a>.</p></section>`;
 }
 function renderLog() {
@@ -489,10 +490,10 @@ function renderAbout() {
       "Hello, I'm Hrushi.",
       "Online as hirsu. I build software, experiment with electronics, and connect the two.",
     ) +
-    `<section class="panel"><h2>A small, useful corner of the internet.</h2><p>This is my project archive: a telescope that followed sky coordinates, a Pi keeping home services useful, tools for maintainers and civic records, and a few experiments that are still taking shape.</p><p>Not everything here is finished. Each project includes its actual status, source when public, and a clear distinction between an illustration, CAD, or a working app screenshot.</p><div class="facts"><span><b>7</b> projects</span><span><b>5</b> public project repos</span><span><b>3</b> hands-on build demos</span></div><a class="bracket" href="https://github.com/hrushikbarani-hub" target="_blank" rel="noopener noreferrer">[ Find me on GitHub ↗ ]</a></section>
+    `<section class="panel"><h2>A small, useful corner of the internet.</h2><p>This is my project archive: a telescope that followed sky coordinates, a Pi keeping home services useful, tools for maintainers and civic records, and a few experiments that are still taking shape.</p><p>Not everything here is finished. Each project includes its actual status, source when public, and a clear distinction between an illustration, CAD, or a working app screenshot.</p><div class="facts"><span><b>${projects.length}</b> projects</span><span><b>${projects.filter((p) => p.source).length}</b> public project repos</span><span><b>3</b> hands-on build demos</span></div><a class="bracket" href="https://github.com/hrushikbarani-hub" target="_blank" rel="noopener noreferrer">[ Find me on GitHub ↗ ]</a></section>
   <section class="panel"><h2>Colophon / visual references</h2><p>Overdrive reinterprets the angular red/yellow menu language of <a href="https://www.cyberpunk.net/us/en/" target="_blank" rel="noopener noreferrer">Cyberpunk 2077 ↗</a> as an original project terminal. Select a file, inspect its real status and preview, then scroll through the workbench. Settings → Customize offers four independent layouts: the scrolling Overdrive workbench, a Netrunner file desktop, the Relic visual dossier, and Switchboard’s movable project map with a two-build comparison patch bay. Palettes, effects and startup scenes are separate choices. No game source, character art or official branding is bundled; this independent portfolio is not affiliated with the franchise.</p><p>The earlier text-first archive and keyboard controls take inspiration from <a href="https://cyberspace.online/" target="_blank" rel="noopener noreferrer">Cyberspace ↗</a>. The supplied UI references informed geometric callouts, sliding panels, hover/focus states and chromatic distortion. The implementation and project content are original.</p><h3>A real city, photographed.</h3><p>The homepage background uses a genuine photograph of Shinjuku, Tokyo, not AI-generated artwork. The original photograph is bundled locally with a smaller responsive copy; only the display crop, dark overlay and temporary glitch slices alter its presentation.</p>${photoCredit()}<p><a href="PHOTO-CREDITS.md">Full photo attribution and license notes ↗</a></p></section>
   <section class="panel"><h2>A signal from the workbench.</h2><p>The opening takes the idea of an assembling interface from <a href="https://hancore.dev/site/#stack" target="_blank" rel="noopener noreferrer">hancore.dev ↗</a>, reinterpreted through six original short boot sequences. Redline is the default: a charged red seam, fractured wordmark, and particle-lined gates that split into the page at 100%. It is a visual introduction, not a download meter or system scan. Skip or Escape dismisses it; replay is in the interface menu. FX off disables motion and the intro. System reduced motion is respected by default.</p></section>
-  <section class="panel"><h2>Local by default.</h2><p>Static files on free GitHub Pages. No Raspberry Pi hosting, portfolio accounts, first-party analytics, backend, or API keys. The optional Stellarium Web embed contacts Stellarium’s servers and analytics only after Load is clicked; unload it or leave Build Lab to disconnect the embedded page. Saved project IDs, interface preferences and Switchboard arrangements stay in this browser. The night sky is an original project illustration, not astronomical coordinates, home-network telemetry or real locations.</p><p><strong>Optional music:</strong> Five complete, owner-supplied MP3 recordings are hosted on this site. The owner confirmed public hosting and streaming permission; recording rights remain with their respective rightsholders. No Spotify, YouTube, third-party player, sign-in or listening-history storage is involved. The site attempts quiet playback on startup. If your browser blocks autoplay, use Retry to start with a click. Playback starts at 15% volume each visit, with a working volume slider and mute controls in both player sizes. The × hides all radio controls without stopping music; Radio in the menu reopens them. Stop &amp; unload ends playback. Music stays with you across pages and layout changes, with optional continuous next-track playback. Browser and device audio restrictions may still apply. See <a href="assets/audio/README.md" target="_blank" rel="noopener noreferrer">recording credits &amp; usage notice</a> or open <a href="#radio">background radio</a>.</p><p>Project facts: five public GitHub repositories and descriptions supplied by Hrushi. The Pi lab is Pi-hole, VPN, and Tailscale; NEXUS is an experimental client for existing local AI models, not a self-trained foundation model. Images are visibly labeled. Snapshot data and provenance are documented in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io" target="_blank" rel="noopener noreferrer">site source ↗</a>.</p></section>`;
+  <section class="panel"><h2>Local by default.</h2><p>Static files on free GitHub Pages. No Raspberry Pi hosting, portfolio accounts, first-party analytics, backend, or API keys. The optional Stellarium Web embed contacts Stellarium’s servers and analytics only after Load is clicked; unload it or leave Build Lab to disconnect the embedded page. Saved project IDs, interface preferences and Switchboard arrangements stay in this browser. The night sky is an original project illustration, not astronomical coordinates, home-network telemetry or real locations.</p><p><strong>Optional music:</strong> Five complete, owner-supplied MP3 recordings are hosted on this site. The owner confirmed public hosting and streaming permission; recording rights remain with their respective rightsholders. No Spotify, YouTube, third-party player, sign-in or listening-history storage is involved. The site attempts quiet playback on startup. If your browser blocks autoplay, use Retry to start with a click. Playback starts at 15% volume each visit, with a working volume slider and mute controls in both player sizes. The × hides all radio controls without stopping music; Radio in the menu reopens them. Stop &amp; unload ends playback. Music stays with you across pages and layout changes, with optional continuous next-track playback. Browser and device audio restrictions may still apply. See <a href="assets/audio/README.md" target="_blank" rel="noopener noreferrer">recording credits &amp; usage notice</a> or open <a href="#radio">background radio</a>.</p><p>Project facts: ${projects.filter((p) => p.source).length} public GitHub project repositories and descriptions supplied by Hrushi. The Pi lab is Pi-hole, VPN, and Tailscale; NEXUS is an experimental client for existing local AI models, not a self-trained foundation model. Images are visibly labeled. Snapshot data and provenance are documented in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io" target="_blank" rel="noopener noreferrer">site source ↗</a>.</p></section>`;
 }
 function renderRoute({ focus = false } = {}) {
   let requested = resolveRoute(location.hash);
@@ -536,8 +537,10 @@ function renderRoute({ focus = false } = {}) {
   else if (route === "log") renderLog();
   else if (route.startsWith("entry-"))
     screen.innerHTML = entryContent(route.slice(6));
-  else if (route === "experiments") screen.innerHTML = experimentsContent();
-  else if (route === "lab") {
+  else if (route === "experiments") {
+    screen.innerHTML = experimentsContent();
+    pageCleanup = mountExperiments(screen);
+  } else if (route === "lab") {
     screen.innerHTML = buildLabContent();
     pageCleanup = mountBuildLab(screen);
   } else renderAbout();

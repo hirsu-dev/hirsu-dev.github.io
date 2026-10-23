@@ -1,7 +1,7 @@
-import { projects } from "./projects.js?v=8";
-import { escapeHTML as esc } from "./console-model.js?v=8";
+import { projects } from "./projects.js?v=23";
+import { escapeHTML as esc } from "./console-model.js?v=23";
 import { cityPhoto, photoCredit } from "./photo.js?v=11";
-import { projectTerminal } from "./project-terminal.js?v=11";
+import { projectTerminal } from "./project-terminal.js?v=23";
 
 export const overdriveSections = [
   "od-projects",
@@ -18,6 +18,7 @@ export function overdriveHome(network) {
     "pi-homelab",
     "nexus-ai",
     "hyprland-forge",
+    ...projects.filter((p) => p.demo).map((p) => p.id),
   ];
   return `<div class="overdrive-home">
     <section class="od-hero" aria-labelledby="od-title">
@@ -32,14 +33,14 @@ export function overdriveHome(network) {
         <p class="terminal-tagline od-enter">CODE MEETS THE PHYSICAL WORLD.</p>
         <p class="od-intro od-enter">Useful software. Custom electronics. A telescope, a home lab,<br />and whatever I can get working next.</p>
       </div>
-      <aside class="terminal-profile od-enter" aria-label="Portfolio summary"><p>BUILDER PROFILE / HIRSU</p><div class="terminal-stats"><span><b>07</b>PROJECT FILES</span><span><b>05</b>PUBLIC REPOS</span><span><b>03</b>SIDE CHANNELS</span></div><div class="terminal-directive"><span>ONGOING WORK</span><a href="#robo-telescope">Repair Robo Telescope <b>↗</b></a><a href="#custom-keyboard">Validate the macro pad <b>↗</b></a></div></aside>
+      <aside class="terminal-profile od-enter" aria-label="Portfolio summary"><p>BUILDER PROFILE / HIRSU</p><div class="terminal-stats"><span><b>${projects.length}</b>PROJECT FILES</span><span><b>${projects.filter((p) => p.source).length}</b>PUBLIC REPOS</span><span><b>03</b>SIDE CHANNELS</span></div><div class="terminal-directive"><span>ONGOING WORK</span><a href="#robo-telescope">Repair Robo Telescope <b>↗</b></a><a href="#custom-keyboard">Validate the macro pad <b>↗</b></a></div></aside>
       </div>
       ${projectTerminal()}
       <div class="od-hero-bottom od-enter">${photoCredit()}<a href="#od-projects" data-home-section="od-projects">SCROLL / FULL ARCHIVE <span class="od-scroll-arrow">↓</span></a></div>
     </section>
     <div class="od-ticker" aria-hidden="true"><div>${Array.from({ length: 2 }, () => `<span>PYTHON <b>×</b> JAVASCRIPT <b>×</b> ROBOTICS <b>×</b> LOCAL AI <b>×</b> RASPBERRY PI <b>×</b> OPEN SOURCE <b>×</b> `).join("")}</div></div>
     <nav class="od-jump" aria-label="Home sections"><span>SCROLL / INDEX</span>${overdriveSections.map((id, i) => `<a href="#${id}" data-home-section="${id}">0${i + 1} / ${["BUILDS", "NIGHT SKY", "STACK", "WORKBENCH"][i]}</a>`).join("")}</nav>
-    <nav class="channel-links od-section" aria-label="Side channels"><a href="#lab">BUILD LAB / TRY MY PROJECTS ↗</a><a href="#radio">RADIO / AFTER HOURS ↗</a><a href="#log">BUILD LOG / MY WORKBENCH ↗</a></nav>
+    <nav class="channel-links od-section" aria-label="Side channels"><a href="#lab">BUILD LAB / TRY MY PROJECTS ↗</a><a href="#radio">RADIO / AFTER HOURS ↗</a><a href="#log">BUILD LOG / MY WORKBENCH ↗</a><a href="#experiments">SEVEN NEW TOOLS / TRY THE PROTOTYPES ↗</a></nav>
     <section id="od-projects" class="od-section" aria-labelledby="od-projects-title">
       <header class="od-section-head" data-reveal><p class="od-kicker">01 / SELECTED SIGNALS</p><div><h2 id="od-projects-title">BUILT TO<br /><em>DO SOMETHING.</em></h2><p>Useful tools. Physical experiments. Unfinished ideas worth pursuing. Every project includes its actual current state.</p></div></header>
       <div class="od-builds">${order
@@ -51,7 +52,7 @@ export function overdriveHome(network) {
           "",
         )}</div><a class="od-button od-archive" href="#projects">SEARCH THE FULL ARCHIVE <span>↗</span></a>
     </section>
-    <section id="od-network" class="od-section od-network" aria-labelledby="od-network-title"><header class="od-section-head" data-reveal><p class="od-kicker">02 / AFTER DARK</p><div><h2 id="od-network-title">SMALL IDEAS.<br /><em>BRIGHT STARS.</em></h2><p>A night sky made from the things I build. Drift between seven constellations and follow the threads connecting software, circuits and the home lab.</p></div></header><div data-reveal>${network}</div></section>
+    <section id="od-network" class="od-section od-network" aria-labelledby="od-network-title"><header class="od-section-head" data-reveal><p class="od-kicker">02 / AFTER DARK</p><div><h2 id="od-network-title">SMALL IDEAS.<br /><em>BRIGHT STARS.</em></h2><p>A night sky made from the things I build. Drift between ${projects.length} constellations and follow the threads connecting software, circuits and the home lab.</p></div></header><div data-reveal>${network}</div></section>
     <section id="od-stack" class="od-section" aria-labelledby="od-stack-title"><header class="od-section-head" data-reveal><p class="od-kicker">03 / THE LOADOUT</p><div><h2 id="od-stack-title">TOOLS, NOT<br /><em>SKILL BARS.</em></h2><p>The technologies behind the work. No invented proficiency percentages. Just things I build with.</p></div></header><div class="od-stack-grid">${[
       [
         "01",

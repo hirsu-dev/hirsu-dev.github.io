@@ -76,7 +76,7 @@ function harness(
     doc = new Target();
   const state = { textContent: "" },
     inspector = { innerHTML: "" };
-  const labels = Array.from({ length: 7 }, (_, i) => {
+  const labels = Array.from({ length: 14 }, (_, i) => {
     const label = new Target();
     label.offsetWidth = 120;
     label.dataset.nodeIndex = String(i);
@@ -224,6 +224,22 @@ test("embedded night sky never intercepts normal page scrolling", (t) => {
     },
   });
   assert.equal(prevented, false);
+});
+
+test("Atlas index search finds shared tools and can recover an empty result", (t) => {
+  const h = harness(t);
+  h.container.emit("input", {
+    target: { id: "atlas-index-search", value: "Python FastAPI" },
+  });
+  assert.equal(h.labels.filter((b) => !b.hidden).length, 4);
+  h.container.emit("input", {
+    target: { id: "atlas-index-search", value: "qzx-no-project" },
+  });
+  assert.ok(h.labels.every((b) => b.hidden));
+  h.container.emit("input", {
+    target: { id: "atlas-index-search", value: "" },
+  });
+  assert.ok(h.labels.every((b) => !b.hidden));
 });
 
 test("sky twinkles while visible, suspends offscreen/background, and resumes", (t) => {

@@ -572,3 +572,8 @@ a.terminal-source:hover {
     gap: 12px;
   }
 }
+/* The directory now contains the original builds and seven runnable tools. */
+.terminal-tabs {
+  max-height: 560px;
+  overflow-y: auto;
+}

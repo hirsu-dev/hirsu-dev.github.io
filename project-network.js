@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=8";
-import { networkLinks, networkInspector } from "./network-view.js?v=21";
+import { projects } from "./projects.js?v=23";
+import { networkLinks, networkInspector } from "./network-view.js?v=23";
 import {
   atlasPoints,
   atlasProject,
@@ -7,14 +7,14 @@ import {
   atlasFocus,
   atlasHubs,
   atlasDust,
-} from "./atlas-model.js?v=21";
+} from "./atlas-model.js?v=23";
 import {
   skyObjects,
   starfield,
   nearestStar,
   meteorAt,
   clamp,
-} from "./sky-model.js?v=17";
+} from "./sky-model.js?v=23";
 
 export const connections = networkLinks.map(([a, b]) => [a, b]);
 
@@ -582,6 +582,28 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
       filter = e.target.value;
       refresh();
     }
+  });
+  listen(container, "input", (e) => {
+    if (e.target.id !== "atlas-index-search") return;
+    const words = e.target.value
+      .toLowerCase()
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+    let count = 0;
+    labels.forEach((button, i) => {
+      const p = projects.find((p) => p.id === skyObjects[i].id),
+        show = words.every((w) =>
+          [p.title, p.description, ...p.tags]
+            .join(" ")
+            .toLowerCase()
+            .includes(w),
+        );
+      button.hidden = !show;
+      if (show) count++;
+    });
+    const status = container.querySelector(".sky-search-status");
+    if (status) status.textContent = `${count} project names match`;
   });
   listen(container, "focusin", focusIn);
   listen(container, "focusout", focusOut);

@@ -26,10 +26,10 @@ test("Overdrive and the archived theme use only the credited real photograph for
     /Display crop, dark overlay &amp; animated slices/,
   );
 });
-test("directory has seven real projects and a single keyboard tab stop", () => {
+test("directory has all real projects and a single keyboard tab stop", () => {
   const html = projectTerminal();
-  assert.equal(new Set(terminalIds).size, 7);
-  assert.equal((html.match(/role="tab"/g) || []).length, 7);
+  assert.equal(new Set(terminalIds).size, 14);
+  assert.equal((html.match(/role="tab"/g) || []).length, 14);
   assert.equal((html.match(/aria-selected="true"/g) || []).length, 1);
   assert.match(html, /role="tablist".*aria-orientation="vertical"/);
   for (const id of terminalIds) {
@@ -75,7 +75,7 @@ function harness() {
       this.attrs[name] = value;
     },
   };
-  const counter = { textContent: "01 / 07" };
+  const counter = { textContent: "01 / 14" };
   const container = {
     querySelectorAll() {
       return tabs;
@@ -112,7 +112,7 @@ test("click updates preview, source, count and accessible selection together", (
   assert.equal(h.tabs[0].tabIndex, -1);
   assert.equal(h.tabs[3].tabIndex, 0);
   assert.equal(h.panel.attrs["aria-labelledby"], h.tabs[3].id);
-  assert.equal(h.counter.textContent, "04 / 07");
+  assert.equal(h.counter.textContent, "04 / 14");
   assert.match(h.panel.innerHTML, /Under repair|UNDER REPAIR|Under Repair/);
   assert.equal(h.animations.length, 1);
   h.listeners.click({ target: h.tabs[3] });
@@ -121,14 +121,14 @@ test("click updates preview, source, count and accessible selection together", (
 test("arrow keys wrap; Home/End focus selection; unrelated keys are untouched", () => {
   const h = harness();
   assert.deepEqual(h.key(0, "ArrowUp"), { prevented: true, stopped: true });
-  assert.equal(h.tabs[6].focused, true);
-  assert.equal(h.counter.textContent, "07 / 07");
-  h.key(6, "ArrowDown");
-  assert.equal(h.counter.textContent, "01 / 07");
+  assert.equal(h.tabs[terminalIds.length - 1].focused, true);
+  assert.equal(h.counter.textContent, "14 / 14");
+  h.key(terminalIds.length - 1, "ArrowDown");
+  assert.equal(h.counter.textContent, "01 / 14");
   h.key(0, "End");
-  assert.equal(h.counter.textContent, "07 / 07");
-  h.key(6, "Home");
-  assert.equal(h.counter.textContent, "01 / 07");
+  assert.equal(h.counter.textContent, "14 / 14");
+  h.key(terminalIds.length - 1, "Home");
+  assert.equal(h.counter.textContent, "01 / 14");
   assert.deepEqual(h.key(0, "Tab"), { prevented: false, stopped: false });
   assert.deepEqual(h.key(0, "s"), { prevented: false, stopped: false });
 });

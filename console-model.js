@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=8";
-import { buildEntryIds } from "./workbench-data.js?v=22";
+import { projects } from "./projects.js?v=23";
+import { buildEntryIds } from "./workbench-data.js?v=23";
 
 export const projectIds = new Set(projects.map((p) => p.id));
 export function savedIds(raw) {

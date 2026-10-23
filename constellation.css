@@ -387,3 +387,18 @@ html[data-motion="off"] .sky-shell .network-node {
     left: 18px;
   }
 }
+.sky-index-search {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.sky-index-search input {
+  width: 100%;
+  min-width: 0;
+}
+.sky-search-status {
+  font-size: 10px !important;
+  padding: 0 12px;
+}

@@ -1,4 +1,4 @@
-import { skyObjects } from "./sky-model.js?v=17";
+import { skyObjects } from "./sky-model.js?v=23";
 import { project3, seededRandom } from "./space-math.js?v=21";
 
 // Every technology membership is supported by projects.js features/tags.
@@ -8,7 +8,15 @@ export const atlasHubs = Object.freeze([
     id: "python",
     label: "PYTHON FAMILY",
     kind: "language",
-    members: ["maintaineros", "civiclens", "hyprland-forge", "custom-keyboard"],
+    members: [
+      "maintaineros",
+      "civiclens",
+      "hyprland-forge",
+      "custom-keyboard",
+      "observatory-planner",
+      "homelab-health",
+      "network-privacy-auditor",
+    ],
     why: "Python tooling / CircuitPython firmware",
     position: [-0.75, -0.25, 0.6],
   },
@@ -16,7 +24,17 @@ export const atlasHubs = Object.freeze([
     id: "javascript",
     label: "JAVASCRIPT",
     kind: "language",
-    members: ["maintaineros", "civiclens"],
+    members: [
+      "maintaineros",
+      "civiclens",
+      "observatory-planner",
+      "coordinate-motor-simulator",
+      "homelab-health",
+      "network-privacy-auditor",
+      "accessible-star-map",
+      "repair-parts-tracker",
+      "offline-project-notebook",
+    ],
     why: "JavaScript web interfaces",
     position: [0.4, 0.15, -0.8],
   },
@@ -24,7 +42,12 @@ export const atlasHubs = Object.freeze([
     id: "fastapi",
     label: "FASTAPI",
     kind: "stack",
-    members: ["maintaineros", "civiclens"],
+    members: [
+      "maintaineros",
+      "civiclens",
+      "observatory-planner",
+      "homelab-health",
+    ],
     why: "FastAPI backends",
     position: [0.4, -0.75, 0.8],
   },
@@ -32,8 +55,14 @@ export const atlasHubs = Object.freeze([
     id: "sqlite",
     label: "SQLITE",
     kind: "stack",
-    members: ["maintaineros", "civiclens"],
-    why: "SQLite / SQLite FTS5",
+    members: [
+      "maintaineros",
+      "civiclens",
+      "observatory-planner",
+      "homelab-health",
+      "network-privacy-auditor",
+    ],
+    why: "SQLite storage / FTS5 / read-only database adapter",
     position: [0.75, -0.2, -0.3],
   },
   {
@@ -60,16 +89,34 @@ export const atlasHubs = Object.freeze([
     why: "Related hardware work (not a shared language)",
     position: [-0.7, 0.7, -0.3],
   },
+  {
+    id: "indexeddb",
+    label: "INDEXEDDB",
+    kind: "stack",
+    members: ["repair-parts-tracker", "offline-project-notebook"],
+    why: "Transactional local browser records",
+    position: [-1.5, -1.2, 0.4],
+  },
+  {
+    id: "astronomy",
+    label: "ASTRONOMY",
+    kind: "theme",
+    members: [
+      "robo-telescope",
+      "observatory-planner",
+      "coordinate-motor-simulator",
+      "accessible-star-map",
+    ],
+    why: "Related astronomy work, not a shared hardware connection",
+    position: [-1.5, 0.3, -0.5],
+  },
 ]);
-export const atlasPositions = [
-  [-2.15, 1.45, 0.25],
-  [2.0, 1.2, -0.65],
-  [2.1, -1.3, 0.5],
-  [-1.2, -0.55, 1.35],
-  [0.05, 1.7, 0.1],
-  [0.45, -1.7, -0.6],
-  [-2.15, -1.4, -0.65],
-];
+export const atlasPositions = skyObjects.map((_, i) => {
+  const y = 1 - (i * 2) / (skyObjects.length - 1),
+    r = Math.sqrt(1 - y * y),
+    angle = i * Math.PI * (3 - Math.sqrt(5));
+  return [Math.cos(angle) * r * 2.5, y * 1.9, Math.sin(angle) * r * 0.85];
+});
 export const atlasCamera = () => ({
   x: 0,
   y: 0,

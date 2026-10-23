@@ -1,4 +1,4 @@
-import { escapeHTML as esc } from "./console-model.js?v=15";
+import { escapeHTML as esc } from "./console-model.js?v=23";
 import {
   boardKey,
   boardProjects,
@@ -10,7 +10,7 @@ import {
   visibleProjects,
   compareProjects,
   wirePath,
-} from "./switchboard-model.js?v=19";
+} from "./switchboard-model.js?v=23";
 
 const byId = (id) => boardProjects.find((p) => p.id === id);
 const number = (i) => String(i + 1).padStart(2, "0");
@@ -25,7 +25,7 @@ const source = (p) =>
 
 export function switchboardHome() {
   return `<div class="switchboard-home" data-board-root>
-    <header class="sb-masthead"><div><p class="sb-kicker"><span>HIRSU / INTERFACE 04</span> PERSONAL PROJECT ROUTER</p><h1>SWITCH<span>BOARD<span class="sb-title-cursor" aria-hidden="true">_</span></span></h1></div><div class="sb-manifest"><p>FOLLOW THE WIRE.<br />FIND THE IDEA.</p><span>Move the files. Trace the connections.<br />Patch two builds together to compare them.</span><div><b>07 <small>PROJECTS</small></b><b>05 <small>PUBLIC REPOS</small></b></div></div></header>
+    <header class="sb-masthead"><div><p class="sb-kicker"><span>HIRSU / INTERFACE 04</span> PERSONAL PROJECT ROUTER</p><h1>SWITCH<span>BOARD<span class="sb-title-cursor" aria-hidden="true">_</span></span></h1></div><div class="sb-manifest"><p>FOLLOW THE WIRE.<br />FIND THE IDEA.</p><span>Move the files. Trace the connections.<br />Patch two builds together to compare them.</span><div><b>${boardProjects.length} <small>PROJECTS</small></b><b>${boardProjects.filter((p) => p.source).length} <small>PUBLIC REPOS</small></b></div></div></header>
     <section class="sb-console" aria-label="Interactive project switchboard">
       <div class="sb-toolbar"><label class="sb-search"><span>FILTER /</span><input type="search" id="sb-search" placeholder="Name, tool, idea…" maxlength="120" autocomplete="off" /></label><div class="sb-filters" aria-label="Filter by project type">${[
         ["all", "All signals"],
@@ -37,7 +37,9 @@ export function switchboardHome() {
           ([id, label]) =>
             `<button data-sb-filter="${id}" aria-pressed="${id === "all"}">${label}</button>`,
         )
-        .join("")}</div><span id="sb-count" role="status">07 / 07</span></div>
+        .join(
+          "",
+        )}</div><span id="sb-count" role="status">${boardProjects.length} / ${boardProjects.length}</span></div>
       <div class="sb-workspace"><div class="sb-map-panel"><div class="sb-map-bar"><span>01 / PATCH FIELD</span><div><button data-sb-arrange="circuit">Circuit</button><button data-sb-arrange="rows">Align</button><button id="sb-isolate" aria-pressed="false">Isolate links</button><button id="sb-trace">Trace signal ↗</button></div></div>
         <p id="sb-move-help" class="sb-move-help"><span class="sb-drag-help">Select a file to inspect. Drag its grip to move it, or focus the grip and use arrow keys. Escape cancels a drag.</span><span class="sb-touch-help">Tap a file to inspect, then patch it into A or B below.</span></p>
         <div class="sb-board" id="sb-board"><svg class="sb-wires" viewBox="0 0 1000 640" preserveAspectRatio="none" aria-hidden="true">${boardLinks.map(([a, b], i) => `<path data-wire="${i}" data-a="${a}" data-b="${b}" />`).join("")}</svg><div class="sb-watermark" aria-hidden="true"><span>H / 04</span>LOCAL TOPOLOGY</div>
@@ -154,7 +156,7 @@ export function mountSwitchboard(
       }).map((p) => p.id),
     );
     $("#sb-count").textContent =
-      `${String(visible.size).padStart(2, "0")} / 07`;
+      `${String(visible.size).padStart(2, "0")} / ${boardProjects.length}`;
     $("#sb-empty").hidden = visible.size !== 0;
     home
       .querySelectorAll("[data-sb-filter]")
