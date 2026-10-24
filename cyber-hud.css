@@ -1,4 +1,4 @@
-/* v10: original angular HUD geometry. Glitches are localized, never a screen flash. */
+
 :root {
   --hud-red: #ff637e;
   --hud-cut: polygon(
@@ -15,7 +15,7 @@
     0 calc(100% - 8px)
   );
 }
-/* Paint the cut shell separately: keyboard outlines and content are never clipped. */
+
 [data-view="blacksite"]
   :is(
     .od-build,
@@ -358,7 +358,7 @@
 .network-crosshair {
   border-color: var(--hud-red);
 }
-/* Slice channels stay local; the base heading and actual project images stay readable. */
+
 html[data-motion="on"] .signal-red {
   animation: hud-red 4.8s steps(1, end) var(--signal-delay, 0s) infinite;
 }

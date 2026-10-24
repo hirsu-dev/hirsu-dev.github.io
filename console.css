@@ -1,4 +1,4 @@
-/* Original implementation: text-first project console, not reference-site source. */
+
 :root {
   color-scheme: dark;
   --bg: #08090b;
@@ -1202,7 +1202,7 @@ dialog .dialog-bar {
   opacity: 1;
   transform: translate(-50%, 0);
 }
-/* The second interface changes the composition as well as the palette. */
+
 [data-view="blacksite"] {
   --bg: #100c1b;
   --panel: #181225;

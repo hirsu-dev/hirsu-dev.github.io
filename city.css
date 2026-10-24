@@ -1,4 +1,4 @@
-/* Night City v6: original composition and motion, inspired by the official campaign site. */
+
 .city-header,
 .city-footer,
 .card-art {
@@ -832,7 +832,7 @@ html[data-view="neon"] {
 [data-view="neon"] #toast {
   left: 50%;
 }
-/* Project browsing and detail pages inherit the same campaign/HUD language. */
+
 [data-view="neon"] .page-head {
   margin-bottom: 40px;
   border-bottom: 1px solid var(--line);

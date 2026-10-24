@@ -1,4 +1,4 @@
-// Browser-local preferences only. No account, permission or device changes.
+
 export const settingsKey = "hirsu-settings-v14";
 export const settingOptions = Object.freeze({
   layout: ["overdrive", "netrunner", "relic", "switchboard"],
@@ -36,7 +36,6 @@ export function readSettings(raw, legacyMotion) {
   try {
     if (raw) return normalizeSettings(JSON.parse(raw));
   } catch {
-    /* Invalid preferences safely use defaults. */
   }
   return normalizeSettings({
     motion: ["on", "off"].includes(legacyMotion) ? legacyMotion : "system",

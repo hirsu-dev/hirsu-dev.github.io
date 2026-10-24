@@ -8,7 +8,7 @@ export function aim(value = {}) {
     alt: Number.isFinite(alt) ? clamp(alt, 0, 90) : 25,
   };
 }
-// Illustrative horizontal axes, not celestial coordinates or mount calibration.
+
 export function aimPoint(value) {
   const { az, alt } = aim(value),
     radius = ((90 - alt) / 90) * 126,

@@ -31,7 +31,6 @@ export function mountSettings({ read, write, onApply, onReset }) {
   }
   function persist() {
     const saved = write(settingsKey, JSON.stringify(value));
-    // Keep the pre-paint compatibility key aligned; "system" follows the OS.
     write("hirsu-console-motion", value.motion);
     status.textContent = saved
       ? "Saved in this browser. No account or tracking."

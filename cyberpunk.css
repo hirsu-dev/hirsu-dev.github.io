@@ -1,4 +1,4 @@
-/* Two original interfaces sharing one project archive. */
+
 :root {
   --bg: #07101c;
   --panel: #0b1626;
@@ -1201,7 +1201,7 @@ dialog {
   background: var(--accent);
   color: var(--bg);
 }
-/* Version 02: deliberately different density, hierarchy, navigation and silhouette. */
+
 [data-view="neon"] #eye-toggle {
   display: none;
 }

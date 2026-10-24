@@ -1,4 +1,4 @@
-/* v14: compact preferences, independent appearance, accessible overrides. */
+
 #theme-dialog {
   width: min(480px, calc(100vw - 32px));
 }
@@ -340,7 +340,7 @@
   padding: 12px;
   font-size: 11px;
 }
-/* FX packages are independent of the cinematic intro. Clean keeps eased movement. */
+
 html[data-fx="clean"]
   :is(
     .signal-noise,
@@ -371,7 +371,7 @@ html[data-fx="crt"] .signal-noise {
     transform: translateY(8px);
   }
 }
-/* Icewire: a precise grid, squared instrument panels and a vertical identity bar. */
+
 html[data-skin="icewire"] {
   --bg: #09131d;
   --panel: #101f2b;
@@ -423,7 +423,7 @@ html[data-skin="icewire"] .od-title-line {
   font-weight: 800;
   letter-spacing: -0.08em;
 }
-/* Monolith: editorial typography, generous space and restrained, soft panels. */
+
 html[data-skin="monolith"] {
   --bg: #101014;
   --panel: #1d1d23;
@@ -502,7 +502,7 @@ html:is([data-skin="icewire"], [data-skin="monolith"])
   ) {
   color: var(--bg);
 }
-/* Accessibility takes precedence over every skin and FX choice. */
+
 html[data-links="underlined"] a {
   text-decoration: underline !important;
   text-decoration-thickness: 1.5px;

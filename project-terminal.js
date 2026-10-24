@@ -27,7 +27,6 @@ export function projectTerminal() {
     )}</div><div id="terminal-preview" role="tabpanel" tabindex="0" aria-labelledby="terminal-tab-${terminalIds[0]}">${terminalProject(terminalIds[0])}</div></div><div class="terminal-footnote"><span>↑ ↓ SELECT / TAB TO OPEN FILE</span><span>LOCAL ARCHIVE · NO LIVE DEVICE CONNECTION</span></div></section>`;
 }
 
-// Scoped to the current home render; detached nodes take their listeners with them.
 export function mountProjectTerminal(container, animate = () => {}) {
   if (!container) return;
   const tabs = [...container.querySelectorAll("[role=tab]")];

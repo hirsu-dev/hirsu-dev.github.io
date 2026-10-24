@@ -1,4 +1,4 @@
-// Original, optional HUD motion. Boot stages are presentation, not network work.
+
 import { introById, introArtwork } from "./intro-variants.js?v=17";
 export const panelFrames = [
   {
@@ -72,7 +72,6 @@ export function createCityMotion() {
       )
       .forEach((element, i) => {
         if (element.classList.contains("signal-title")) return;
-        // Decorative channels leave the real text readable, with no duplicate speech.
         const text = element.innerText;
         element.classList.add("signal-title");
         element.style.setProperty("--signal-delay", `${i * 1.37}s`);
@@ -278,7 +277,6 @@ export function createCityMotion() {
           }
         }, phase.at),
       );
-    // This measures the visual sequence, not downloads or a real system scan.
     for (let elapsed = 75; elapsed < 2250; elapsed += 75)
       bootTimers.add(
         setTimeout(() => {
@@ -287,11 +285,9 @@ export function createCityMotion() {
               String(bootProgressAt(elapsed)).padStart(3, "0") + "%";
         }, elapsed),
       );
-    // Asset/network loading never holds the page hostage.
     bootTimers.add(setTimeout(finishOpening, bootDuration));
     return true;
   }
-  // Ignore a queued close event from a previous, already-replayed sequence.
   boot?.addEventListener("close", () => {
     if (!boot.open) settleOpening();
   });

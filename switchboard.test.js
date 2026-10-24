@@ -17,7 +17,6 @@ import {
 } from "./switchboard-model.js";
 import { normalizeSettings } from "./settings-model.js";
 
-// DOM/interaction checks only; Happy DOM is not a rendering browser.
 function harness(t, { raw = null, blocked = false } = {}) {
   const win = new Window({
     url: "https://portfolio.test/",

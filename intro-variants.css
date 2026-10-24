@@ -1,4 +1,4 @@
-/* v12: localized signal effects; no audio, strobes or bright full-screen flashes. */
+
 #theme-dialog {
   width: min(900px, calc(100vw - 32px));
 }
@@ -215,7 +215,7 @@
   display: inline;
   font-size: 9px;
 }
-/* 02 / Optical lock, five independently rotating rings and a camera-like punch-through. */
+
 #boot-dialog[data-intro="neural"] {
   --boot-yellow: #9af5fb;
   --boot-cyan: #79c5ff;
@@ -290,7 +290,7 @@
     transform: scale(1.65);
   }
 }
-/* 03 / Twelve CSS-only code columns. Decorative, not a real terminal. */
+
 #boot-dialog[data-intro="rain"] {
   --boot-yellow: #a0ffc0;
   --boot-cyan: #56dca7;
@@ -352,7 +352,7 @@
     transform: translateY(-35px);
   }
 }
-/* 04 / Two physical-looking gates split along a diagonal seam. */
+
 #boot-dialog[data-intro="redline"] {
   --boot-yellow: #ff6571;
   --boot-cyan: #ffe45e;
@@ -438,7 +438,7 @@
     transform: translateX(-12%) skewX(-8deg);
   }
 }
-/* 05 / A single low-luminance CRT sweep, then one line-collapse. */
+
 #boot-dialog[data-intro="ghost"] {
   --boot-yellow: #d8f2e4;
   --boot-cyan: #a4c9bc;
@@ -513,7 +513,7 @@
     opacity: 0;
   }
 }
-/* 06 / Six clipped plates: assemble around the name, disperse away from it. */
+
 #boot-dialog[data-intro="shards"] {
   --boot-yellow: #d9bdff;
   --boot-cyan: #6de7f2;
@@ -678,7 +678,7 @@
     margin-top: 10px;
   }
 }
-/* This file is last in the cascade: explicitly preserve the global pause rules. */
+
 html[data-motion="off"] #boot-dialog *,
 html[data-motion="off"] .intro-card {
   animation: none !important;

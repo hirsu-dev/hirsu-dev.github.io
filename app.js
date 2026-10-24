@@ -33,7 +33,6 @@ const savePreference = (key, value) => {
   try {
     localStorage.setItem(`hirsu-${key}`, value);
   } catch {
-    /* Private browsing can disable storage. */
   }
 };
 

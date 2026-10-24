@@ -1,8 +1,6 @@
 import { skyObjects } from "./sky-model.js?v=23";
 import { project3, seededRandom } from "./space-math.js?v=21";
 
-// Every technology membership is supported by projects.js features/tags.
-// CircuitPython is deliberately labeled a family connection, not identical Python.
 export const atlasHubs = Object.freeze([
   {
     id: "python",
@@ -146,8 +144,7 @@ export function atlasPoints() {
     })),
   }));
 }
-// A gentle reframe keeps connected projects visible instead of zooming into
-// an isolated star and pushing its shared-language nodes beyond the viewport.
+
 export const atlasFocus = (p) => ({
   x: p.x * 0.32,
   y: p.y * 0.32,

@@ -1,4 +1,4 @@
-/* v13: separate scene compositions; only the original keeps the classic loader. */
+
 #boot-dialog:not([data-intro="fracture"]) .boot-center {
   display: contents;
 }
@@ -6,7 +6,7 @@
   :is(.boot-kicker, .boot-reticle, .boot-stages, .boot-grid) {
   display: none;
 }
-/* Keep the modal's accessible name/description without duplicating the scene visually. */
+
 #boot-dialog:not([data-intro="fracture"]) :is(#boot-title, #boot-description) {
   position: absolute;
   width: 1px;
@@ -268,7 +268,7 @@
     opacity: 0;
   }
 }
-/* REDLINE: the page is covered by two exact complementary diagonal masks. */
+
 #boot-dialog[data-intro="redline"] .boot-variant-art {
   animation: none;
 }

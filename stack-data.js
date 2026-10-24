@@ -1,6 +1,5 @@
-// GitHub REST snapshot, 2026-10-20. Languages exclude this portfolio.
-// Sources: /repos/hrushikbarani-hub/{repo}/languages and
-// commits?per_page=100&since=2026-04-20T00:00:00Z (none hit the 100-result limit).
+
+
 export const snapshot = {
   date: "2026-10-20",
   repositories: [
@@ -30,8 +29,6 @@ export const snapshot = {
       ],
     },
   ],
-  // Author login matched hrushikbarani-hub. Includes this site's first commit.
-  // Public commit snapshot, NOT GitHub's contributions calendar.
   commits: {
     "2026-06-18": 1,
     "2026-10-03": 18,

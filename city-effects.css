@@ -1,4 +1,4 @@
-/* v7: original signal boot / chromatic displacement. No strobe or audio. */
+
 html[data-booting="true"] {
   overflow: hidden;
 }
@@ -405,7 +405,6 @@ html[data-booting="true"] #screen *::after {
   }
 }
 
-/* Slow, sliced displacement leaves primary text continuously visible. */
 .signal-title {
   position: relative;
   isolation: isolate;

@@ -24,8 +24,6 @@ import {
 } from "./network-view.js";
 import { projects } from "./projects.js";
 
-// DOM unit tests, NOT a visual browser or a live streaming integration test.
-// Script/stylesheet loading is explicitly disabled; provider playback is mocked.
 function dom(t, html = "", extraGlobals = () => ({})) {
   const cleanups = [];
   const win = new Window({

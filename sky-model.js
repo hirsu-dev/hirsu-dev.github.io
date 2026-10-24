@@ -1,5 +1,5 @@
-// An original, illustrated star atlas. Positions are project composition, not
-// celestial coordinates or a map of anybody's devices/location.
+
+
 import { newProjects } from "./new-projects.js?v=23";
 export const skyObjects = Object.freeze(
   [
@@ -184,7 +184,7 @@ export function nearestStar(positions, x, y, radius = 24) {
   });
   return nearest;
 }
-// One soft, short meteor per twelve seconds, never a full-screen flash.
+
 export function meteorAt(time) {
   const cycle = Math.floor(time / 12),
     local = time % 12;

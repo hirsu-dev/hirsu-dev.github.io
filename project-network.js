@@ -18,7 +18,6 @@ import {
 
 export const connections = networkLinks.map(([a, b]) => [a, b]);
 
-// A perspective volume of projects and their shared tools, not a globe.
 export function createProjectNetwork(container, { scrollZoom = true } = {}) {
   const canvas = container.querySelector("canvas"),
     ctx = canvas.getContext("2d");
@@ -159,7 +158,6 @@ export function createProjectNetwork(container, { scrollZoom = true } = {}) {
           ctx.fillText(hub.label, node.x, node.y + 15);
         }
       }
-      // Theme links remain secondary to the explicit technology hubs.
       for (const [a, b] of edges) {
         if (filter !== "all" && filter !== "theme") continue;
         const linked = active === a || active === b;
