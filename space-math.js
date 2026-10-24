@@ -1,4 +1,3 @@
-
 export const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
 export const add3 = (a, b) => a.map((v, i) => v + b[i]);
 export const sub3 = (a, b) => a.map((v, i) => v - b[i]);

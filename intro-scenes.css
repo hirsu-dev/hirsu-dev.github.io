@@ -1,4 +1,3 @@
-
 #boot-dialog:not([data-intro="fracture"]) .boot-center {
   display: contents;
 }
@@ -6,7 +5,6 @@
   :is(.boot-kicker, .boot-reticle, .boot-stages, .boot-grid) {
   display: none;
 }
-
 #boot-dialog:not([data-intro="fracture"]) :is(#boot-title, #boot-description) {
   position: absolute;
   width: 1px;
@@ -268,7 +266,6 @@
     opacity: 0;
   }
 }
-
 #boot-dialog[data-intro="redline"] .boot-variant-art {
   animation: none;
 }

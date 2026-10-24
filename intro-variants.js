@@ -1,4 +1,3 @@
-
 export const introStorageKey = "hirsu-startup-v17";
 export const defaultIntro = "redline";
 export const intros = Object.freeze([
@@ -57,7 +56,6 @@ export function introById(value) {
     intros.find((intro) => intro.id === defaultIntro)
   );
 }
-
 export const redlineParticles = Object.freeze(
   Array.from({ length: 72 }, (_, i) => ({
     y: 5 + ((i * 29) % 90),

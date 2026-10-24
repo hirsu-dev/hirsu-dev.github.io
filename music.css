@@ -368,7 +368,6 @@ html[data-fx="off"] .music-bars i {
   color: var(--muted);
   font-size: 10px;
 }
-
 html[data-music="open"] body {
   padding-bottom: min(650px, 85dvh);
 }

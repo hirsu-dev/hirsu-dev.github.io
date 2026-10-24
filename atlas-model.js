@@ -144,7 +144,6 @@ export function atlasPoints() {
     })),
   }));
 }
-
 export const atlasFocus = (p) => ({
   x: p.x * 0.32,
   y: p.y * 0.32,

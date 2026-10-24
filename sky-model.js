@@ -1,5 +1,3 @@
-
-
 import { newProjects } from "./new-projects.js?v=23";
 export const skyObjects = Object.freeze(
   [
@@ -184,7 +182,6 @@ export function nearestStar(positions, x, y, radius = 24) {
   });
   return nearest;
 }
-
 export function meteorAt(time) {
   const cycle = Math.floor(time / 12),
     local = time % 12;

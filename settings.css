@@ -1,4 +1,3 @@
-
 #theme-dialog {
   width: min(480px, calc(100vw - 32px));
 }
@@ -340,7 +339,6 @@
   padding: 12px;
   font-size: 11px;
 }
-
 html[data-fx="clean"]
   :is(
     .signal-noise,
@@ -371,7 +369,6 @@ html[data-fx="crt"] .signal-noise {
     transform: translateY(8px);
   }
 }
-
 html[data-skin="icewire"] {
   --bg: #09131d;
   --panel: #101f2b;
@@ -423,7 +420,6 @@ html[data-skin="icewire"] .od-title-line {
   font-weight: 800;
   letter-spacing: -0.08em;
 }
-
 html[data-skin="monolith"] {
   --bg: #101014;
   --panel: #1d1d23;
@@ -502,7 +498,6 @@ html:is([data-skin="icewire"], [data-skin="monolith"])
   ) {
   color: var(--bg);
 }
-
 html[data-links="underlined"] a {
   text-decoration: underline !important;
   text-decoration-thickness: 1.5px;

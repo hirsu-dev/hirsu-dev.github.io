@@ -1,4 +1,3 @@
-
 :root {
   color-scheme: dark;
   --bg: #08090b;
@@ -1202,7 +1201,6 @@ dialog .dialog-bar {
   opacity: 1;
   transform: translate(-50%, 0);
 }
-
 [data-view="blacksite"] {
   --bg: #100c1b;
   --panel: #181225;

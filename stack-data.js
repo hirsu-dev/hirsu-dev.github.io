@@ -1,5 +1,3 @@
-
-
 export const snapshot = {
   date: "2026-10-20",
   repositories: [

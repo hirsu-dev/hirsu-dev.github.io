@@ -1,4 +1,3 @@
-
 export function createAudioOutput(
   audio,
   { Context = window.AudioContext || window.webkitAudioContext } = {},

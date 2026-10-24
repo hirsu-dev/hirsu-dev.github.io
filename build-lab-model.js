@@ -8,7 +8,6 @@ export function aim(value = {}) {
     alt: Number.isFinite(alt) ? clamp(alt, 0, 90) : 25,
   };
 }
-
 export function aimPoint(value) {
   const { az, alt } = aim(value),
     radius = ((90 - alt) / 90) * 126,

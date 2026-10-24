@@ -1,4 +1,3 @@
-
 export const settingsKey = "hirsu-settings-v14";
 export const settingOptions = Object.freeze({
   layout: ["overdrive", "netrunner", "relic", "switchboard"],

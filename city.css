@@ -1,4 +1,3 @@
-
 .city-header,
 .city-footer,
 .card-art {
@@ -832,7 +831,6 @@ html[data-view="neon"] {
 [data-view="neon"] #toast {
   left: 50%;
 }
-
 [data-view="neon"] .page-head {
   margin-bottom: 40px;
   border-bottom: 1px solid var(--line);

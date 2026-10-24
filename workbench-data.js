@@ -1,5 +1,4 @@
 import { newProjects } from "./new-projects.js?v=23";
-
 export const statusTypes = Object.freeze({
   published: {
     label: "Published",
