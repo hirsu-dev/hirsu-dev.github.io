@@ -1,4 +1,4 @@
-/* v9 / original Overdrive: long-form workbench + signal-break entry. */
+
 html[data-view="blacksite"] {
   --rail: 0px;
   --yellow: #dbff00;
@@ -509,7 +509,7 @@ html[data-motion="on"] .od-ticker > div {
   touch-action: pan-y;
 }
 .network-node {
-  /* Absolute auto-width labels must not shrink against an old right-hand dock on resize. */
+  
   width: max-content;
 }
 .od-network .network-index {
@@ -624,7 +624,6 @@ html[data-motion="on"] .od-ticker > div {
   border-color: #100c1b88;
 }
 
-/* Grain is visible but low-contrast; distortion never flashes the entire page. */
 .signal-noise {
   opacity: 0.09;
 }
@@ -670,7 +669,6 @@ html[data-view][data-motion="on"] .motion-ready.revealed {
   -webkit-text-stroke: 0;
 }
 
-/* The loader reaches 100%, holds, breaks into eight offset signal bands, then clears. */
 .boot-meter {
   display: flex;
   justify-content: space-between;

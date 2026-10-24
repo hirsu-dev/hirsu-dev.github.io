@@ -1,5 +1,5 @@
 import { newProjects } from "./new-projects.js?v=23";
-// Editorial review dates, not claims of new physical builds or hardware tests.
+
 export const statusTypes = Object.freeze({
   published: {
     label: "Published",

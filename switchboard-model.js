@@ -32,7 +32,6 @@ export function boardState(raw) {
   try {
     data = JSON.parse(raw);
   } catch {
-    /* Browser-local state is optional. */
   }
   const positions = boardArrangement();
   for (const id of ids) {

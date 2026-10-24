@@ -1,4 +1,4 @@
-/* v11 / original project-terminal composition, photographed city, game-menu geometry. */
+
 html[data-view="blacksite"] {
   --bg: #0b0a0f;
   --panel: #171014;
@@ -377,7 +377,7 @@ a.terminal-source:hover {
 .hud-frame > span:nth-child(2) {
   color: #c9b9c0;
 }
-/* Keep the downstream archive, maps and controls in the same material system. */
+
 [data-view="blacksite"]
   :is(
     .od-build,
@@ -572,7 +572,7 @@ a.terminal-source:hover {
     gap: 12px;
   }
 }
-/* The directory now contains the original builds and seven runnable tools. */
+
 .terminal-tabs {
   max-height: 560px;
   overflow-y: auto;

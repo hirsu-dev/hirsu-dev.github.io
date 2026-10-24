@@ -1,4 +1,4 @@
-/* v8 / one shared media treatment and a richer, optional signal-motion layer. */
+
 :root {
   --signal-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --media-bg: #0b141b;
@@ -79,7 +79,6 @@ html[data-motion="on"] .signal-tear {
   }
 }
 
-/* Instrument rings assemble behind the wordmark, then travel with the shutters. */
 .boot-orbits {
   position: absolute;
   width: min(600px, 80vw);
@@ -157,7 +156,6 @@ html[data-motion="on"] .signal-tear {
   box-shadow: 0 0 24px #79edf044;
 }
 
-/* Key art stays independent of the noise and typography layers. */
 .city-keyart img {
   object-position: 68% center;
 }
@@ -194,7 +192,7 @@ html[data-motion="on"] .signal-red {
 html[data-motion="on"] .signal-cyan {
   animation-duration: 7.7s;
 }
-/* Brief split-channel slices, never a flashing full-screen layer. */
+
 @keyframes signal-red {
   0%,
   90%,
@@ -251,7 +249,6 @@ html[data-motion="on"] .signal-cyan {
     -1px 0 #79edf044;
 }
 
-/* Actual evidence and illustrations share the same stage, not destructive filters. */
 html[data-view="neon"] .featured-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -383,7 +380,6 @@ html[data-view] .project-media {
   object-fit: contain;
 }
 
-/* Shared motion cadence: panels deploy, controls respond, evidence remains legible. */
 html[data-view][data-motion="on"] .motion-ready {
   transition:
     opacity 0.8s var(--signal-ease) var(--reveal-delay, 0ms),
@@ -489,7 +485,6 @@ html[data-motion="on"] dialog[open]:not(#boot-dialog)::backdrop {
   }
 }
 
-/* Observatory / conceptual project graph. Fixed docking labels are real links. */
 .network-viewport {
   background: radial-gradient(
     ellipse at 50% 50%,

@@ -227,7 +227,6 @@ document.querySelector(".skip").addEventListener("click", (e) => {
 $("#city-menu").onclick = () => openDialog("#theme-dialog");
 function replayIntro() {
   document.querySelectorAll("dialog[open]").forEach((d) => d.close());
-  // Return to a visible control after preview; a closed menu cannot receive focus.
   $("#city-settings").focus({ preventScroll: true });
   cityMotion.opening({ replay: true });
 }
@@ -629,7 +628,6 @@ window.addEventListener("popstate", (e) => {
     ),
     { push: false },
   );
-  // Theme changes preserve the current gallery, search and expansion state.
   if (resolveRoute(location.hash) !== route) renderRoute({ focus: true });
   syncIdentity();
 });

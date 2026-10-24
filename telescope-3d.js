@@ -30,7 +30,6 @@ export const telescopeParts = {
   ],
 };
 
-// Solid cylinder meshes, transformed in world space and depth-sorted by the renderer.
 export function telescopeMesh({
   az = 0,
   alt = 25,

@@ -1,7 +1,6 @@
 import { escapeHTML as esc } from "./console-model.js?v=19";
 import { createAudioOutput } from "./audio-output.js?v=21";
 
-// Owner supplied these recordings and confirmed public hosting/streaming permission.
 export const radioTracks = Object.freeze(
   [
     {
@@ -31,7 +30,6 @@ export function formatTime(value) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
-// Outside the route outlet. Dismissing every control never unloads audio.
 export function mountRadio({
   createAudio = () => document.createElement("audio"),
   createOutput = createAudioOutput,

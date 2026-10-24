@@ -1,4 +1,4 @@
-// Same-origin audio. Gain control also works where media-element volume does not.
+
 export function createAudioOutput(
   audio,
   { Context = window.AudioContext || window.webkitAudioContext } = {},
@@ -29,16 +29,13 @@ export function createAudioOutput(
         source = context.createMediaElementSource(audio);
         source.connect(gain);
         gain.connect(context.destination);
-        audio.volume = 1; // gain now applies attenuation
+        audio.volume = 1;
       }
-      // Both calls occur within the gesture, not after an await.
       const resumed =
         context?.state !== "running" ? context?.resume() : undefined;
       let timer;
       try {
         const playback = Promise.all([resumed, audio.play()]);
-        // Some browsers leave resume() pending instead of rejecting autoplay.
-        // Bound that attempt so the player can offer a real gesture-driven retry.
         if (autoplay)
           await Promise.race([
             playback,

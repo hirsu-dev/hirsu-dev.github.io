@@ -112,7 +112,6 @@ export function mountSwitchboard(
     try {
       saved = write(boardKey, JSON.stringify(state));
     } catch {
-      /* Session remains usable. */
     }
     announce(
       message +

@@ -1,5 +1,5 @@
-/* v17: charged gates, longer easing and restrained signal interference. */
-/* One small impact at the cut. The progress/Skip controls never shake. */
+
+
 html[data-motion="on"] #boot-dialog[open][data-intro="redline"] .cut-scene {
   animation: redline-impact-shake 0.34s 2.23s cubic-bezier(0.2, 0.8, 0.2, 1)
     both;
@@ -272,7 +272,6 @@ html[data-visibility="hidden"] #boot-dialog[data-intro="redline"] .cut-scene {
   }
 }
 
-/* Shared choreography: UI surfaces settle; controls respond without flashing. */
 html[data-motion="on"] .city-nav > :is(a, button) {
   transition:
     background 0.24s,

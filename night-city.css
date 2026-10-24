@@ -1,4 +1,4 @@
-/* Night City / anime art direction. Original artwork and interface, not franchise assets. */
+
 :root {
   --bg: #0a0a0c;
   --panel: #141015;
@@ -462,7 +462,7 @@ body:before {
 .underbar a {
   color: var(--link);
 }
-/* Anime frequency: acidic color blocks, purple shadows, skewed poster hierarchy. */
+
 [data-view="blacksite"] .site-header {
   border-top-color: var(--accent);
   border-bottom-color: var(--secondary);

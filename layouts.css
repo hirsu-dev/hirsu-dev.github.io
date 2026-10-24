@@ -1,5 +1,4 @@
-/* Layout is independent from palette. These interfaces have different DOM,
-   information hierarchy and controls; color presets remain composable. */
+
 .netrunner-home,
 .relic-home {
   color: var(--text);

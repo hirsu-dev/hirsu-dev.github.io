@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import { createCityMotion, bootDuration, bootPhases } from "./city-motion.js";
 import { intros } from "./intro-variants.js";
 
-// Minimal DOM/timer harness exercises the production controller without a browser dependency.
 function harness(
   t,
   { motion = "on", hidden = false, modalError = false, intro = "redline" } = {},
@@ -149,7 +148,6 @@ test("Skip closes immediately; a replay gets fresh timers and returns focus", (t
   h.doc.activeElement = h.focusTarget;
   assert.equal(h.controller.opening({ replay: true }), true);
   assert.equal(h.percent.textContent, "000%");
-  // A queued close event from the prior sequence must not abort a replay.
   h.boot.dispatchEvent(new Event("close"));
   assert.equal(h.root.dataset.booting, "true");
   h.tick(bootDuration);

@@ -8,8 +8,6 @@ import {
   atlasFocus,
 } from "./atlas-model.js";
 
-// Exercise the real renderer/controller with deterministic canvas, focus and RAF
-// boundaries. This checks lifecycle behavior; it is not a visual browser test.
 function harness(
   t,
   { motion = "on", canvasAvailable = true, scrollZoom = true } = {},
