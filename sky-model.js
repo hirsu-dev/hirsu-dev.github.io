@@ -1,4 +1,4 @@
-import { newProjects } from "./new-projects.js?v=23";
+import { newProjects } from "./new-projects.js?v=24";
 export const skyObjects = Object.freeze(
   [
     {

@@ -1,4 +1,4 @@
-import { projects } from "./projects.js?v=23";
+import { projects } from "./projects.js?v=24";
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 export function aim(value = {}) {
   const az = Number(value.az),
@@ -122,7 +122,7 @@ export const macroLayers = Object.freeze({
   software: [
     "maintaineros",
     "civiclens",
-    "nexus-ai",
+    "biobuzz-simulator",
     "hyprland-forge",
     "offline-project-notebook",
     "observatory-planner",
@@ -144,6 +144,7 @@ export const macroLabels = Object.freeze({
   "hyprland-forge": "FORGE",
   maintaineros: "MAINT",
   civiclens: "CIVIC",
+  "biobuzz-simulator": "BIOBUZZ",
   "offline-project-notebook": "NOTES",
   "observatory-planner": "PLAN",
   "coordinate-motor-simulator": "MOTION",

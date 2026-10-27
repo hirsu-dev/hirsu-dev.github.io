@@ -1,5 +1,36 @@
 export const newProjects = [
   {
+    id: "biobuzz-simulator",
+    title: "BIOBUZZ Simulator",
+    subtitle: "Build driver instinct. One match at a time.",
+    category: "ROBOTICS / 3D SIMULATION",
+    tags: ["JavaScript", "Three.js", "Rapier", "Robotics"],
+    description:
+      "A browser-based 3D FTC practice game: ten robot designs, 2-vs-2 matches and touch, keyboard or gamepad driving.",
+    features: [
+      "Ten procedural robot presets with different drive types and mechanisms",
+      "Timed matches, free drive, AI teammates and opponents, and local replays",
+      "Mobile touch controls, camera selection and render-quality settings",
+      "A local Java draft editor with import and download; no Java execution in the browser",
+    ],
+    progress:
+      "The public browser game is playable. Physics, scoring and robot geometry are simplified estimates for practice, not calibrated hardware or an official scorer. Multiplayer and accounts are not implemented. Physical mobile devices still need testing.",
+    filters: ["software", "robotics"],
+    status: "Playable prototype",
+    artwork: "biobuzz-simulator",
+    image: "assets/apps/biobuzz-simulator.svg",
+    alt: "Original isometric diagram of a robot practice field with opposing robots and a ball trajectory",
+    caption: "Original simulation diagram · not a gameplay screenshot",
+    overview:
+      "Drive one robot alongside an AI teammate against two AI opponents. Three.js draws the field and Rapier handles rigid-body physics on the visitor's device. Quick matches, full matches and free drive support different kinds of driver practice.",
+    source: "https://github.com/hrushikbarani-hub/biobuzz-simulator",
+    sourceLabel: "Source & setup",
+    demo: "https://hrushikbarani-hub.github.io/biobuzz-simulator/",
+    demoLabel: "Play BIOBUZZ",
+    evidence:
+      "Public README, package and default-branch commit 99c93d0, reviewed October 27, 2026.",
+  },
+  {
     id: "observatory-planner",
     title: "Observatory Planner",
     subtitle: "Make room for a night outside.",

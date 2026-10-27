@@ -1,4 +1,4 @@
-import { skyObjects } from "./sky-model.js?v=23";
+import { skyObjects } from "./sky-model.js?v=24";
 import { project3, seededRandom } from "./space-math.js?v=21";
 
 export const atlasHubs = Object.freeze([
@@ -32,6 +32,7 @@ export const atlasHubs = Object.freeze([
       "accessible-star-map",
       "repair-parts-tracker",
       "offline-project-notebook",
+      "biobuzz-simulator",
     ],
     why: "JavaScript web interfaces",
     position: [0.4, 0.15, -0.8],
@@ -94,6 +95,18 @@ export const atlasHubs = Object.freeze([
     members: ["repair-parts-tracker", "offline-project-notebook"],
     why: "Transactional local browser records",
     position: [-1.5, -1.2, 0.4],
+  },
+  {
+    id: "robotics",
+    label: "ROBOTICS",
+    kind: "theme",
+    members: [
+      "robo-telescope",
+      "coordinate-motor-simulator",
+      "biobuzz-simulator",
+    ],
+    why: "Related motion and robot practice work, not a shared physical connection",
+    position: [1.1, 1.1, 0.3],
   },
   {
     id: "astronomy",

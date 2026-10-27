@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=23";
-import { networkLinks } from "./network-view.js?v=23";
+import { projects } from "./projects.js?v=24";
+import { networkLinks } from "./network-view.js?v=24";
 
 export const boardKey = "hirsu-switchboard-v18";
 export const boardProjects = projects;

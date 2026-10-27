@@ -1,10 +1,10 @@
-import { escapeHTML as esc } from "./console-model.js?v=23";
+import { escapeHTML as esc } from "./console-model.js?v=24";
 import {
   telescopeControls,
   planetariumContent,
   mountTelescope,
 } from "./telescope-3d.js?v=21";
-import { projects } from "./projects.js?v=23";
+import { projects } from "./projects.js?v=24";
 import {
   aim,
   aimPoint,
@@ -13,7 +13,7 @@ import {
   labServices,
   macroLayers,
   macroLabels,
-} from "./build-lab-model.js?v=23";
+} from "./build-lab-model.js?v=24";
 
 const project = (id) => projects.find((p) => p.id === id);
 const fact = (id) => {

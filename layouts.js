@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=23";
-import { escapeHTML as esc } from "./console-model.js?v=23";
+import { projects } from "./projects.js?v=24";
+import { escapeHTML as esc } from "./console-model.js?v=24";
 import { cityPhoto, photoCredit } from "./photo.js?v=11";
 
 export const layoutProjects = [
@@ -16,9 +16,12 @@ const number = (i) => String(i + 1).padStart(2, "0");
 const tags = (p) =>
   `<ul class="layout-tags">${p.tags.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`;
 const source = (p) =>
-  p.source
+  (p.demo
+    ? `<a href="${esc(p.demo)}" target="_blank" rel="noopener noreferrer">${esc(p.demoLabel || "Try in browser")} ↗</a>`
+    : "") +
+  (p.source
     ? `<a href="${esc(p.source)}" target="_blank" rel="noopener noreferrer">Source & setup ↗</a>`
-    : "<span>Personal build / no public repository</span>";
+    : "<span>Personal build / no public repository</span>");
 const image = (p) =>
   `<figure class="layout-media"><img src="${p.image}" alt="${esc(p.alt)}" width="1200" height="750" /><figcaption>${esc(p.caption)}</figcaption></figure>`;
 const windowBar = (label, extra = "") =>

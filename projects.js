@@ -1,5 +1,6 @@
-import { projectStatus } from "./workbench-data.js?v=23";
-import { newProjects } from "./new-projects.js?v=23";
+import { projectStatus } from "./workbench-data.js?v=24";
+import { newProjects } from "./new-projects.js?v=24";
+import { repositoryFor } from "./repository-data.js?v=24";
 
 export const projects = [
   {
@@ -7,7 +8,7 @@ export const projects = [
     title: "Robo Telescope",
     subtitle: "A little closer to the stars.",
     category: "ROBOTICS / ASTRONOMY",
-    filters: ["hardware"],
+    filters: ["hardware", "robotics"],
     status: "Under repair",
     statusClass: "repair",
     artwork: "telescope",
@@ -191,25 +192,29 @@ export const projects = [
     alt: "Conceptual illustration of a tiled Linux desktop with a shell panel",
     caption: "Desktop illustration · not a hardware screenshot",
     description:
-      "A personal Arch Linux and Hyprland desktop with a custom shell, display controls, and configuration tooling.",
+      "A personal Arch Linux and Hyprland desktop with a Quickshell panel, launcher, clipboard tools, and display and theme controls.",
     tags: ["Arch Linux", "Hyprland", "Python", "QML"],
     overview:
       "A personal desktop project for Arch Linux and Hyprland. The repository contains a custom Quickshell interface, desktop configuration, and tools for installation, appearance, and display settings.",
     features: [
-      "Custom Quickshell panels and desktop interface",
-      "Display and appearance configuration tools",
+      "Custom Quickshell panels, launcher, clipboard and screenshot tools",
+      "Wallpaper, display, appearance and scalable workspace controls",
       "Python tooling and an Arch/Hyprland configuration",
     ],
     progress:
-      "Still in development, with real hardware validation pending. The repository tracks the configuration and custom shell as the desktop takes shape.",
+      "Still in development. Configuration and runtime checks have passed in test environments, and recent work improves controls on small, scaled surfaces. Daily-use readiness and support on the target physical laptop still need testing.",
     source: "https://github.com/hrushikbarani-hub/hyprland-forge",
     sourceLabel: "Explore the repository",
     evidence:
-      "Public hyprland-forge description, project.json, and repository contents.",
+      "Public README, project.json and default-branch commits, reviewed October 27, 2026.",
   },
 ]
   .concat(newProjects)
-  .map((project) => ({ ...project, lifecycle: projectStatus[project.id] }));
+  .map((project) => ({
+    ...project,
+    lifecycle: projectStatus[project.id],
+    activity: repositoryFor(project.source),
+  }));
 
 export const projectCount = projects.length;
 export const publicRepoCount = projects.filter((p) => p.source).length;

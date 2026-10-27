@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=23";
-import { buildEntryIds } from "./workbench-data.js?v=23";
+import { projects } from "./projects.js?v=24";
+import { buildEntryIds } from "./workbench-data.js?v=24";
 
 export const projectIds = new Set(projects.map((p) => p.id));
 export function savedIds(raw) {
@@ -16,14 +16,20 @@ export function findProjects({
   category = "all",
   query = "",
   saved = new Set(),
+  availability = "all",
+  sort = "curated",
 } = {}) {
   const words = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
-  return projects.filter(
+  const result = projects.filter(
     (p) =>
       (category === "all" ||
         (category === "saved"
           ? saved.has(p.id)
           : p.filters.includes(category))) &&
+      (availability === "all" ||
+        (availability === "browser" && Boolean(p.demo)) ||
+        (availability === "local" && Boolean(p.source) && !p.demo) ||
+        (availability === "personal" && !p.source)) &&
       words.every((word) =>
         [p.title, p.description, p.category, p.status, ...p.tags]
           .join(" ")
@@ -31,6 +37,15 @@ export function findProjects({
           .includes(word),
       ),
   );
+  if (sort === "name") result.sort((a, b) => a.title.localeCompare(b.title));
+  if (sort === "updated")
+    result.sort(
+      (a, b) =>
+        (b.activity?.updated || b.lifecycle.reviewed).localeCompare(
+          a.activity?.updated || a.lifecycle.reviewed,
+        ) || a.title.localeCompare(b.title),
+    );
+  return result;
 }
 export function resolveRoute(hash) {
   let route;

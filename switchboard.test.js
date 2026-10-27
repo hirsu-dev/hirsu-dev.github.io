@@ -143,7 +143,7 @@ test("Switchboard validates local positions, IDs and distinct socket pairs", () 
   assert.deepEqual(dirty.positions["nexus-ai"], boardArrangement()["nexus-ai"]);
   assert.equal(dirty.selected, "maintaineros");
   assert.deepEqual(dirty.sockets, ["maintaineros", "civiclens"]);
-  assert.equal(Object.keys(dirty.positions).length, 14);
+  assert.equal(Object.keys(dirty.positions).length, boardProjects.length);
 });
 test("both map arrangements and every wire stay finite and bounded", () => {
   for (const mode of ["circuit", "rows"]) {
@@ -157,12 +157,12 @@ test("both map arrangements and every wire stay finite and bounded", () => {
       );
     assert.equal(
       new Set(Object.values(points).map((p) => JSON.stringify(p))).size,
-      14,
+      boardProjects.length,
     );
   }
 });
 test("filtering and isolation use real project metadata", () => {
-  assert.equal(visibleProjects().length, 14);
+  assert.equal(visibleProjects().length, boardProjects.length);
   assert.deepEqual(
     visibleProjects({ query: "python fastapi" }).map((p) => p.id),
     ["maintaineros", "civiclens", "observatory-planner", "homelab-health"],
@@ -186,7 +186,10 @@ test("comparison reports documented shared tools without invented relationships"
 });
 test("Switchboard renders all working files with factual imagery and accessible targets", (t) => {
   const h = harness(t);
-  assert.equal(h.win.document.querySelectorAll("[data-sb-node]").length, 14);
+  assert.equal(
+    h.win.document.querySelectorAll("[data-sb-node]").length,
+    boardProjects.length,
+  );
   for (const p of boardProjects) {
     h.$(`[data-sb-select="${p.id}"]`).click();
     assert.equal(h.$("#sb-file-title").textContent, p.title);
@@ -213,7 +216,9 @@ test("search, category, isolate and empty-state recovery compose", (t) => {
   assert.equal(h.$("#sb-empty").hidden, false);
   h.$("#sb-clear").click();
   assert.equal(h.$("#sb-empty").hidden, true);
-  assert.match(h.$("#sb-count").textContent, /14/);
+  assert.ok(
+    h.$("#sb-count").textContent.includes(String(boardProjects.length)),
+  );
   assert.equal(h.$("#sb-isolate").getAttribute("aria-pressed"), "false");
 });
 test("socket pinning, selectors and swap keep distinct projects and persist", (t) => {

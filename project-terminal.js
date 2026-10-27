@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=23";
-import { escapeHTML as esc } from "./console-model.js?v=23";
+import { projects } from "./projects.js?v=24";
+import { escapeHTML as esc } from "./console-model.js?v=24";
 
 export const terminalIds = [
   "maintaineros",
@@ -14,7 +14,7 @@ export const terminalIds = [
 export function terminalProject(id) {
   const project = projects.find((p) => p.id === id);
   if (!project || !terminalIds.includes(id)) return "";
-  return `<figure class="terminal-image"><img src="${project.image}" width="1200" height="750" alt="${esc(project.alt)}" decoding="async" /><figcaption>${esc(project.caption)}</figcaption></figure><div class="terminal-details"><p class="terminal-category">${esc(project.category)}</p><h2>${esc(project.title)}</h2><p class="terminal-description">${esc(project.description)}</p><div class="terminal-facts"><span>STATE</span><strong class="${project.statusClass || ""}">${esc(project.status)}</strong><span>TOOLS</span><strong>${project.tags.map(esc).join(" / ")}</strong></div><div class="terminal-links"><a class="od-button" href="#${id}">OPEN FILE <span>↗</span></a>${project.source ? `<a class="terminal-source" href="${esc(project.source)}" target="_blank" rel="noopener noreferrer">SOURCE CODE ↗</a>` : `<span class="terminal-source">PERSONAL BUILD / NO PUBLIC REPO</span>`}</div></div>`;
+  return `<figure class="terminal-image"><img src="${project.image}" width="1200" height="750" alt="${esc(project.alt)}" decoding="async" /><figcaption>${esc(project.caption)}</figcaption></figure><div class="terminal-details"><p class="terminal-category">${esc(project.category)}</p><h2>${esc(project.title)}</h2><p class="terminal-description">${esc(project.description)}</p><div class="terminal-facts"><span>STATE</span><strong class="${project.statusClass || ""}">${esc(project.status)}</strong><span>TOOLS</span><strong>${project.tags.map(esc).join(" / ")}</strong></div><div class="terminal-links"><a class="od-button" href="#${id}">OPEN FILE <span>↗</span></a>${project.demo ? `<a class="terminal-source" href="${esc(project.demo)}" target="_blank" rel="noopener noreferrer">${esc(project.demoLabel || "TRY IN BROWSER")} ↗</a>` : ""}${project.source ? `<a class="terminal-source" href="${esc(project.source)}" target="_blank" rel="noopener noreferrer">SOURCE CODE ↗</a>` : `<span class="terminal-source">PERSONAL BUILD / NO PUBLIC REPO</span>`}</div></div>`;
 }
 export function projectTerminal() {
   return `<section class="project-terminal od-enter" aria-label="Interactive project directory"><div class="terminal-toolbar"><span><i aria-hidden="true"></i> PROJECT DIRECTORY</span><span>SELECT A FILE TO INSPECT</span><b id="terminal-position">01 / ${terminalIds.length}</b></div><div class="terminal-layout"><div class="terminal-tabs" role="tablist" aria-label="Project files" aria-orientation="vertical">${terminalIds

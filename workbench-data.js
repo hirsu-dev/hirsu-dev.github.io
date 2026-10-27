@@ -1,4 +1,4 @@
-import { newProjects } from "./new-projects.js?v=23";
+import { newProjects } from "./new-projects.js?v=24";
 export const statusTypes = Object.freeze({
   published: {
     label: "Published",
@@ -23,6 +23,11 @@ export const statusTypes = Object.freeze({
 });
 
 export const projectStatus = Object.freeze({
+  "biobuzz-simulator": {
+    state: "prototype",
+    reviewed: "2026-10-27",
+    next: "Test sustained performance and multitouch on physical phones, then compare practice behavior with measured robot behavior.",
+  },
   "observatory-planner": {
     state: "prototype",
     reviewed: "2026-10-23",
@@ -90,12 +95,32 @@ export const projectStatus = Object.freeze({
   },
   "hyprland-forge": {
     state: "development",
-    reviewed: "2026-10-23",
+    reviewed: "2026-10-27",
     next: "Validate the desktop configuration and installer on real Arch/Hyprland hardware.",
   },
 });
 
 export const buildEntries = Object.freeze([
+  {
+    id: "biobuzz-browser-practice",
+    date: "2026-10-27",
+    project: "biobuzz-simulator",
+    kind: "Software milestone",
+    title: "Robot practice, straight from the browser.",
+    summary:
+      "BIOBUZZ brings ten robot presets, 2-vs-2 matches and mobile controls to the public workshop.",
+    goal: "Make driver practice available without a local desktop simulator or a physical field.",
+    changed:
+      "Published a Three.js and Rapier browser game with timed matches, free drive, AI teammates and opponents, robot setup and local replay.",
+    constraint:
+      "The game uses simplified physics and scoring. Browser Java files are editable drafts, not executable FTC programs. Physical phone performance remains unverified.",
+    learned:
+      "Input reset, pause handling and adjustable rendering are part of making a practice game usable across devices.",
+    next: "Try real phone multitouch and sustained frame rates, then collect driver feedback.",
+    image: "assets/apps/biobuzz-simulator.svg",
+    alt: "Original diagram of a robot practice field",
+    caption: "Original simulation diagram. Not a gameplay screenshot.",
+  },
   {
     id: "seven-tools-first-release",
     date: "2026-10-23",

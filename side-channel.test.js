@@ -105,8 +105,14 @@ test("night sky focuses project constellations with a perspective orbit camera",
 
 test("network inspector links only to actual projects and explains each connection", (t) => {
   const h = dom(t, networkContent());
-  assert.equal(h.doc.querySelectorAll("[data-node-index]").length, 14);
-  assert.equal(h.doc.querySelectorAll(".network-index a").length, 14);
+  assert.equal(
+    h.doc.querySelectorAll("[data-node-index]").length,
+    projects.length,
+  );
+  assert.equal(
+    h.doc.querySelectorAll(".network-index a").length,
+    projects.length,
+  );
   for (let i = 0; i < projects.length; i++) {
     const html = networkInspector(i);
     const text = h.doc.createElement("div");
@@ -127,7 +133,10 @@ test("network inspector links only to actual projects and explains each connecti
 test("Netrunner filters real project files and keeps the inspector and source factual", (t) => {
   const h = dom(t, netrunnerHome());
   h.cleanup(mountLayout(h.doc.body));
-  assert.equal(h.doc.querySelectorAll("[data-layout-project]").length, 14);
+  assert.equal(
+    h.doc.querySelectorAll("[data-layout-project]").length,
+    projects.length,
+  );
   assert.match(h.$("#layout-inspector").textContent, /MaintainerOS/);
   h.input(h.$("#layout-search"), "Robo Telescope");
   assert.equal(h.$("#layout-result-count").textContent, "1");
@@ -140,7 +149,10 @@ test("Netrunner filters real project files and keeps the inspector and source fa
   assert.equal(h.$("#layout-empty").hidden, false);
   assert.equal(h.$("#layout-result-count").textContent, "0");
   h.input(h.$("#layout-search"), "");
-  assert.equal(h.$("#layout-result-count").textContent, "14");
+  assert.equal(
+    h.$("#layout-result-count").textContent,
+    String(projects.length),
+  );
   h.$('[data-layout-project="5"]').click();
   assert.match(h.$("#layout-inspector").textContent, /existing models/);
   assert.equal(h.$(".nr-notes").open, false);
@@ -151,7 +163,10 @@ test("Relic changes project files and supports keyboard chapter navigation and c
   h.cleanup(dispose);
   h.$('[data-file-step="-1"]').click();
   assert.match(h.$("#layout-inspector-title").textContent, /Fieldnotes/);
-  assert.match(h.$("#relic-file-number").textContent, /14/);
+  assert.equal(
+    h.$("#relic-file-number").textContent,
+    `FILE ${projects.length} / ${projects.length}`,
+  );
   h.$('[data-file-step="1"]').click();
   assert.match(h.$("#layout-inspector-title").textContent, /MaintainerOS/);
   h.$('[data-layout-project="3"]').click();
@@ -274,11 +289,45 @@ test("full app routes new pages, preserves the deck, and retains existing projec
   assert.match(h.$("#sb-file-title").textContent, /Telescope/);
   assert.equal(h.$('[data-sb-socket="0"]').value, "robo-telescope");
   go("projects");
-  assert.equal(h.doc.querySelectorAll(".project-card").length, 14);
+  assert.equal(h.doc.querySelectorAll(".project-card").length, projects.length);
+  assert.equal(h.$(".project-card").dataset.project, "biobuzz-simulator");
+  const setOption = (selector, value) => {
+    const input = h.$(selector);
+    input.value = value;
+    input.dispatchEvent(new h.win.Event("change", { bubbles: true }));
+  };
+  setOption("#project-availability", "browser");
+  assert.equal(h.doc.querySelectorAll(".project-card").length, 8);
+  assert.equal(h.doc.querySelectorAll(".demo-link").length, 8);
+  h.input(h.$("#project-search"), "rapier");
+  assert.equal(h.doc.querySelectorAll(".project-card").length, 1);
+  assert.equal(h.$(".project-card").dataset.project, "biobuzz-simulator");
+  setOption("#project-availability", "local");
+  assert.ok(h.$(".empty"));
+  h.$("[data-reset-feed]").click();
+  assert.equal(h.doc.querySelectorAll(".project-card").length, projects.length);
+  assert.equal(h.$("#project-availability").value, "all");
+  setOption("#project-sort", "name");
+  const names = [...h.doc.querySelectorAll(".project-card h3")].map(
+    (n) => n.textContent,
+  );
+  assert.deepEqual(
+    names,
+    [...names].sort((a, b) => a.localeCompare(b)),
+  );
+  go("biobuzz-simulator");
+  assert.match(h.$("#screen").textContent, /simplified estimates/);
+  assert.ok(
+    h.$('a[href="https://hrushikbarani-hub.github.io/biobuzz-simulator/"]'),
+  );
+  go("stack");
+  assert.match(h.$("#screen").textContent, /13 public project repos/);
+  assert.equal(h.doc.querySelectorAll(".repo-activity li").length, 13);
+  go("projects");
   chooseLayout("overdrive");
   assert.equal(
     h.doc.querySelectorAll(".project-card").length,
-    14,
+    projects.length,
     "layout selection preserves route",
   );
   go("index");

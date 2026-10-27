@@ -1,7 +1,7 @@
-import { relatedHubs } from "./atlas-model.js?v=23";
-import { skyObjects } from "./sky-model.js?v=23";
-import { projects } from "./projects.js?v=23";
-import { escapeHTML as esc } from "./console-model.js?v=23";
+import { relatedHubs } from "./atlas-model.js?v=24";
+import { skyObjects } from "./sky-model.js?v=24";
+import { projects } from "./projects.js?v=24";
+import { escapeHTML as esc } from "./console-model.js?v=24";
 export const networkLinks = [
   ["maintaineros", "civiclens", "Python · FastAPI · SQLite"],
   ["civiclens", "hyprland-forge", "Python tooling"],

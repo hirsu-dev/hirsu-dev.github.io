@@ -79,7 +79,7 @@ test("legacy circular navigation helper wraps correctly", () => {
 });
 
 test("project filters and multi-word search compose without mutating content", () => {
-  assert.equal(findProjects().length, 14);
+  assert.equal(findProjects().length, projects.length);
   assert.deepEqual(
     findProjects({ category: "software", query: "python SQLite" }).map(
       (p) => p.id,
@@ -235,7 +235,7 @@ test("HTML escaping covers user-supplied query attribute delimiters", () => {
   assert.equal(escapeHTML('<a x="&">\''), "&lt;a x=&quot;&amp;&quot;&gt;&#39;");
 });
 test("all original constellations map exactly to real project data", () => {
-  assert.equal(skyObjects.length, 14);
+  assert.equal(skyObjects.length, projects.length);
   const ids = new Set(projects.map((p) => p.id));
   assert.deepEqual(new Set(skyObjects.map((p) => p.id)), ids);
   for (const pair of connections) for (const id of pair) assert.ok(ids.has(id));

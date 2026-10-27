@@ -1,4 +1,4 @@
-import { projects } from "./projects.js?v=23";
+import { projects } from "./projects.js?v=24";
 import {
   workbenchContent,
   mountWorkbench,
@@ -6,8 +6,14 @@ import {
   statusPanel,
   experimentsContent,
   mountExperiments,
-} from "./workbench.js?v=23";
-import { snapshot, languageCounts, calendarDays } from "./stack-data.js";
+} from "./workbench.js?v=24";
+import { languageCounts } from "./stack-data.js";
+import { repositorySnapshot } from "./repository-data.js?v=24";
+import {
+  archiveOptions,
+  mountArchiveOptions,
+  projectDate,
+} from "./discovery.js?v=24";
 import {
   interfaces,
   interfaceFromSearch,
@@ -18,14 +24,14 @@ import {
   findProjects,
   resolveRoute,
   escapeHTML as esc,
-} from "./console-model.js?v=23";
-import { createProjectNetwork } from "./project-network.js?v=23";
-import { networkContent } from "./network-view.js?v=23";
-import { buildLabContent, mountBuildLab } from "./build-lab.js?v=23";
+} from "./console-model.js?v=24";
+import { createProjectNetwork } from "./project-network.js?v=24";
+import { networkContent } from "./network-view.js?v=24";
+import { buildLabContent, mountBuildLab } from "./build-lab.js?v=24";
 import { mountRadio } from "./music.js?v=21";
-import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=23";
-import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=23";
-import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=23";
+import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=24";
+import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=24";
+import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=24";
 import { createCityMotion } from "./city-motion.js?v=19";
 import { mountSettings } from "./settings.js?v=18";
 import {
@@ -34,7 +40,7 @@ import {
   introOptions,
   introStorageKey,
 } from "./intro-variants.js?v=17";
-import { mountProjectTerminal } from "./project-terminal.js?v=23";
+import { mountProjectTerminal } from "./project-terminal.js?v=24";
 import { photoCredit } from "./photo.js?v=11";
 
 const $ = (s) => document.querySelector(s);
@@ -59,7 +65,9 @@ const write = (key, value) => {
 let saved = savedIds(read("hirsu-saved-projects")),
   route = "index",
   category = "all",
-  query = "";
+  query = "",
+  availability = "all",
+  sort = "updated";
 let expanded = new Set(),
   shots = new Map(),
   networkCleanup = null,
@@ -289,13 +297,15 @@ function progress(p) {
 function card(p, i) {
   return `<article class="project-card" tabindex="-1" data-project="${p.id}" aria-labelledby="title-${p.id}" style="animation-delay:${Math.min(i, 5) * 30}ms">
     <a class="card-art" href="#${p.id}" aria-label="View ${esc(p.title)}"><img src="${p.image}" alt="${esc(p.alt)}" loading="lazy" width="1200" height="750" /><span>${esc(p.caption)}</span></a><div class="card-meta"><span class="owner">@hirsu</span><span class="card-category">${esc(p.category.toLowerCase())}</span><span class="project-status ${p.statusClass || ""}">${esc(p.status)}</span></div>
-    <h3 id="title-${p.id}"><a href="#${p.id}">${esc(p.title)}</a></h3><p class="description">${esc(p.description)}</p>
+    <h3 id="title-${p.id}"><a href="#${p.id}">${esc(p.title)}</a></h3>${projectDate(p)}<p class="description">${esc(p.description)}</p>
     <div class="tags">${p.tags.map((t) => `<button class="tag" data-tag="${esc(t)}" aria-label="Search projects for ${esc(t)}">${esc(t.toLowerCase())}</button>`).join("")}</div>
-    <div class="card-actions"><a href="#${p.id}" aria-label="Open ${esc(p.title)}">[↵] Open</a><button data-save="${p.id}" aria-pressed="${saved.has(p.id)}" aria-label="${saved.has(p.id) ? "Unsave" : "Save"} ${esc(p.title)}">[S] ${saved.has(p.id) ? "Saved" : "Save"}</button><button data-expand="${p.id}" aria-expanded="${expanded.has(p.id)}" aria-controls="expand-${p.id}" aria-label="${expanded.has(p.id) ? "Collapse" : "Expand"} ${esc(p.title)}">[E] ${expanded.has(p.id) ? "Collapse" : "Expand"}</button>${sourceLink(p, "[↗] Source")}</div>
+    <div class="card-actions"><a href="#${p.id}" aria-label="Open ${esc(p.title)}">[↵] Open</a>${p.demo ? `<a class="demo-link" href="${esc(p.demo)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(p.demoLabel || "Open browser app")} — ${esc(p.title)}">[↗] ${esc(p.demoLabel || "Try in browser")}</a>` : ""}<button data-save="${p.id}" aria-pressed="${saved.has(p.id)}" aria-label="${saved.has(p.id) ? "Unsave" : "Save"} ${esc(p.title)}">[S] ${saved.has(p.id) ? "Saved" : "Save"}</button><button data-expand="${p.id}" aria-expanded="${expanded.has(p.id)}" aria-controls="expand-${p.id}" aria-label="${expanded.has(p.id) ? "Collapse" : "Expand"} ${esc(p.title)}">[E] ${expanded.has(p.id) ? "Collapse" : "Expand"}</button>${sourceLink(p, "[↗] Source")}</div>
     <div class="expanded-content" id="expand-${p.id}" ${expanded.has(p.id) ? "" : "hidden"}>${progress(p)}<a class="bracket" href="#${p.id}">[ View project / images → ]</a></div>
   </article>`;
 }
 function renderFeed() {
+  pageCleanup?.();
+  pageCleanup = null;
   screen.innerHTML =
     pageHead(
       "PROJECT.ARCHIVE",
@@ -306,6 +316,7 @@ function renderFeed() {
       ["all", "Index"],
       ["software", "Software"],
       ["hardware", "Hardware"],
+      ["robotics", "Robotics"],
       ["homelab", "Home lab"],
       ["saved", "Saved"],
     ]
@@ -315,15 +326,20 @@ function renderFeed() {
       )
       .join(
         "",
-      )}</div><label class="search-wrap"><span class="sr-only">Search projects</span><input id="project-search" type="search" value="${esc(query)}" maxlength="120" placeholder="Search projects…" autocomplete="off" /></label></div><div class="feed-heading"><h2 id="feed-caption"></h2><span id="result-count"></span></div><div class="project-list" id="project-list"></div></section>`;
+      )}</div><label class="search-wrap"><span class="sr-only">Search projects</span><input id="project-search" type="search" value="${esc(query)}" maxlength="120" placeholder="Search projects…" autocomplete="off" /></label></div>${archiveOptions({ availability, sort })}<div class="feed-heading"><h2 id="feed-caption"></h2><span id="result-count" role="status" aria-live="polite" aria-atomic="true"></span></div><div class="project-list" id="project-list"></div></section>`;
   $("#project-search").addEventListener("input", (e) => {
     query = e.target.value;
+    renderCards();
+  });
+  pageCleanup = mountArchiveOptions(screen, (options) => {
+    availability = options.availability;
+    sort = options.sort;
     renderCards();
   });
   renderCards();
 }
 function renderCards() {
-  const results = findProjects({ category, query, saved });
+  const results = findProjects({ category, query, saved, availability, sort });
   $("#feed-caption").textContent =
     category === "saved"
       ? "Your saved projects · stored on this browser"
@@ -407,7 +423,7 @@ function gallery(p) {
 function renderProject(p) {
   const images = gallery(p),
     at = shots.get(p.id) || 0;
-  screen.innerHTML = `<a class="back-link" href="#projects">← Back to all projects</a><header class="page-head"><div><p class="eyebrow">PROJECT / ${String(projects.indexOf(p) + 1).padStart(2, "0")} / ${esc(p.category)}</p><h1>${esc(p.title)}</h1><p>${esc(p.subtitle)}</p><div class="detail-links">${p.demo ? `<a class="bracket" href="${esc(p.demo)}">[ Open working prototype ↗ ]</a>` : ""}${sourceLink(p, "[ Source & setup ↗ ]")}<button class="bracket" data-save="${p.id}" aria-pressed="${saved.has(p.id)}" aria-label="${saved.has(p.id) ? "Unsave" : "Save"} ${esc(p.title)}">[ ${saved.has(p.id) ? "Saved" : "Save project"} ]</button></div></div><span class="project-badge ${p.statusClass || ""}">${esc(p.status)}</span></header>
+  screen.innerHTML = `<a class="back-link" href="#projects">← Back to all projects</a><header class="page-head"><div><p class="eyebrow">PROJECT / ${String(projects.indexOf(p) + 1).padStart(2, "0")} / ${esc(p.category)}</p><h1>${esc(p.title)}</h1><p>${esc(p.subtitle)}</p><div class="detail-links">${p.demo ? `<a class="bracket" href="${esc(p.demo)}" target="_blank" rel="noopener noreferrer">[ ${esc(p.demoLabel || "Open working prototype")} ↗ ]</a>` : ""}${sourceLink(p, "[ Source & setup ↗ ]")}<button class="bracket" data-save="${p.id}" aria-pressed="${saved.has(p.id)}" aria-label="${saved.has(p.id) ? "Unsave" : "Save"} ${esc(p.title)}">[ ${saved.has(p.id) ? "Saved" : "Save project"} ]</button></div></div><span class="project-badge ${p.statusClass || ""}">${esc(p.status)}</span></header>
   <div class="detail-layout"><section class="panel"><h2>01 / The idea</h2><p>${esc(p.overview)}</p></section><section class="panel"><h2>02 / What it does</h2><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section><section class="panel"><h2>03 / Current state</h2><p class="status-note">${esc(p.progress)}</p>${statusPanel(p)}</section>
   <figure class="project-media"><button class="media-open" data-preview="${p.id}" aria-label="Enlarge ${esc(p.title)} image"><img id="project-image" src="${images[at].image}" alt="${esc(images[at].alt)}" /></button><figcaption id="project-caption">${esc(images[at].caption)}</figcaption>${images.length > 1 ? `<div class="gallery-controls"><button data-shot="-1" aria-label="Previous project image">←</button><span id="shot-position">${at + 1} / ${images.length}</span><button data-shot="1" aria-label="Next project image">→</button></div>` : ""}</figure>
   <p class="detail-evidence">SOURCE NOTE / ${esc(p.evidence)}</p></div>`;
@@ -467,16 +483,29 @@ function renderNetwork() {
   networkCleanup = createProjectNetwork($("#network-shell"));
 }
 function renderStack() {
-  const counts = languageCounts(),
-    days = calendarDays();
+  const repos = repositorySnapshot.repositories,
+    counts = languageCounts(repos);
   screen.innerHTML =
     pageHead(
       "03",
       "Tools, not skill bars.",
       "What actually appears in the public projects. Counts are repositories, not self-rated proficiency.",
     ) +
-    `<div class="stack-grid"><section class="panel"><h2>Languages / 5 original repos / dated snapshot</h2>${counts.map(([name, count]) => `<div class="language-row"><span>${esc(name)}</span><div class="language-bar" aria-hidden="true"><i style="width:${(count / 5) * 100}%"></i></div><span>${count} / 5</span></div>`).join("")}</section><section class="panel"><h2>Software ↔ physical world</h2><p>Python / FastAPI / SQLite for local tools. JavaScript for the web. SwiftUI for a personal iOS interface.</p><p>KiCad and CAD for electronics. CircuitPython for USB HID. QML / Quickshell for a custom Linux desktop.</p><p>Raspberry Pi, Pi-hole, VPN, and Tailscale for home services. Existing local language models behind the NEXUS interface.</p><p class="fineprint">These are project tools, not certifications or claims of expertise. Hardware validation is still pending where noted.</p></section></div>
-  <section class="panel" style="margin-top:18px"><h2>Public commit snapshot / 78 authored commits</h2><div class="calendar" role="img" aria-label="78 authored public default-branch commits in the bounded April to October 20, 2026 snapshot. Highest recorded day: 38 commits on October 7.">${days.map((d) => `<span data-level="${d.count > 10 ? 3 : d.count > 2 ? 2 : d.count > 0 ? 1 : 0}" data-future="${d.future}" title="${d.date}: ${d.count} commits"></span>`).join("")}</div><p class="fineprint">Snapshot: ${snapshot.date}. Five public project repositories plus this portfolio. Not a live GitHub contribution calendar. Repository language counts exclude the portfolio. Public REST sources and refresh instructions are in the <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io#grounded-content--data" target="_blank" rel="noopener noreferrer">README ↗</a>.</p></section>`;
+    `<div class="stack-grid"><section class="panel"><h2>Languages / ${repos.length} public project repos</h2><p class="fineprint">GitHub language snapshot · ${repositorySnapshot.date}. A repository can contain several languages.</p>${counts.map(([name, count]) => `<div class="language-row"><span>${esc(name)}</span><div class="language-bar" aria-hidden="true"><i style="width:${(count / repos.length) * 100}%"></i></div><span>${count} / ${repos.length}</span></div>`).join("")}</section><section class="panel"><h2>Software ↔ physical world</h2><p>Python / FastAPI / SQLite for local tools. JavaScript for the web. SwiftUI for a personal iOS interface.</p><p>Three.js and Rapier for browser robot practice. KiCad and CAD for electronics. CircuitPython for USB HID. QML / Quickshell for a custom Linux desktop.</p><p>Raspberry Pi, Pi-hole, VPN, and Tailscale for home services. Existing local language models behind the NEXUS interface.</p><p class="fineprint">These are project tools, not certifications or claims of expertise. Hardware validation is still pending where noted.</p></section></div>
+  <section class="panel repo-activity"><h2>Latest repository activity</h2><p>Last default-branch commit in each project, checked ${repositorySnapshot.date}. Documentation and cleanup changes count too; these dates do not mean a hardware test or new release.</p><ul>${[
+    ...repos,
+  ]
+    .sort(
+      (a, b) =>
+        b.updated.localeCompare(a.updated) || a.name.localeCompare(b.name),
+    )
+    .map(
+      (repo) =>
+        `<li><time datetime="${repo.updated}">${repo.updated}</time><a href="https://github.com/hrushikbarani-hub/${repo.name}" target="_blank" rel="noopener noreferrer">${esc(repo.name)} ↗</a><a href="${repo.url}" target="_blank" rel="noopener noreferrer">${esc(repo.commit)} ↗</a></li>`,
+    )
+    .join(
+      "",
+    )}</ul><p class="fineprint">A saved public snapshot, refreshed with the site. The portfolio itself is excluded. <a href="https://github.com/hrushikbarani-hub/hrushikbarani-hub.github.io#privacy-and-accuracy" target="_blank" rel="noopener noreferrer">Data sources &amp; refresh notes ↗</a></p></section>`;
 }
 function renderLog() {
   screen.innerHTML = workbenchContent();
@@ -609,6 +638,8 @@ screen.addEventListener("click", (e) => {
   if (b.hasAttribute("data-reset-feed")) {
     query = "";
     category = "all";
+    availability = "all";
+    sort = "updated";
     if (route === "saved") {
       location.hash = "projects";
     } else {
@@ -812,3 +843,9 @@ setView(interfaceFromSearch(location.search, read("hirsu-city-view-v9")), {
 refreshMotion();
 renderRoute();
 cityMotion.opening();
+document.querySelectorAll("[data-project-count]").forEach((node) => {
+  node.textContent = projects.length;
+});
+document.querySelectorAll("[data-repo-count]").forEach((node) => {
+  node.textContent = projects.filter((p) => p.source).length;
+});

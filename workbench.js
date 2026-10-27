@@ -1,11 +1,11 @@
-import { projects } from "./projects.js?v=23";
-import { escapeHTML as esc } from "./console-model.js?v=23";
+import { projects } from "./projects.js?v=24";
+import { escapeHTML as esc } from "./console-model.js?v=24";
 import {
   buildEntries,
   filterEntries,
   statusTypes,
   experiments,
-} from "./workbench-data.js?v=23";
+} from "./workbench-data.js?v=24";
 
 const projectById = (id) => projects.find((p) => p.id === id);
 const date = (value) =>

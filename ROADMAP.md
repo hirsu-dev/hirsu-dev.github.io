@@ -22,7 +22,14 @@ Work through each phase as a usable release, with setup instructions and honest 
 | Benchbook           | [Open](https://hrushikbarani-hub.github.io/repair-parts-tracker/)       | [Source](https://github.com/hrushikbarani-hub/repair-parts-tracker)       |
 | Fieldnotes          | [Open](https://hrushikbarani-hub.github.io/offline-project-notebook/)   | [Source](https://github.com/hrushikbarani-hub/offline-project-notebook)   |
 
-All seven GitHub check/deploy workflows succeeded. The portfolio now includes 14 projects, 12 public code repositories, a 14-constellation Atlas, searchable status/build notes and working prototype links. It has 138 passing checks; the app repositories have 50 more. These are usable first releases, not a claim of completed real-device testing.
+All seven original app check/deploy workflows succeeded. These are usable first releases, with device review still pending.
+
+## October 27 portfolio refresh
+
+- Added [BIOBUZZ Simulator](https://hrushikbarani-hub.github.io/biobuzz-simulator/) with a project page, original field diagram, build note and JavaScript/robotics Atlas connections. The portfolio now contains 15 projects and 13 public code repositories.
+- Featured BIOBUZZ, Hyprland Forge and Fieldnotes on the home page. Added direct browser-app links, availability filtering, update-date/name sorting and repository dates to the archive.
+- Refreshed the Stack page from all 13 public project repositories. Exact default-branch commit links and language lists are saved in `repository-data.js`; private repositories and the portfolio are excluded.
+- All 144 portfolio checks pass. All eight public browser apps returned HTTP 200. Visual browser controls were unavailable; real-device and screen-reader review remains next.
 
 ## Next milestone: real usage and device review
 

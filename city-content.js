@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=23";
-import { escapeHTML as esc } from "./console-model.js?v=23";
+import { projects } from "./projects.js?v=24";
+import { escapeHTML as esc } from "./console-model.js?v=24";
 import { cityPhoto, photoCredit } from "./photo.js?v=11";
 
 export const featuredIds = ["maintaineros", "civiclens", "custom-keyboard"];

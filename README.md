@@ -4,11 +4,11 @@
 
 This is my personal portfolio and project hub. It is a static website hosted on GitHub Pages. It has no backend, account system, paid domain, first-party analytics, or runtime npm dependencies.
 
-The site includes 14 projects, four interface layouts, a searchable project archive, an interactive project map, build logs, accessibility settings, and an optional music player. Most content and settings stay in your browser. The music player tries to start quietly at 15% volume. Browsers may require a Play/Retry click. Stellarium Web is available as an optional external embed.
+The site includes 15 projects, four interface layouts, a searchable project archive, an interactive project map, build logs, accessibility settings, and an optional music player. Most content and settings stay in your browser. The music player tries to start quietly at 15% volume. Browsers may require a Play/Retry click. Stellarium Web is available as an optional external embed.
 
 ## Projects
 
-The portfolio covers 12 public code projects and two personal builds. The original work includes:
+The portfolio covers 13 public code projects and two personal builds. The original work includes:
 
 - **Custom Keyboard / NEXUS Macro Pad:** a six-key macro pad with an OLED screen. The PCB, case, and firmware are in progress; physical fit has not been confirmed.
 - **NEXUS Mobile:** an experimental iOS companion app for local models and home services. It does not train its own AI model.
@@ -18,7 +18,9 @@ The portfolio covers 12 public code projects and two personal builds. The origin
 - **Robo Telescope:** a telescope project that is currently under repair. The site demo does not control real hardware.
 - **Raspberry Pi Home Lab:** a home setup with services such as Pi-hole, Tailscale, and VPN tools. The site does not connect to or scan the network.
 
-Seven version 0.1 tools now have their own repositories and free browser editions:
+The latest addition is **[BIOBUZZ Simulator](https://hrushikbarani-hub.github.io/biobuzz-simulator/)**: browser-based 3D robot practice with ten presets, 2-vs-2 matches and touch, keyboard or gamepad controls. Physics and scoring are simplified. Its Java editor saves drafts; the browser does not execute FTC Java. [Source and setup](https://github.com/hrushikbarani-hub/biobuzz-simulator).
+
+Seven version 0.1 tools also have their own repositories and free browser editions:
 
 | Project                       | Browser app                                                               | Source and local setup                                                        |
 | ----------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
@@ -36,7 +38,7 @@ The portfolio labels illustrations, CAD previews, screenshots, and demos so they
 
 ## Using the site
 
-- Browse projects by searching, filtering, opening, or saving them in your browser.
+- Browse projects by searching, filtering by topic or browser availability, sorting by update date or name, and saving them on this device. Browser apps have direct links that open in a new tab.
 - Pick an interface layout, color palette, visual effects, and startup animation in **Settings**.
 - Orbit the 3D night-sky project map to explore shared languages, tools and services. Filter connections and select a star to inspect its project.
 - Use keyboard controls and accessibility options such as reduced motion, larger text, and high contrast.
@@ -70,12 +72,13 @@ npx http-server . -p 8130 -a 127.0.0.1 -c-1
 
 Then open [http://127.0.0.1:8130/](http://127.0.0.1:8130/). The site uses JavaScript modules, so serve it over HTTP instead of opening `index.html` directly. The preview server supports HTTP range requests so full-song seeking works.
 
-All 138 portfolio checks pass, covering project data, routes, settings, keyboard controls, animations, 3D geometry, audio lifecycle, interactive demos, build-note filters, experiments and the expanded Atlas. The seven app repositories have another 50 passing checks in total. Earlier browser checks covered the original desktop/mobile telescope controls, Stellarium rendering, blocked-autoplay fallback and background playback. The v23 integration passed DOM and geometry checks; visual browser controls were unavailable in this development session. Actual offline reload, screen-reader use, Mobile Safari and lock-screen behavior remain device checks to perform.
+All 144 portfolio checks passed on October 27, 2026. They cover project data, routes, settings, keyboard controls, animations, 3D geometry, audio lifecycle, interactive demos, filters, date sorting, experiments and the expanded Atlas. The full DOM workflow checks browser-only filtering, an empty result, reset, sorting, BIOBUZZ navigation, the Stack page and switching layouts. All eight browser-app links returned HTTP 200. Each standalone app keeps its own checks. Visual browser controls were unavailable for this update; responsive appearance, actual offline reload, screen-reader use, Mobile Safari and lock-screen behavior still need device review.
 
 ## Main files
 
 - `index.html` — page shell and navigation
-- `projects.js`, `new-projects.js`, `stack-data.js` — project details and dated GitHub activity snapshot
+- `projects.js`, `new-projects.js`, `repository-data.js` — project details and the current dated GitHub snapshot
+- `discovery.js`, `discovery.css` — latest-work feature and archive availability/sort controls
 - `workbench-data.js`, `workbench.js`, `workbench.css` — status board, dated notes and experiments
 - `console.js`, `console-model.js` — routes, search, bookmarks, and project views
 - `settings.js`, `settings-model.js` — preferences and local storage
@@ -91,7 +94,9 @@ Some older files and sections remain in the repository for history, but are not 
 
 The site does not publish home network details, credentials, private contact information, or backend endpoints. Bookmarks and settings are stored in your browser. If browser storage is blocked, some features work only for the current session.
 
-The activity and language information on the Stack page comes from a dated snapshot of the five original public code projects, not all 12 current code projects or a live GitHub connection. Language counts show which repositories use a language; they do not measure skill. Demo records and maps are clearly labeled as examples or illustrations.
+The Stack page uses `repository-data.js`, checked on October 27, 2026, for all 13 public project repositories. It excludes the portfolio and private repositories. Language counts come from each public GitHub REST `/repos/hrushikbarani-hub/{repo}/languages` response. Latest activity comes from `/commits?per_page=1` on each default branch, with a link to the exact commit. These dates include documentation and cleanup; they do not imply a new release or a physical test. No GitHub API is called by visitors.
+
+To refresh, list the public personal repositories, compare their current READMEs, and update the saved language lists, default-branch commit SHAs, messages and UTC dates. Keep hardware status tied to actual evidence. `stack-data.js` retains the older bounded calendar data for compatibility; it is no longer the displayed activity source. Demo records and maps are labeled as examples or illustrations.
 
 ## Deploy
 

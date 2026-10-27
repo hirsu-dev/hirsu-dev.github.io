@@ -68,8 +68,7 @@
           document.documentElement.dataset.contrast = "high";
         if (preferences.underlineLinks === true)
           document.documentElement.dataset.links = "underlined";
-      } catch {
-      }
+      } catch {}
     </script>
     <link rel="stylesheet" href="console.css?v=5" />
     <link rel="stylesheet" href="city.css?v=6" />
@@ -77,20 +76,21 @@
     <link rel="stylesheet" href="city-upgrade.css?v=8" />
     <link rel="stylesheet" href="overdrive.css?v=9" />
     <link rel="stylesheet" href="cyber-hud.css?v=10" />
-    <link rel="stylesheet" href="terminal-ui.css?v=23" />
+    <link rel="stylesheet" href="terminal-ui.css?v=24" />
     <link rel="stylesheet" href="intro-variants.css?v=13" />
     <link rel="stylesheet" href="intro-scenes.css?v=13" />
     <link rel="stylesheet" href="settings.css?v=14" />
     <link rel="stylesheet" href="side-channel.css?v=19" />
     <link rel="stylesheet" href="layouts.css?v=16" />
     <link rel="stylesheet" href="music.css?v=21" />
-    <link rel="stylesheet" href="constellation.css?v=23" />
+    <link rel="stylesheet" href="constellation.css?v=24" />
     <link rel="stylesheet" href="motion-upgrade.css?v=18" />
     <link rel="stylesheet" href="switchboard.css?v=18" />
     <link rel="stylesheet" href="build-lab.css?v=19" />
     <link rel="stylesheet" href="observatory.css?v=21" />
-    <link rel="stylesheet" href="workbench.css?v=23" />
-    <script type="module" src="console.js?v=23"></script>
+    <link rel="stylesheet" href="workbench.css?v=24" />
+    <link rel="stylesheet" href="discovery.css?v=24" />
+    <script type="module" src="console.js?v=24"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -265,7 +265,8 @@
             </div>
             <span class="art-label">PERSONAL PROJECT NETWORK</span>
             <div class="identity-numbers">
-              <span><b>14</b> projects</span><span><b>12</b> public repos</span>
+              <span><b data-project-count>15</b> projects</span
+              ><span><b data-repo-count>13</b> public repos</span>
             </div>
           </div>
           <div class="theme-strip">
@@ -340,7 +341,7 @@
         ><span class="keyboard-hint"
           ><kbd>↑ ↓</kbd> Navigate <kbd>↵</kbd> Open <kbd>S</kbd> Save</span
         ><span class="system-end" id="system-status"
-          >14 projects / static archive</span
+          ><span data-project-count>15</span> projects / static archive</span
         ><button id="help-button" aria-haspopup="dialog">[?] Help</button>
       </footer>
     </div>
