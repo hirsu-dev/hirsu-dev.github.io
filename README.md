@@ -70,7 +70,7 @@ npx http-server . -p 8130 -a 127.0.0.1 -c-1
 
 Then open [http://127.0.0.1:8130/](http://127.0.0.1:8130/). The site uses JavaScript modules, so serve it over HTTP instead of opening `index.html` directly. The preview server supports HTTP range requests so full-song seeking works.
 
-All 138 portfolio checks pass, covering project data, routes, settings, keyboard controls, animations, 3D geometry, audio lifecycle, interactive demos, build-note filters, experiments and the expanded Atlas. The seven app repositories have another 50 passing checks in total. Earlier browser checks covered the original desktop/mobile telescope controls, Stellarium rendering, blocked-autoplay fallback and background playback. The v23 integration passed DOM and geometry checks; visual browser controls were unavailable in this development session. Actual offline reload, screen-reader use, Mobile Safari and lock-screen behavior remain device checks to perform.
+The automated suite covers project data, routing, settings, keyboard controls, animation lifecycles, 3D geometry, audio, interactive demos and build notes. Earlier browser checks covered telescope controls, Stellarium rendering, blocked autoplay and background playback. Offline reload, screen-reader use, Mobile Safari and lock-screen behavior still need device testing.
 
 ## Main files
 
