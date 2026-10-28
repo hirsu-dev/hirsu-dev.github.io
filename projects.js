@@ -30,7 +30,7 @@ export const projects = [
     source: null,
     sourceLabel: null,
     evidence:
-      "Project description and current status supplied by Hrushi, October 2026.",
+      "Project description and current status supplied by hirsu, October 2026.",
   },
   {
     id: "nexus-ai",
@@ -55,7 +55,7 @@ export const projects = [
     ],
     progress:
       "Experimental SwiftUI source. Running it requires Xcode, signing, and the corresponding backend services. The AI interface selects existing models, with computation provided by the local service.",
-    source: "https://github.com/hrushikbarani-hub/nexus-mobile",
+    source: "https://github.com/hirsu-dev/nexus-mobile",
     sourceLabel: "Explore the repository",
     evidence: "Public README and ContentView.swift in nexus-mobile.",
   },
@@ -84,7 +84,7 @@ export const projects = [
       "A personal setup centered on network ad blocking and remote access. The diagram shows the main services in the home lab.",
     source: null,
     sourceLabel: null,
-    evidence: "Home lab description supplied by Hrushi, October 2026.",
+    evidence: "Home lab description supplied by hirsu, October 2026.",
   },
   {
     id: "custom-keyboard",
@@ -109,7 +109,7 @@ export const projects = [
     ],
     progress:
       "Design files and firmware source are prepared. Physical assembly, component clearances, and fit still need to be verified. The image shows the CAD design and nominal electronics fit.",
-    source: "https://github.com/hrushikbarani-hub/custom-keyboard",
+    source: "https://github.com/hirsu-dev/custom-keyboard",
     sourceLabel: "Explore the repository",
     evidence:
       "Public custom-keyboard README and photos/README.md. The CAD preview comes from that repository.",
@@ -149,7 +149,7 @@ export const projects = [
     ],
     progress:
       "Version 0.3 is published as a runnable local application with a CLI and Docker setup. The screenshot includes labeled fictional demo data. Source and setup instructions are available on GitHub.",
-    source: "https://github.com/hrushikbarani-hub/maintaineros",
+    source: "https://github.com/hirsu-dev/maintaineros",
     sourceLabel: "Explore the repository",
     evidence: "Published MaintainerOS README and source at version 0.3.",
   },
@@ -176,7 +176,7 @@ export const projects = [
     ],
     progress:
       "Version 0.3 is published as a runnable local application. Its included municipal records are fictional demonstrations. Real records can be imported as validated JSON bundles or converted from CSV.",
-    source: "https://github.com/hrushikbarani-hub/civiclens",
+    source: "https://github.com/hirsu-dev/civiclens",
     sourceLabel: "Explore the repository",
     evidence: "Published CivicLens README and source at version 0.3.",
   },
@@ -203,7 +203,7 @@ export const projects = [
     ],
     progress:
       "Still in development. Configuration and runtime checks have passed in test environments, and recent work improves controls on small, scaled surfaces. Daily-use readiness and support on the target physical laptop still need testing.",
-    source: "https://github.com/hrushikbarani-hub/hyprland-forge",
+    source: "https://github.com/hirsu-dev/hyprland-forge",
     sourceLabel: "Explore the repository",
     evidence:
       "Public README, project.json and default-branch commits, reviewed October 27, 2026.",

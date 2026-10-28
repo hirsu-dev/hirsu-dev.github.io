@@ -14,7 +14,7 @@ Official references inspected: https://www.cyberpunk.net/us/en/ and https://www.
 
 Nightshift takes cues from Cyberpunk 2077's acid yellow, black, red/cyan interface lines, condensed typography and clipped geometry. Overdrive uses the anime's hard-edged color blocking, chartreuse, violet shadows and high-energy composition. No franchise artwork, character art, logos or source code is republished.
 
-Original hero asset: assets/night-city-builder.png. Generated using the built-in image-generation tool, not the CLI. Fictional anonymous technician; not a portrait of Hrushi. Original scene artwork, not an official franchise asset.
+Original hero asset: assets/night-city-builder.png. Generated using the built-in image-generation tool, not the CLI. Fictional anonymous technician; not a portrait of hirsu. Original scene artwork, not an official franchise asset.
 
 ## Final generation prompt
 

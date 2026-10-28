@@ -5,7 +5,7 @@ Artwork generated October 20, 2026; implementation completed October 21, 2026.
 ## Artwork provenance
 
 - Built-in image-generation tool, fresh generation, opaque background.
-- Asset: assets/night-city-engineer-v8.png. Original fictional key art, not a portrait of Hrushi or evidence of a real build.
+- Asset: assets/night-city-engineer-v8.png. Original fictional key art, not a portrait of hirsu or evidence of a real build.
 - Delivered PNG dimensions: 1672 × 941, verified from the PNG header. The prompt requests 4K detail, but the delivered asset is not 4K. It is a new, more detailed composition, not an upscaled version of the previous art.
 
 ### Exact generation prompt

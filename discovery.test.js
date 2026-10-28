@@ -120,7 +120,7 @@ test("the latest-work feature has playable links, labeled diagrams and no embedd
     host = win.document.createElement("main");
   host.innerHTML = recentWork();
   const play = host.querySelector(
-    `a[href="https://hrushikbarani-hub.github.io/biobuzz-simulator/"]`,
+    `a[href="https://hirsu-dev.github.io/biobuzz-simulator/"]`,
   );
   assert.equal(play.target, "_blank");
   assert.match(play.rel, /noopener/);

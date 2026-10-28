@@ -23,9 +23,9 @@ export const newProjects = [
     caption: "Original simulation diagram · not a gameplay screenshot",
     overview:
       "Drive one robot alongside an AI teammate against two AI opponents. Three.js draws the field and Rapier handles rigid-body physics on the visitor's device. Quick matches, full matches and free drive support different kinds of driver practice.",
-    source: "https://github.com/hrushikbarani-hub/biobuzz-simulator",
+    source: "https://github.com/hirsu-dev/biobuzz-simulator",
     sourceLabel: "Source & setup",
-    demo: "https://hrushikbarani-hub.github.io/biobuzz-simulator/",
+    demo: "https://hirsu-dev.github.io/biobuzz-simulator/",
     demoLabel: "Play BIOBUZZ",
     evidence:
       "Public README, package and default-branch commit 99c93d0, reviewed October 27, 2026.",
@@ -53,9 +53,9 @@ export const newProjects = [
     caption: "Original app diagram · not a screenshot",
     overview:
       "Plan observing windows, compare approximate target altitude and keep a local field journal.",
-    source: "https://github.com/hrushikbarani-hub/observatory-planner",
+    source: "https://github.com/hirsu-dev/observatory-planner",
     sourceLabel: "Source & local setup",
-    demo: "https://hrushikbarani-hub.github.io/observatory-planner/",
+    demo: "https://hirsu-dev.github.io/observatory-planner/",
     evidence:
       "Published version 0.1 README, source, local checks and GitHub deployment.",
   },
@@ -82,9 +82,9 @@ export const newProjects = [
     caption: "Original app diagram · not a screenshot",
     overview:
       "Simulate telescope mount paths, cable travel limits and angle-space exclusion zones before touching a motor.",
-    source: "https://github.com/hrushikbarani-hub/coordinate-motor-simulator",
+    source: "https://github.com/hirsu-dev/coordinate-motor-simulator",
     sourceLabel: "Source & local setup",
-    demo: "https://hrushikbarani-hub.github.io/coordinate-motor-simulator/",
+    demo: "https://hirsu-dev.github.io/coordinate-motor-simulator/",
     evidence:
       "Published version 0.1 README, source, local checks and GitHub deployment.",
   },
@@ -111,9 +111,9 @@ export const newProjects = [
     caption: "Original app diagram · not a screenshot",
     overview:
       "A private service dashboard with incident history, connection latency and honest sample coverage.",
-    source: "https://github.com/hrushikbarani-hub/homelab-health",
+    source: "https://github.com/hirsu-dev/homelab-health",
     sourceLabel: "Source & local setup",
-    demo: "https://hrushikbarani-hub.github.io/homelab-health/",
+    demo: "https://hirsu-dev.github.io/homelab-health/",
     evidence:
       "Published version 0.1 README, source, local checks and GitHub deployment.",
   },
@@ -140,9 +140,9 @@ export const newProjects = [
     caption: "Original app diagram · not a screenshot",
     overview:
       "Audit DNS blocking from local files while retaining aggregate counts instead of browsing histories.",
-    source: "https://github.com/hrushikbarani-hub/network-privacy-auditor",
+    source: "https://github.com/hirsu-dev/network-privacy-auditor",
     sourceLabel: "Source & local setup",
-    demo: "https://hrushikbarani-hub.github.io/network-privacy-auditor/",
+    demo: "https://hirsu-dev.github.io/network-privacy-auditor/",
     evidence:
       "Published version 0.1 README, source, local checks and GitHub deployment.",
   },
@@ -169,9 +169,9 @@ export const newProjects = [
     caption: "Original app diagram · not a screenshot",
     overview:
       "Explore a licensed bright-star catalog through a searchable list, a chart, or a text-only view.",
-    source: "https://github.com/hrushikbarani-hub/accessible-star-map",
+    source: "https://github.com/hirsu-dev/accessible-star-map",
     sourceLabel: "Source & local setup",
-    demo: "https://hrushikbarani-hub.github.io/accessible-star-map/",
+    demo: "https://hirsu-dev.github.io/accessible-star-map/",
     evidence:
       "Published version 0.1 README, source, local checks and GitHub deployment.",
   },
@@ -198,9 +198,9 @@ export const newProjects = [
     caption: "Original app diagram · not a screenshot",
     overview:
       "Keep repair history, test outcomes, wiring notes and parts stock together in a local workspace.",
-    source: "https://github.com/hrushikbarani-hub/repair-parts-tracker",
+    source: "https://github.com/hirsu-dev/repair-parts-tracker",
     sourceLabel: "Source & local setup",
-    demo: "https://hrushikbarani-hub.github.io/repair-parts-tracker/",
+    demo: "https://hirsu-dev.github.io/repair-parts-tracker/",
     evidence:
       "Published version 0.1 README, source, local checks and GitHub deployment.",
   },
@@ -227,9 +227,9 @@ export const newProjects = [
     caption: "Original app diagram · not a screenshot",
     overview:
       "Keep project notes, tasks, photos and wiring ideas locally, with backups and an offline app cache.",
-    source: "https://github.com/hrushikbarani-hub/offline-project-notebook",
+    source: "https://github.com/hirsu-dev/offline-project-notebook",
     sourceLabel: "Source & local setup",
-    demo: "https://hrushikbarani-hub.github.io/offline-project-notebook/",
+    demo: "https://hirsu-dev.github.io/offline-project-notebook/",
     evidence:
       "Published version 0.1 README, source, local checks and GitHub deployment.",
   },

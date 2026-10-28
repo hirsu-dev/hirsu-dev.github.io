@@ -318,7 +318,7 @@ test("full app routes new pages, preserves the deck, and retains existing projec
   go("biobuzz-simulator");
   assert.match(h.$("#screen").textContent, /simplified estimates/);
   assert.ok(
-    h.$('a[href="https://hrushikbarani-hub.github.io/biobuzz-simulator/"]'),
+    h.$('a[href="https://hirsu-dev.github.io/biobuzz-simulator/"]'),
   );
   go("stack");
   assert.match(h.$("#screen").textContent, /13 public project repos/);

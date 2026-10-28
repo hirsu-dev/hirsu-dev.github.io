@@ -1,6 +1,6 @@
 # hirsu — from code to the real world
 
-**Live site:** [hrushikbarani-hub.github.io](https://hrushikbarani-hub.github.io/)
+**Live site:** [hirsu-dev.github.io](https://hirsu-dev.github.io/)
 
 This is my personal portfolio and project hub. It is a static website hosted on GitHub Pages. It has no backend, account system, paid domain, first-party analytics, or runtime npm dependencies.
 
@@ -18,19 +18,19 @@ The portfolio covers 13 public code projects and two personal builds. The origin
 - **Robo Telescope:** a telescope project that is currently under repair. The site demo does not control real hardware.
 - **Raspberry Pi Home Lab:** a home setup with services such as Pi-hole, Tailscale, and VPN tools. The site does not connect to or scan the network.
 
-The latest addition is **[BIOBUZZ Simulator](https://hrushikbarani-hub.github.io/biobuzz-simulator/)**: browser-based 3D robot practice with ten presets, 2-vs-2 matches and touch, keyboard or gamepad controls. Physics and scoring are simplified. Its Java editor saves drafts; the browser does not execute FTC Java. [Source and setup](https://github.com/hrushikbarani-hub/biobuzz-simulator).
+The latest addition is **[BIOBUZZ Simulator](https://hirsu-dev.github.io/biobuzz-simulator/)**: browser-based 3D robot practice with ten presets, 2-vs-2 matches and touch, keyboard or gamepad controls. Physics and scoring are simplified. Its Java editor saves drafts; the browser does not execute FTC Java. [Source and setup](https://github.com/hirsu-dev/biobuzz-simulator).
 
 Seven version 0.1 tools also have their own repositories and free browser editions:
 
 | Project                       | Browser app                                                               | Source and local setup                                                        |
 | ----------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Observatory Planner           | [Try it](https://hrushikbarani-hub.github.io/observatory-planner/)        | [Repository](https://github.com/hrushikbarani-hub/observatory-planner)        |
-| Pointing Lab                  | [Try it](https://hrushikbarani-hub.github.io/coordinate-motor-simulator/) | [Repository](https://github.com/hrushikbarani-hub/coordinate-motor-simulator) |
-| Lantern / Homelab Health      | [Try it](https://hrushikbarani-hub.github.io/homelab-health/)             | [Repository](https://github.com/hrushikbarani-hub/homelab-health)             |
-| Quiet Hours / Privacy Auditor | [Try it](https://hrushikbarani-hub.github.io/network-privacy-auditor/)    | [Repository](https://github.com/hrushikbarani-hub/network-privacy-auditor)    |
-| Open Sky                      | [Try it](https://hrushikbarani-hub.github.io/accessible-star-map/)        | [Repository](https://github.com/hrushikbarani-hub/accessible-star-map)        |
-| Benchbook                     | [Try it](https://hrushikbarani-hub.github.io/repair-parts-tracker/)       | [Repository](https://github.com/hrushikbarani-hub/repair-parts-tracker)       |
-| Fieldnotes                    | [Try it](https://hrushikbarani-hub.github.io/offline-project-notebook/)   | [Repository](https://github.com/hrushikbarani-hub/offline-project-notebook)   |
+| Observatory Planner           | [Try it](https://hirsu-dev.github.io/observatory-planner/)        | [Repository](https://github.com/hirsu-dev/observatory-planner)        |
+| Pointing Lab                  | [Try it](https://hirsu-dev.github.io/coordinate-motor-simulator/) | [Repository](https://github.com/hirsu-dev/coordinate-motor-simulator) |
+| Lantern / Homelab Health      | [Try it](https://hirsu-dev.github.io/homelab-health/)             | [Repository](https://github.com/hirsu-dev/homelab-health)             |
+| Quiet Hours / Privacy Auditor | [Try it](https://hirsu-dev.github.io/network-privacy-auditor/)    | [Repository](https://github.com/hirsu-dev/network-privacy-auditor)    |
+| Open Sky                      | [Try it](https://hirsu-dev.github.io/accessible-star-map/)        | [Repository](https://github.com/hirsu-dev/accessible-star-map)        |
+| Benchbook                     | [Try it](https://hirsu-dev.github.io/repair-parts-tracker/)       | [Repository](https://github.com/hirsu-dev/repair-parts-tracker)       |
+| Fieldnotes                    | [Try it](https://hirsu-dev.github.io/offline-project-notebook/)   | [Repository](https://github.com/hirsu-dev/offline-project-notebook)   |
 
 These are working first releases, labeled as prototypes. Astronomy calculations have stated limits, the public health dashboard uses synthetic data, and actual offline reload/screen-reader testing remains unverified. The new cover images are original SVG diagrams, not photographs or claimed screenshots. Each app's README documents its checks and limitations.
 
@@ -94,7 +94,7 @@ Some older files and sections remain in the repository for history, but are not 
 
 The site does not publish home network details, credentials, private contact information, or backend endpoints. Bookmarks and settings are stored in your browser. If browser storage is blocked, some features work only for the current session.
 
-The Stack page uses `repository-data.js`, checked on October 27, 2026, for all 13 public project repositories. It excludes the portfolio and private repositories. Language counts come from each public GitHub REST `/repos/hrushikbarani-hub/{repo}/languages` response. Latest activity comes from `/commits?per_page=1` on each default branch, with a link to the exact commit. These dates include documentation and cleanup; they do not imply a new release or a physical test. No GitHub API is called by visitors.
+The Stack page uses `repository-data.js`, checked on October 27, 2026, for all 13 public project repositories. It excludes the portfolio and private repositories. Language counts come from each public GitHub REST `/repos/hirsu-dev/{repo}/languages` response. Latest activity comes from `/commits?per_page=1` on each default branch, with a link to the exact commit. These dates include documentation and cleanup; they do not imply a new release or a physical test. No GitHub API is called by visitors.
 
 To refresh, list the public personal repositories, compare their current READMEs, and update the saved language lists, default-branch commit SHAs, messages and UTC dates. Keep hardware status tied to actual evidence. `stack-data.js` retains the older bounded calendar data for compatibility; it is no longer the displayed activity source. Demo records and maps are labeled as examples or illustrations.
 

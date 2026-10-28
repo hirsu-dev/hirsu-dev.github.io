@@ -218,8 +218,8 @@ export const experiments = Object.freeze(
       id: "observatory-planner",
       title: "Observatory Planner",
       state: "Prototype · v0.1",
-      source: "https://github.com/hrushikbarani-hub/observatory-planner",
-      demo: "https://hrushikbarani-hub.github.io/observatory-planner/",
+      source: "https://github.com/hirsu-dev/observatory-planner",
+      demo: "https://hirsu-dev.github.io/observatory-planner/",
       project: "robo-telescope",
       purpose:
         "Plan observing sessions, rank visible targets and keep an observation log.",
