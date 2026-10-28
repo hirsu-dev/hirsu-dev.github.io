@@ -21,7 +21,7 @@ const fact = (id) => {
   return `<p class="bl-reality"><b>ACTUAL BUILD / ${esc(p.status)}</b>${esc(p.progress)}<a href="#${p.id}">Read my project file ↗</a></p>`;
 };
 export function buildLabContent() {
-  return `<div class="build-lab"><header class="page-head"><div><p class="eyebrow">HRUSHI / HANDS-ON PROJECTS</p><h1>Inside my<br /><em>workbench.</em></h1><p>A closer look at the things I build. Aim the telescope concept, follow my home-lab services, and try a six-key project navigator.</p></div><span class="bl-stamp">03 DEMOS<br />MY BUILDS<br /><small>NOT LIVE HARDWARE</small></span></header>
+  return `<div class="build-lab"><header class="page-head"><div><p class="eyebrow">HIRSU / HANDS-ON PROJECTS</p><h1>Inside my<br /><em>workbench.</em></h1><p>A closer look at the things I build. Aim the telescope concept, follow my home-lab services, and try a six-key project navigator.</p></div><span class="bl-stamp">03 DEMOS<br />MY BUILDS<br /><small>NOT LIVE HARDWARE</small></span></header>
     <div class="bl-tabs" role="tablist" aria-label="Explore my builds">${[
       ["scope", "01", "Robo Telescope"],
       ["home", "02", "Pi home lab"],

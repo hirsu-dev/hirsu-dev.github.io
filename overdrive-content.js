@@ -30,7 +30,7 @@ export function overdriveHome(network) {
       <div class="hud-frame" aria-hidden="true"><span>OVR_DRIVE // WORKBENCH_OS.11</span><span>PERSONAL ARCHIVE / MANUAL CONTROL</span><i></i><b>+<br />+<br />+<br />+</b></div>
       <div class="terminal-banner">
       <div class="od-hero-copy">
-        <p class="od-kicker od-enter"><i></i> HRUSHI / INDEPENDENT BUILDER</p>
+        <p class="od-kicker od-enter"><i></i> HIRSU / INDEPENDENT BUILDER</p>
         <h1 id="od-title"><span class="od-title-line">HIRSU<span class="od-dot">_</span></span></h1>
         <p class="terminal-tagline od-enter">CODE MEETS THE PHYSICAL WORLD.</p>
         <p class="od-intro od-enter">Useful software. Custom electronics. A telescope, a home lab,<br />and whatever I can get working next.</p>
