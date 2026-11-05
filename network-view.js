@@ -1,7 +1,7 @@
-import { relatedHubs } from "./atlas-model.js?v=24";
-import { skyObjects } from "./sky-model.js?v=24";
-import { projects } from "./projects.js?v=24";
-import { escapeHTML as esc } from "./console-model.js?v=24";
+import { relatedHubs } from "./atlas-model.js?v=27";
+import { skyObjects } from "./sky-model.js?v=27";
+import { projects } from "./projects.js?v=27";
+import { escapeHTML as esc } from "./console-model.js?v=27";
 export const networkLinks = [
   ["maintaineros", "civiclens", "Python · FastAPI · SQLite"],
   ["civiclens", "hyprland-forge", "Python tooling"],
@@ -49,7 +49,7 @@ export const networkLinks = [
 export function networkInspector(index = -1) {
   const p = projects[index];
   if (!p)
-    return `<div><p class="eyebrow">STAR ATLAS / ${projects.length} CONSTELLATIONS</p><h3>Every build leaves a light.</h3><p>Orbit a three-dimensional web of my projects. Bright stars are builds; smaller labeled nodes are shared languages, tools and services. Choose a project to trace its connections.</p></div><div><p class="eyebrow">3D PROJECT UNIVERSE</p><p>A depth-filled, original night sky—not astronomical coordinates or live telemetry. Warm nodes mark language families; cool nodes mark tools and services. Physical builds is a related-work theme, not a shared coding language.</p><a href="#lab">Explore my Build Lab ↗</a></div>`;
+    return `<div><p class="eyebrow">STAR ATLAS / ${projects.length} CONSTELLATIONS</p><h3>Every build leaves a light.</h3><p>Orbit a three-dimensional web of my projects. Bright stars are builds; smaller labeled nodes are shared languages, tools and services. Choose a project to trace its connections.</p></div><div><p class="eyebrow">3D PROJECT UNIVERSE</p><p>A depth-filled, original night sky—not astronomical coordinates or live telemetry. Warm nodes mark language families; cool nodes mark tools and services. Physical builds is a related-work theme, not a shared coding language.</p><a href="#log">Explore my Build notes ↗</a></div>`;
   const neighbors = networkLinks
     .filter(([a, b]) => a === p.id || b === p.id)
     .map(([a, b, why]) => ({

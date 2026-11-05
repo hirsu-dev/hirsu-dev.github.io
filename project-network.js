@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=24";
-import { networkLinks, networkInspector } from "./network-view.js?v=24";
+import { projects } from "./projects.js?v=27";
+import { networkLinks, networkInspector } from "./network-view.js?v=27";
 import {
   atlasPoints,
   atlasProject,
@@ -7,14 +7,14 @@ import {
   atlasFocus,
   atlasHubs,
   atlasDust,
-} from "./atlas-model.js?v=24";
+} from "./atlas-model.js?v=27";
 import {
   skyObjects,
   starfield,
   nearestStar,
   meteorAt,
   clamp,
-} from "./sky-model.js?v=24";
+} from "./sky-model.js?v=27";
 
 export const connections = networkLinks.map(([a, b]) => [a, b]);
 

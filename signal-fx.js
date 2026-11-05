@@ -1,5 +1,5 @@
 const panelSelector =
-  ".od-build,.latest-feature,.recent-secondary article,.project-card,.panel,.nr-window,.relic-file,.sb-console,.sb-patchbay,.project-terminal,.terminal-profile,.wb-entry,.od-stack-grid article,.bl-stage,.network-inspector";
+  ".od-build,.latest-feature,.recent-secondary article,.project-card,.panel,.nr-window,.relic-file,.sb-console,.sb-patchbay,.project-terminal,.terminal-profile,.wb-entry,.od-stack-grid article,.network-inspector,.orbit-reader,.orbit-insight";
 const actionSelector =
   "button,a.od-button,a.bracket,.od-text-link,.layout-action,.city-nav a,.terminal-tabs button";
 const noop = () => {};

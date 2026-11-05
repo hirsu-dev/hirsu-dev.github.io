@@ -1,6 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { telescopeMesh, telescopeParts } from "./telescope-3d.js";
 import { project3, rotate3, insidePolygon } from "./space-math.js";
 import {
   atlasPoints,
@@ -13,28 +12,6 @@ import {
 } from "./atlas-model.js";
 import { projects } from "./projects.js";
 
-test("telescope is a solid 3D assembly; both axes, focus and explosion change its geometry", () => {
-  const initial = telescopeMesh(),
-    serialize = (mesh) => JSON.stringify(mesh);
-  assert.ok(initial.length > 300);
-  assert.equal(
-    new Set(initial.map((f) => f.part)).size,
-    Object.keys(telescopeParts).length,
-  );
-  for (const options of [
-    { az: 90 },
-    { alt: 80 },
-    { focus: 100 },
-    { exploded: true },
-  ])
-    assert.notEqual(serialize(initial), serialize(telescopeMesh(options)));
-  for (const az of [0, 90, 180, 270, 359])
-    for (const alt of [0, 45, 90])
-      for (const face of telescopeMesh({ az, alt, exploded: true })) {
-        assert.ok(face.points.length >= 3);
-        assert.ok(face.points.flat().every(Number.isFinite));
-      }
-});
 test("perspective changes apparent size with depth and orbit preserves length", () => {
   const near = project3([1, 0, 2], {}, 800, 600),
     far = project3([1, 0, -2], {}, 800, 600);

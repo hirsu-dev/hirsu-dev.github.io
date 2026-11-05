@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=24";
-import { buildEntryIds } from "./workbench-data.js?v=24";
+import { projects } from "./projects.js?v=27";
+import { buildEntryIds } from "./workbench-data.js?v=27";
 
 export const projectIds = new Set(projects.map((p) => p.id));
 export function savedIds(raw) {
@@ -60,7 +60,10 @@ export function resolveRoute(hash) {
     whoami: "about",
     themes: "themes",
     settings: "themes",
-    archive: "lab",
+    archive: "projects",
+    lab: "projects",
+    experiments: "projects",
+    radio: "index",
   };
   if (Object.hasOwn(aliases, route)) return aliases[route];
   if (route.startsWith("entry-") && buildEntryIds.has(route.slice(6)))
@@ -76,9 +79,6 @@ export function resolveRoute(hash) {
       "about",
       "saved",
       "themes",
-      "lab",
-      "radio",
-      "experiments",
     ].includes(route)
     ? route
     : "index";

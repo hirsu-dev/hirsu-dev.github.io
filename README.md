@@ -1,103 +1,48 @@
-# hirsu — from code to the real world
+# hirsu — code, circuits and the work behind them
 
-**Live site:** [hirsu-dev.github.io](https://hirsu-dev.github.io/)
+[Live portfolio](https://hirsu-dev.github.io/)
 
-This is my personal portfolio and project hub. It is a static website hosted on GitHub Pages. It has no backend, account system, paid domain, first-party analytics, or runtime npm dependencies.
+A personal portfolio with 15 projects, source links, screenshots, build notes, a stack overview and a project map. It runs on free GitHub Pages without a backend or account.
 
-The site includes 15 projects, four interface layouts, a searchable project archive, an interactive project map, build logs, accessibility settings, and an optional music player. Most content and settings stay in your browser. The music player tries to start quietly at 15% volume. Browsers may require a Play/Retry click. Stellarium Web is available as an optional external embed.
+Settings → Customize has five layouts: Overdrive, Netrunner, Relic, Switchboard and Orbit. Orbit uses a thumbnail project wheel, a terminal-style reader and a branching project map. It takes visual inspiration from [Hancore](https://hancore.dev/site/), with original code and my own project content.
 
-## Projects
+The Build Lab, experiments page, music player and hosted audio files have been removed. The actual telescope, Pi and software projects remain. Old utility links lead back to the archive or home.
 
-The portfolio covers 13 public code projects and two personal builds. The original work includes:
+## Browser apps
 
-- **Custom Keyboard / NEXUS Macro Pad:** a six-key macro pad with an OLED screen. The PCB, case, and firmware are in progress; physical fit has not been confirmed.
-- **NEXUS Mobile:** an experimental iOS companion app for local models and home services. It does not train its own AI model.
-- **Hyprland Forge:** a Linux setup project. Real-hardware testing is still pending.
-- **MaintainerOS:** a local app that helps organize public GitHub issues and pull requests.
-- **CivicLens:** a local app for tracking public decisions and linking them to their sources.
-- **Robo Telescope:** a telescope project that is currently under repair. The site demo does not control real hardware.
-- **Raspberry Pi Home Lab:** a home setup with services such as Pi-hole, Tailscale, and VPN tools. The site does not connect to or scan the network.
+- [BIOBUZZ Simulator](https://hirsu-dev.github.io/biobuzz-simulator/) — 3D robot practice
+- [Observatory Planner](https://hirsu-dev.github.io/observatory-planner/) — approximate observing windows and notes
+- [Pointing Lab](https://hirsu-dev.github.io/coordinate-motor-simulator/) — illustrative mount-path simulation
+- [Lantern](https://hirsu-dev.github.io/homelab-health/) — synthetic service-health demo
+- [Quiet Hours](https://hirsu-dev.github.io/network-privacy-auditor/) — aggregate DNS reports
+- [Open Sky](https://hirsu-dev.github.io/accessible-star-map/) — accessible bright-star catalog
+- [Benchbook](https://hirsu-dev.github.io/repair-parts-tracker/) — repair history and parts
+- [Fieldnotes](https://hirsu-dev.github.io/offline-project-notebook/) — local project notes and backups
 
-The latest addition is **[BIOBUZZ Simulator](https://hirsu-dev.github.io/biobuzz-simulator/)**: browser-based 3D robot practice with ten presets, 2-vs-2 matches and touch, keyboard or gamepad controls. Physics and scoring are simplified. Its Java editor saves drafts; the browser does not execute FTC Java. [Source and setup](https://github.com/hirsu-dev/biobuzz-simulator).
+Project pages keep their source, current state and limitations. The physical telescope is under repair. CAD fit and target-laptop validation remain pending where noted. Media captions distinguish screenshots, CAD and illustrations.
 
-Seven version 0.1 tools also have their own repositories and free browser editions:
+## Run and check
 
-| Project                       | Browser app                                                               | Source and local setup                                                        |
-| ----------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Observatory Planner           | [Try it](https://hirsu-dev.github.io/observatory-planner/)        | [Repository](https://github.com/hirsu-dev/observatory-planner)        |
-| Pointing Lab                  | [Try it](https://hirsu-dev.github.io/coordinate-motor-simulator/) | [Repository](https://github.com/hirsu-dev/coordinate-motor-simulator) |
-| Lantern / Homelab Health      | [Try it](https://hirsu-dev.github.io/homelab-health/)             | [Repository](https://github.com/hirsu-dev/homelab-health)             |
-| Quiet Hours / Privacy Auditor | [Try it](https://hirsu-dev.github.io/network-privacy-auditor/)    | [Repository](https://github.com/hirsu-dev/network-privacy-auditor)    |
-| Open Sky                      | [Try it](https://hirsu-dev.github.io/accessible-star-map/)        | [Repository](https://github.com/hirsu-dev/accessible-star-map)        |
-| Benchbook                     | [Try it](https://hirsu-dev.github.io/repair-parts-tracker/)       | [Repository](https://github.com/hirsu-dev/repair-parts-tracker)       |
-| Fieldnotes                    | [Try it](https://hirsu-dev.github.io/offline-project-notebook/)   | [Repository](https://github.com/hirsu-dev/offline-project-notebook)   |
+Development checks use Node.js 22 or newer:
 
-These are working first releases, labeled as prototypes. Astronomy calculations have stated limits, the public health dashboard uses synthetic data, and actual offline reload/screen-reader testing remains unverified. The new cover images are original SVG diagrams, not photographs or claimed screenshots. Each app's README documents its checks and limitations.
-
-The portfolio labels illustrations, CAD previews, screenshots, and demos so they are not mistaken for photos or verified hardware. Its project map is an illustration, not live network or astronomy data.
-
-## Using the site
-
-- Browse projects by searching, filtering by topic or browser availability, sorting by update date or name, and saving them on this device. Browser apps have direct links that open in a new tab.
-- Pick an interface layout, color palette, visual effects, and startup animation in **Settings**.
-- Orbit the 3D night-sky project map to explore shared languages, tools and services. Filter connections and select a star to inspect its project.
-- Use keyboard controls and accessibility options such as reduced motion, larger text, and high contrast.
-- Open the **Build Lab** to orbit a solid 3D telescope, inspect its parts, extend the focuser, try wireframe or explode the assembly. Azimuth/elevation previews move the model, never real hardware. The Pi and macro-pad demos are still available.
-- **Radio** attempts low-volume startup playback and offers Retry when blocked. × hides every floating player control while music continues; reopen Radio from the menu. Volume, mute, seek, track selection and Stop & unload remain available.
-- **Build logs / status** has a manually reviewed status board, dated notes, project/date/search filters, and a separate link for each note. **Experiments** separates runnable prototypes from any planned work and shows the next step.
-
-## Adding build notes
-
-Edit `workbench-data.js` for status, next steps, notes and planned experiments; `new-projects.js` contains the seven app descriptions, source links and demo links. Experiment cards derive their runnable state from those app records. Review dates describe the content review, not a new hardware test. Each note has a goal, change, limitation, takeaway, next step and a labeled image. Its link is `#entry-<id>`; all notes are at `#log`. See [the phased roadmap](ROADMAP.md) for release evidence and next milestones.
-
-The site makes no runtime API calls for portfolio data. Radio loads the current same-origin track when attempting startup playback or after Play/Retry. Audio files are supplied by the owner. See [the audio credits and usage notice](assets/audio/README.md). The site's code license does not give visitors permission to reuse the music.
-
-## Stellarium and the 3D sky
-
-**Load Stellarium Web** in Build Lab opens the official browser planetarium. Search its sky and use its time, location, constellation and grid controls. Expand/compact and unload controls are included, with a separate-tab fallback. Leaving the build tab or page unloads the embedded app.
-
-This is [Stellarium Web](https://stellarium-labs.com/stellarium-web/), not every feature of desktop Stellarium. It is separate from the telescope model: selecting a star does not move the model or real hardware. The external app contacts Stellarium’s servers and analytics only after Load; this portfolio does not delegate precise-location permission. The [Web Engine](https://github.com/Stellarium/stellarium-web-engine) is AGPL-3.0. No Stellarium source, binary or data was copied or relicensed here; availability is controlled by Stellarium.
-
-The portfolio atlas is a separate, original XYZ project graph with a layered night-sky background. Its language and tool links come from the documented projects. CircuitPython is labeled as a Python-family connection; physical-build links are themes, not invented shared languages. Positions are illustrative, not astronomical coordinates.
-
-## Run it locally
-
-You need Node.js 22 or newer for the development checks. The site itself is static and does not need an npm install to serve.
-
-```powershell
+```sh
 npm ci
 npm run check
-npx http-server . -p 8130 -a 127.0.0.1 -c-1
+npx http-server . -p 8134 -a 127.0.0.1 -c-1
 ```
 
-Then open [http://127.0.0.1:8130/](http://127.0.0.1:8130/). The site uses JavaScript modules, so serve it over HTTP instead of opening `index.html` directly. The preview server supports HTTP range requests so full-song seeking works.
+Open the printed local URL. Serve over HTTP because the site uses JavaScript modules. There is no runtime npm dependency.
 
-All 144 portfolio checks passed on October 27, 2026. They cover project data, routes, settings, keyboard controls, animations, 3D geometry, audio lifecycle, interactive demos, filters, date sorting, experiments and the expanded Atlas. The full DOM workflow checks browser-only filtering, an empty result, reset, sorting, BIOBUZZ navigation, the Stack page and switching layouts. All eight browser-app links returned HTTP 200. Each standalone app keeps its own checks. Visual browser controls were unavailable for this update; responsive appearance, actual offline reload, screen-reader use, Mobile Safari and lock-screen behavior still need device review.
+Checks cover project data, routes, saved preferences, startup, layout switching, gallery and filter controls, keyboard navigation, animation cleanup and the map. Screen-reader and physical-phone review are separate checks.
 
-## Main files
+## Grounded content and data
 
-- `index.html` — page shell and navigation
-- `projects.js`, `new-projects.js`, `repository-data.js` — project details and the current dated GitHub snapshot
-- `discovery.js`, `discovery.css` — latest-work feature and archive availability/sort controls
-- `workbench-data.js`, `workbench.js`, `workbench.css` — status board, dated notes and experiments
-- `console.js`, `console-model.js` — routes, search, bookmarks, and project views
-- `settings.js`, `settings-model.js` — preferences and local storage
-- `music.js`, `audio-output.js` — radio player and audio controls
-- `build-lab.js`, `build-lab-model.js`, `telescope-3d.js`, `observatory.css` — interactive demos and optional planetarium
-- `project-network.js`, `atlas-model.js`, `network-view.js`, `constellation.css` — 3D project map and documented connections
-- `space-math.js`, `observatory.test.js` — shared projection geometry and tests
-- `intro-variants.js`, `intro-scenes.css` — startup animations
+`projects.js` and `new-projects.js` hold project details. `repository-data.js` is a public GitHub snapshot dated October 27, 2026. It includes the 13 public project repositories, excluding this portfolio and private repositories. Language lists come from GitHub's `/languages` endpoint; activity links point to exact default-branch commits. Documentation and cleanup commits count as activity. Visitors make no GitHub API requests.
 
-Some older files and sections remain in the repository for history, but are not part of the active site.
+The map shows project relationships. It is not live device data or an astronomical chart. Saved projects and layout choices stay in this browser. There is no first-party analytics, cloud sync or private-network connection.
 
-## Privacy and accuracy
-
-The site does not publish home network details, credentials, private contact information, or backend endpoints. Bookmarks and settings are stored in your browser. If browser storage is blocked, some features work only for the current session.
-
-The Stack page uses `repository-data.js`, checked on October 27, 2026, for all 13 public project repositories. It excludes the portfolio and private repositories. Language counts come from each public GitHub REST `/repos/hirsu-dev/{repo}/languages` response. Latest activity comes from `/commits?per_page=1` on each default branch, with a link to the exact commit. These dates include documentation and cleanup; they do not imply a new release or a physical test. No GitHub API is called by visitors.
-
-To refresh, list the public personal repositories, compare their current READMEs, and update the saved language lists, default-branch commit SHAs, messages and UTC dates. Keep hardware status tied to actual evidence. `stack-data.js` retains the older bounded calendar data for compatibility; it is no longer the displayed activity source. Demo records and maps are labeled as examples or illustrations.
+The city photograph is [Shinjuku by Night by Fboas](https://commons.wikimedia.org/wiki/File:Shinjuku_by_Night.jpg), used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Credits appear beside the image. Other project media keeps its source notes and captions.
 
 ## Deploy
 
-GitHub Pages serves the `main` branch from the repository root over HTTPS. Push changes to `main` to update the live site. No backend, Raspberry Pi hosting, or paid service is needed.
+GitHub Pages serves the root of `main`. Push changes to update the live site.

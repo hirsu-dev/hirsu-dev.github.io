@@ -1,7 +1,7 @@
 export const settingsKey = "hirsu-settings-v14";
 export const motionChoiceKey = "hirsu-motion-choice-v26";
 export const settingOptions = Object.freeze({
-  layout: ["overdrive", "netrunner", "relic", "switchboard"],
+  layout: ["overdrive", "netrunner", "relic", "switchboard", "orbit"],
   motion: ["system", "on", "off"],
   skin: ["overdrive", "icewire", "monolith"],
   fx: ["signal", "clean", "crt"],

@@ -1,19 +1,17 @@
-import { projects } from "./projects.js?v=24";
+import { projects } from "./projects.js?v=27";
 import {
   workbenchContent,
   mountWorkbench,
   entryContent,
   statusPanel,
-  experimentsContent,
-  mountExperiments,
-} from "./workbench.js?v=24";
+} from "./workbench.js?v=27";
 import { languageCounts } from "./stack-data.js";
-import { repositorySnapshot } from "./repository-data.js?v=24";
+import { repositorySnapshot } from "./repository-data.js?v=27";
 import {
   archiveOptions,
   mountArchiveOptions,
   projectDate,
-} from "./discovery.js?v=24";
+} from "./discovery.js?v=27";
 import {
   interfaces,
   interfaceFromSearch,
@@ -24,23 +22,22 @@ import {
   findProjects,
   resolveRoute,
   escapeHTML as esc,
-} from "./console-model.js?v=24";
-import { createProjectNetwork } from "./project-network.js?v=24";
-import { networkContent } from "./network-view.js?v=24";
-import { buildLabContent, mountBuildLab } from "./build-lab.js?v=24";
-import { mountRadio } from "./music.js?v=21";
-import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=24";
-import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=24";
-import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=24";
-import { createCityMotion } from "./city-motion.js?v=25";
-import { mountSettings } from "./settings.js?v=26";
+} from "./console-model.js?v=27";
+import { createProjectNetwork } from "./project-network.js?v=27";
+import { networkContent } from "./network-view.js?v=27";
+import { orbitHome, mountOrbit } from "./orbit-layout.js?v=27";
+import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=27";
+import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=27";
+import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=27";
+import { createCityMotion } from "./city-motion.js?v=27";
+import { mountSettings } from "./settings.js?v=27";
 import {
   introById,
   defaultIntro,
   introOptions,
   introStorageKey,
 } from "./intro-variants.js?v=25";
-import { mountProjectTerminal } from "./project-terminal.js?v=24";
+import { mountProjectTerminal } from "./project-terminal.js?v=27";
 import { photoCredit } from "./photo.js?v=11";
 
 const $ = (s) => document.querySelector(s);
@@ -194,7 +191,6 @@ const preferences = mountSettings({
     return write(introStorageKey, defaultIntro);
   },
 });
-const radio = mountRadio();
 function openSettings(tab = "general") {
   preferences.selectTab(tab);
   openDialog("#settings-dialog");
@@ -269,6 +265,15 @@ function renderHome() {
   layoutCleanup?.();
   layoutCleanup = null;
   renderedLayout = root.dataset.layout || "overdrive";
+  if (renderedLayout === "orbit") {
+    screen.innerHTML = orbitHome();
+    layoutCleanup = mountOrbit(screen, {
+      read,
+      write,
+      animate: cityMotion.animate,
+    });
+    return;
+  }
   if (renderedLayout === "switchboard") {
     screen.innerHTML = switchboardHome();
     layoutCleanup = mountSwitchboard(screen, {
@@ -514,22 +519,16 @@ function renderLog() {
 function renderAbout() {
   screen.innerHTML =
     pageHead(
-      "05",
-      "Hello, I'm hirsu.",
-      "Online as hirsu. I build software, experiment with electronics, and connect the two.",
+      "ABOUT",
+      "Hello, I’m hirsu.",
+      "I build useful software, experiment with electronics, and connect the two.",
     ) +
-    `<section class="panel"><h2>A small, useful corner of the internet.</h2><p>This is my project archive: a telescope that followed sky coordinates, a Pi keeping home services useful, tools for maintainers and civic records, and a few experiments that are still taking shape.</p><p>Not everything here is finished. Each project includes its actual status, source when public, and a clear distinction between an illustration, CAD, or a working app screenshot.</p><div class="facts"><span><b>${projects.length}</b> projects</span><span><b>${projects.filter((p) => p.source).length}</b> public project repos</span><span><b>3</b> hands-on build demos</span></div><a class="bracket" href="https://github.com/hirsu-dev" target="_blank" rel="noopener noreferrer">[ Find me on GitHub ↗ ]</a></section>
-  <section class="panel"><h2>Colophon / visual references</h2><p>Overdrive reinterprets the angular red/yellow menu language of <a href="https://www.cyberpunk.net/us/en/" target="_blank" rel="noopener noreferrer">Cyberpunk 2077 ↗</a> as an original project terminal. Select a file, inspect its real status and preview, then scroll through the workbench. Settings → Customize offers four independent layouts: the scrolling Overdrive workbench, a Netrunner file desktop, the Relic visual dossier, and Switchboard’s movable project map with a two-build comparison patch bay. Palettes, effects and startup scenes are separate choices. No game source, character art or official branding is bundled; this independent portfolio is not affiliated with the franchise.</p><p>The earlier text-first archive and keyboard controls take inspiration from <a href="https://cyberspace.online/" target="_blank" rel="noopener noreferrer">Cyberspace ↗</a>. The supplied UI references informed geometric callouts, sliding panels, hover/focus states and chromatic distortion. The implementation and project content are original.</p><h3>A real city, photographed.</h3><p>The homepage background uses a genuine photograph of Shinjuku, Tokyo, not AI-generated artwork. The original photograph is bundled locally with a smaller responsive copy; only the display crop, dark overlay and temporary glitch slices alter its presentation.</p>${photoCredit()}<p><a href="PHOTO-CREDITS.md">Full photo attribution and license notes ↗</a></p></section>
-  <section class="panel"><h2>A signal from the workbench.</h2><p>The opening takes the idea of an assembling interface from <a href="https://hancore.dev/site/#stack" target="_blank" rel="noopener noreferrer">hancore.dev ↗</a>, reinterpreted through six original short boot sequences. Redline is the default: a charged red seam, fractured wordmark, and particle-lined gates that split into the page at 100%. It is a visual introduction, not a download meter or system scan. Skip or Escape dismisses it; replay is in the interface menu. FX off disables motion and the intro. System reduced motion is respected by default.</p></section>
-  <section class="panel"><h2>Local by default.</h2><p>Static files on free GitHub Pages. No Raspberry Pi hosting, portfolio accounts, first-party analytics, backend, or API keys. The optional Stellarium Web embed contacts Stellarium’s servers and analytics only after Load is clicked; unload it or leave Build Lab to disconnect the embedded page. Saved project IDs, interface preferences and Switchboard arrangements stay in this browser. The night sky is an original project illustration, not astronomical coordinates, home-network telemetry or real locations.</p><p><strong>Optional music:</strong> Five complete, owner-supplied MP3 recordings are hosted on this site. The owner confirmed public hosting and streaming permission; recording rights remain with their respective rightsholders. No Spotify, YouTube, third-party player, sign-in or listening-history storage is involved. The site attempts quiet playback on startup. If your browser blocks autoplay, use Retry to start with a click. Playback starts at 15% volume each visit, with a working volume slider and mute controls in both player sizes. The × hides all radio controls without stopping music; Radio in the menu reopens them. Stop &amp; unload ends playback. Music stays with you across pages and layout changes, with optional continuous next-track playback. Browser and device audio restrictions may still apply. See <a href="assets/audio/README.md" target="_blank" rel="noopener noreferrer">recording credits &amp; usage notice</a> or open <a href="#radio">background radio</a>.</p><p>Project facts: ${projects.filter((p) => p.source).length} public GitHub project repositories and descriptions supplied by hirsu. The Pi lab is Pi-hole, VPN, and Tailscale; NEXUS is an experimental client for existing local AI models, not a self-trained foundation model. Images are visibly labeled. Snapshot data and provenance are documented in the <a href="https://github.com/hirsu-dev/hirsu-dev.github.io" target="_blank" rel="noopener noreferrer">site source ↗</a>.</p></section>`;
+    `<section class="panel"><h2>Code, circuits, and the work behind them.</h2><p>This portfolio brings together my software, robotics, Raspberry Pi projects, and desktop tools. Every project includes its actual state, public source when available, and a browser app when there is one.</p><div class="facts"><span><b>${projects.length}</b> projects</span><span><b>${projects.filter((p) => p.source).length}</b> public repositories</span><span><b>${projects.filter((p) => p.demo).length}</b> browser apps</span></div><a class="bracket" href="https://github.com/hirsu-dev" target="_blank" rel="noopener noreferrer">[ Find me on GitHub ↗ ]</a></section>
+  <section class="panel"><h2>Design and sources.</h2><p>Settings → Customize offers five layouts: Overdrive, Netrunner, Relic, Switchboard, and Orbit. Orbit takes inspiration from the project wheel and terminal composition of <a href="https://hancore.dev/site/" target="_blank" rel="noopener noreferrer">Hancore’s portfolio ↗</a>, using original code, project imagery, and a map of my own work.</p><p>The angular interface draws on <a href="https://www.cyberpunk.net/us/en/" target="_blank" rel="noopener noreferrer">Cyberpunk 2077 ↗</a>; the earlier text archive drew inspiration from <a href="https://cyberspace.online/" target="_blank" rel="noopener noreferrer">Cyberspace ↗</a>. This independent portfolio uses original interfaces and is not affiliated with those projects.</p><h3>Image credits</h3><p>Project media is labeled as a screenshot, CAD preview, or illustration. The city background is a real photograph.</p>${photoCredit()}</section>
+  <section class="panel"><h2>Local by default.</h2><p>Hosted on GitHub Pages, with no account, first-party analytics, or private device connection. Saved projects, layout preferences and Switchboard arrangements stay in this browser. The project map illustrates recorded connections between builds.</p><p>Repository dates and language lists are a dated public snapshot. Each project keeps its source notes, limitations and image credits. NEXUS is a client for existing local AI models. Physical builds retain their stated repair or validation status.</p><a href="https://github.com/hirsu-dev/hirsu-dev.github.io" target="_blank" rel="noopener noreferrer">Portfolio source ↗</a></section>`;
 }
 function renderRoute({ focus = false } = {}) {
   let requested = resolveRoute(location.hash);
-  const openMusic = requested === "radio";
-  if (openMusic) {
-    requested = "index";
-    history.replaceState(history.state, "", "#index");
-  }
   if (requested === "themes") {
     if (!screen.innerHTML) {
       route = "index";
@@ -565,13 +564,7 @@ function renderRoute({ focus = false } = {}) {
   else if (route === "log") renderLog();
   else if (route.startsWith("entry-"))
     screen.innerHTML = entryContent(route.slice(6));
-  else if (route === "experiments") {
-    screen.innerHTML = experimentsContent();
-    pageCleanup = mountExperiments(screen);
-  } else if (route === "lab") {
-    screen.innerHTML = buildLabContent();
-    pageCleanup = mountBuildLab(screen);
-  } else renderAbout();
+  else renderAbout();
   $("#top-path").textContent = "/ " + (project ? project.id : route);
   document.title =
     "hirsu // " +
@@ -594,7 +587,6 @@ function renderRoute({ focus = false } = {}) {
     window.scrollTo({ top: 0, behavior: "instant" });
   }
   cityMotion.enter(screen);
-  if (openMusic) radio.open();
 }
 screen.addEventListener("click", (e) => {
   const jump = e.target.closest("[data-home-section]");
@@ -675,16 +667,9 @@ function commands() {
       ["network", "Night sky / project constellations"],
       ["stack", "Technology stack"],
       ["log", "Build logs & project status"],
-      ["experiments", "Experiments / planned tools"],
       ["saved", "Saved projects"],
       ["about", "About / colophon"],
-      ["lab", "Build Lab / telescope, home lab & macro pad"],
     ].map(([id, label]) => ({ label, type: "PAGE", run: () => navigate(id) })),
-    {
-      label: "Background radio / music selections",
-      type: "AUDIO",
-      run: () => radio.open(),
-    },
     ...projects.map((p) => ({
       label: p.title,
       type: "PROJECT",

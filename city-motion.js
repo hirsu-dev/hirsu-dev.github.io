@@ -1,5 +1,5 @@
 import { introById, introArtwork } from "./intro-variants.js?v=25";
-import { mountSignalFX } from "./signal-fx.js?v=25";
+import { mountSignalFX } from "./signal-fx.js?v=27";
 export const panelFrames = [
   {
     opacity: 0,
@@ -69,7 +69,7 @@ export function createCityMotion() {
   function decorate(container) {
     container
       .querySelectorAll(
-        ".hero-line,.city-section h2,.page-head h1,.od-title-line,.od-section h2 em,.od-build h3 a,.nr-masthead h1 em,.relic-masthead h1 em",
+        ".hero-line,.city-section h2,.page-head h1,.od-title-line,.od-section h2 em,.od-build h3 a,.nr-masthead h1 em,.relic-masthead h1 em,.orbit-heading h1",
       )
       .forEach((element, i) => {
         if (element.classList.contains("signal-title")) return;
@@ -181,7 +181,7 @@ export function createCityMotion() {
       animate(container);
       container
         .querySelectorAll(
-          ".page-head .eyebrow,.page-head h1,.page-head p:not(.eyebrow),.sky-shell,.feed-tools,.nr-masthead,.nr-window,.nr-dock,.relic-masthead,.relic-index,.relic-file,.relic-footnotes,.sb-masthead,.sb-console,.sb-patchbay,.sb-exits,.bl-tabs,.bl-panel:not([hidden])",
+          ".page-head .eyebrow,.page-head h1,.page-head p:not(.eyebrow),.sky-shell,.feed-tools,.nr-masthead,.nr-window,.nr-dock,.relic-masthead,.relic-index,.relic-file,.relic-footnotes,.sb-masthead,.sb-console,.sb-patchbay,.sb-exits,.orbit-heading,.orbit-rail,.orbit-reader,.orbit-insight,.orbit-status",
         )
         .forEach((piece, i) =>
           animate(

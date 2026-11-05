@@ -2,8 +2,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { Window } from "happy-dom";
-import { buildLabContent } from "./build-lab.js";
-import { radioTracks } from "./music.js";
 import {
   netrunnerHome,
   relicHome,
@@ -75,21 +73,18 @@ function dom(t, html = "", extraGlobals = () => ({})) {
     },
   };
 }
-test("new routes and menus expose real pages, while the archive stays discoverable", () => {
-  for (const route of ["lab", "radio"])
-    assert.equal(resolveRoute("#" + route), route);
-  assert.equal(resolveRoute("#radio/../../"), "index");
-  assert.equal(resolveRoute("#archive"), "lab");
+test("retired utility URLs resolve to the portfolio without exposing removed features", () => {
+  for (const route of ["lab", "archive", "experiments"])
+    assert.equal(resolveRoute("#" + route), "projects");
+  assert.equal(resolveRoute("#radio"), "index");
   const html = readFileSync(new URL("index.html", import.meta.url), "utf8");
-  assert.match(html, /href="#lab"/);
-  assert.match(html, /href="#radio"/);
-  assert.doesNotMatch(html, /<iframe|src="https:\/\/www.youtube/);
-  assert.equal(radioTracks.length, 5);
-  assert.equal(
-    radioTracks.filter((track) => track.type === "playlist").length,
-    0,
+  assert.doesNotMatch(
+    html,
+    /href="#(?:lab|radio|experiments)"|music\.css|build-lab\.css|Stellarium/,
   );
+  assert.match(html, /value="orbit"/);
 });
+
 test("night sky focuses project constellations with a perspective orbit camera", () => {
   for (const point of atlasPoints()) {
     const p = atlasProject(
@@ -219,7 +214,7 @@ test("both layout templates use all real project images and unique accessible ta
   }
 });
 
-test("full app routes new pages, preserves the deck, and retains existing projects/settings", async (t) => {
+test("portfolio switches five layouts, retires utilities and keeps project navigation", async (t) => {
   const h = dom(t, "", (win) => ({
     Event: win.Event,
     history: win.history,
@@ -233,117 +228,56 @@ test("full app routes new pages, preserves the deck, and retains existing projec
     "hirsu-settings-v14",
     JSON.stringify({ motion: "off", autoplay: false }),
   );
-  h.win.localStorage.setItem("hirsu-startup-v12", "fracture");
-  h.win.history.replaceState(null, "", "#lab");
+  h.win.history.replaceState(null, "", "#projects");
   h.win.HTMLCanvasElement.prototype.getContext = () => null;
-  await import("./console.js?integration-v20");
-  assert.ok(h.$(".build-lab"));
-  assert.equal(h.doc.documentElement.dataset.intro, "redline");
-  assert.equal(h.$('input[name="startup"]:checked').value, "redline");
-  const deck = h.$("#music-dock");
+  await import("./console.js?pure-portfolio-v27");
   const go = (hash) => {
     h.win.history.replaceState(null, "", "#" + hash);
     h.win.dispatchEvent(new h.win.HashChangeEvent("hashchange"));
   };
-  h.$('a[href="#radio"]').click();
-  assert.ok(h.$(".build-lab"), "opening music preserves current page");
-  assert.equal(deck.hidden, false);
-  go("archive");
-  assert.ok(h.$(".build-lab"));
-  assert.equal(h.$("#packet-form"), null);
-  assert.equal(h.$("#music-dock"), deck);
-  go("lab");
-  h.input(h.$("#aim-az"), "150");
-  assert.equal(h.$("#aim-az-value").textContent, "150°");
-  go("network");
-  assert.ok(h.$(".network-inspector"));
-  assert.equal(h.$("#network-shell").dataset.renderer, "unavailable");
-  h.$('[data-node-index="4"]').click();
-  assert.match(h.$(".network-inspector").textContent, /MaintainerOS/);
-  assert.equal(h.$("#sky-pause").disabled, true);
-  go("maintaineros");
-  assert.match(h.$("#screen").textContent, /MaintainerOS/);
-  go("index");
-  assert.ok(h.$(".overdrive-home"));
-  assert.equal(h.doc.querySelectorAll("#music-dock").length, 1);
-
-  const chooseLayout = (value) => {
-    const input = h.$('[data-setting="layout"][value="' + value + '"]');
-    input.checked = true;
-    input.dispatchEvent(new h.win.Event("change", { bubbles: true }));
+  const choose = (value) => {
+    const c = h.$('[data-setting="layout"][value="' + value + '"]');
+    c.checked = true;
+    c.dispatchEvent(new h.win.Event("change", { bubbles: true }));
   };
-  chooseLayout("netrunner");
-  assert.ok(h.$(".netrunner-home"));
-  assert.equal(h.$("#music-dock"), deck);
-  chooseLayout("relic");
-  assert.ok(h.$(".relic-home"));
-  chooseLayout("switchboard");
-  assert.ok(h.$(".switchboard-home"));
-  h.$('[data-sb-select="robo-telescope"]').click();
-  h.$('[data-sb-pin="0"]').click();
-  assert.match(h.$("#sb-comparison").textContent, /Under repair/);
-  assert.equal(h.$("#music-dock"), deck);
-  chooseLayout("netrunner");
-  assert.ok(h.$(".netrunner-home"));
-  chooseLayout("switchboard");
-  assert.match(h.$("#sb-file-title").textContent, /Telescope/);
-  assert.equal(h.$('[data-sb-socket="0"]').value, "robo-telescope");
-  go("projects");
   assert.equal(h.doc.querySelectorAll(".project-card").length, projects.length);
-  assert.equal(h.$(".project-card").dataset.project, "biobuzz-simulator");
-  const setOption = (selector, value) => {
-    const input = h.$(selector);
-    input.value = value;
-    input.dispatchEvent(new h.win.Event("change", { bubbles: true }));
-  };
-  setOption("#project-availability", "browser");
-  assert.equal(h.doc.querySelectorAll(".project-card").length, 8);
-  assert.equal(h.doc.querySelectorAll(".demo-link").length, 8);
-  h.input(h.$("#project-search"), "rapier");
-  assert.equal(h.doc.querySelectorAll(".project-card").length, 1);
-  assert.equal(h.$(".project-card").dataset.project, "biobuzz-simulator");
-  setOption("#project-availability", "local");
-  assert.ok(h.$(".empty"));
-  h.$("[data-reset-feed]").click();
-  assert.equal(h.doc.querySelectorAll(".project-card").length, projects.length);
-  assert.equal(h.$("#project-availability").value, "all");
-  setOption("#project-sort", "name");
-  const names = [...h.doc.querySelectorAll(".project-card h3")].map(
-    (n) => n.textContent,
-  );
-  assert.deepEqual(
-    names,
-    [...names].sort((a, b) => a.localeCompare(b)),
-  );
+  for (const route of ["lab", "archive", "experiments"]) {
+    go(route);
+    assert.equal(h.doc.documentElement.dataset.page, "projects");
+  }
+  go("radio");
+  assert.equal(h.doc.documentElement.dataset.page, "index");
+  for (const mode of [
+    "netrunner",
+    "relic",
+    "switchboard",
+    "orbit",
+    "overdrive",
+  ]) {
+    choose(mode);
+    assert.ok(h.$("." + mode + "-home"), mode);
+  }
+  choose("orbit");
+  h.input(h.$("#orbit-search"), "rapier");
+  assert.equal(h.doc.querySelectorAll("#orbit-list [role=tab]").length, 1);
+  h.$('[data-orbit-project="biobuzz-simulator"]').click();
+  assert.match(h.$("#orbit-project-panel").textContent, /BIOBUZZ/);
   go("biobuzz-simulator");
   assert.match(h.$("#screen").textContent, /simplified estimates/);
-  assert.ok(h.$('a[href="https://hirsu-dev.github.io/biobuzz-simulator/"]'));
   go("stack");
-  assert.match(h.$("#screen").textContent, /13 public project repos/);
   assert.equal(h.doc.querySelectorAll(".repo-activity li").length, 13);
-  go("projects");
-  chooseLayout("overdrive");
-  assert.equal(
-    h.doc.querySelectorAll(".project-card").length,
-    projects.length,
-    "layout selection preserves route",
-  );
-  go("index");
-  assert.ok(h.$(".overdrive-home"));
-  assert.equal(h.$("#music-dock"), deck);
-  go("radio");
-  assert.equal(h.win.location.hash, "#index");
-  assert.equal(deck.hidden, false);
   go("about");
-  assert.match(h.$("#screen").textContent, /Optional music/);
-  h.$("#city-settings").click();
-  assert.equal(h.$("#settings-dialog").open, true);
+  assert.doesNotMatch(
+    h.$("#screen").textContent,
+    /Optional music|Stellarium|hands-on build demos/,
+  );
+  assert.match(h.$("#screen").textContent, /Orbit/);
   assert.equal(
-    h.doc.querySelectorAll(
-      'script[src="https://open.spotify.com/embed/iframe-api/v1"]',
-    ).length,
+    h.doc.querySelectorAll("audio,iframe,#music-dock,#music-mini").length,
     0,
   );
+  h.$("#city-settings").click();
+  assert.equal(h.$("#settings-dialog").open, true);
 });
 
 test("a fresh visit starts Redline even when the OS reports reduced motion", async (t) => {

@@ -1,4 +1,3 @@
-import { newProjects } from "./new-projects.js?v=24";
 export const statusTypes = Object.freeze({
   published: {
     label: "Published",
@@ -142,27 +141,6 @@ export const buildEntries = Object.freeze([
     caption: "Original app diagram. No browser screenshot is implied.",
   },
   {
-    id: "telescope-digital-workbench",
-    date: "2026-10-23",
-    project: "robo-telescope",
-    kind: "Software milestone",
-    title: "A digital telescope to explore while the real one waits.",
-    summary:
-      "The portfolio now has a 3D telescope with orbit, focus, part inspection and an exploded assembly.",
-    goal: "Make the control idea and the parts easier to explore before the physical telescope is repaired.",
-    changed:
-      "Added a movable 3D model, camera controls, wireframe and exploded views, and an optional Stellarium Web panel.",
-    constraint:
-      "The physical telescope is still broken. The model is illustrative, and the external planetarium does not drive it.",
-    learned:
-      "A useful simulator needs a clear boundary between a visual demonstration and a verified physical result.",
-    next: "Add a target-to-movement mission planner, then use documented hardware measurements if a physical model becomes available.",
-    image: "assets/telescope.svg?v=8",
-    alt: "Illustration of a telescope and motorized mount",
-    caption:
-      "Project illustration. This is not a build photograph or a measured model.",
-  },
-  {
     id: "macro-pad-fit-review",
     date: "2026-10-23",
     project: "custom-keyboard",
@@ -204,103 +182,6 @@ export const buildEntries = Object.freeze([
   },
 ]);
 export const buildEntryIds = new Set(buildEntries.map((entry) => entry.id));
-
-const experimentProjectIds = {
-  "motor-simulator": "coordinate-motor-simulator",
-  "privacy-auditor": "network-privacy-auditor",
-  "accessible-sky": "accessible-star-map",
-  "repair-tracker": "repair-parts-tracker",
-  "project-notebook": "offline-project-notebook",
-};
-export const experiments = Object.freeze(
-  [
-    {
-      id: "observatory-planner",
-      title: "Observatory Planner",
-      state: "Prototype · v0.1",
-      source: "https://github.com/hirsu-dev/observatory-planner",
-      demo: "https://hirsu-dev.github.io/observatory-planner/",
-      project: "robo-telescope",
-      purpose:
-        "Plan observing sessions, rank visible targets and keep an observation log.",
-      next: "Gather observing feedback and add validated backup import and epoch transformations.",
-      tags: ["Python", "JavaScript", "Astronomy"],
-    },
-    {
-      id: "homelab-health",
-      title: "Homelab Health Dashboard",
-      state: "Planned",
-      project: "pi-homelab",
-      purpose:
-        "Understand service health and incident history in a private home lab.",
-      next: "Start with a synthetic demo, then add a private local checker.",
-      tags: ["Python", "Networking", "Raspberry Pi"],
-    },
-    {
-      id: "motor-simulator",
-      title: "Coordinate-to-Motor Simulator",
-      state: "Planned",
-      project: "robo-telescope",
-      purpose:
-        "Preview a telescope movement, limits and possible collision zones.",
-      next: "Define coordinate conventions and verify reference calculations.",
-      tags: ["Simulation", "Robotics"],
-    },
-    {
-      id: "privacy-auditor",
-      title: "Local Network Privacy Auditor",
-      state: "Planned",
-      project: "pi-homelab",
-      purpose:
-        "Summarize DNS blocking without retaining raw browsing histories.",
-      next: "Design an aggregate-only import and retention policy.",
-      tags: ["Privacy", "Python"],
-    },
-    {
-      id: "accessible-sky",
-      title: "Accessible Star Map",
-      state: "Planned",
-      project: "robo-telescope",
-      purpose:
-        "Explore constellations through keyboard controls and equivalent text descriptions.",
-      next: "Choose a licensed dataset and build an accessible list first.",
-      tags: ["Accessibility", "Astronomy"],
-    },
-    {
-      id: "repair-tracker",
-      title: "Repair Log & Parts Tracker",
-      state: "Planned",
-      project: "custom-keyboard",
-      purpose:
-        "Keep parts, costs, repair notes and results together across electronics builds.",
-      next: "Model projects, repair entries and a simple parts inventory.",
-      tags: ["Electronics", "Local tools"],
-    },
-    {
-      id: "project-notebook",
-      title: "Offline Project Notebook",
-      state: "Planned",
-      project: "hyprland-forge",
-      purpose:
-        "Keep build notes, diagrams and tasks available without a connection.",
-      next: "Ship reliable local storage, search and export before adding sync.",
-      tags: ["Offline", "JavaScript"],
-    },
-  ].map((e) => {
-    const p = newProjects.find(
-      (p) => p.id === (experimentProjectIds[e.id] || e.id),
-    );
-    return p
-      ? {
-          ...e,
-          state: p.status,
-          source: p.source,
-          demo: p.demo,
-          next: projectStatus[p.id].next,
-        }
-      : e;
-  }),
-);
 
 export function filterEntries({
   project = "all",

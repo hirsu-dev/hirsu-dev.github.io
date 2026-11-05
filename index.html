@@ -59,7 +59,7 @@
             ? "off"
             : "on";
         for (const [key, options] of Object.entries({
-          layout: ["overdrive", "netrunner", "relic", "switchboard"],
+          layout: ["overdrive", "netrunner", "relic", "switchboard", "orbit"],
           skin: ["overdrive", "icewire", "monolith"],
           fx: ["signal", "clean", "crt"],
           textSize: ["standard", "large"],
@@ -79,22 +79,19 @@
     <link rel="stylesheet" href="city-upgrade.css?v=8" />
     <link rel="stylesheet" href="overdrive.css?v=9" />
     <link rel="stylesheet" href="cyber-hud.css?v=10" />
-    <link rel="stylesheet" href="terminal-ui.css?v=24" />
+    <link rel="stylesheet" href="terminal-ui.css?v=27" />
     <link rel="stylesheet" href="intro-variants.css?v=13" />
     <link rel="stylesheet" href="intro-scenes.css?v=13" />
     <link rel="stylesheet" href="settings.css?v=14" />
-    <link rel="stylesheet" href="side-channel.css?v=19" />
     <link rel="stylesheet" href="layouts.css?v=16" />
-    <link rel="stylesheet" href="music.css?v=21" />
-    <link rel="stylesheet" href="constellation.css?v=24" />
+    <link rel="stylesheet" href="constellation.css?v=27" />
     <link rel="stylesheet" href="motion-upgrade.css?v=18" />
     <link rel="stylesheet" href="switchboard.css?v=18" />
-    <link rel="stylesheet" href="build-lab.css?v=19" />
-    <link rel="stylesheet" href="observatory.css?v=21" />
-    <link rel="stylesheet" href="workbench.css?v=24" />
-    <link rel="stylesheet" href="discovery.css?v=24" />
+    <link rel="stylesheet" href="workbench.css?v=27" />
+    <link rel="stylesheet" href="discovery.css?v=27" />
     <link rel="stylesheet" href="signal-fx.css?v=25" />
-    <script type="module" src="console.js?v=26"></script>
+    <link rel="stylesheet" href="orbit-layout.css?v=27" />
+    <script type="module" src="console.js?v=27"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -105,9 +102,7 @@
       <nav class="city-nav" aria-label="Portfolio navigation">
         <a href="#projects" data-nav="projects">PROJECTS</a
         ><a href="#stack" data-nav="stack">STACK</a
-        ><a href="#network" data-nav="network">NIGHT SKY</a
-        ><a href="#lab" data-nav="lab">BUILD LAB</a
-        ><a href="#radio" data-nav="radio">RADIO</a
+        ><a href="#network" data-nav="network">PROJECT MAP</a
         ><button
           id="city-settings"
           aria-haspopup="dialog"
@@ -325,12 +320,11 @@
         <a class="city-wordmark" href="#index">hirsu<span>_</span></a>
         <p>
           INDEPENDENT PROJECTS. REAL WORK IN PROGRESS.<br /><small
-            >Original portfolio · no franchise affiliation · optional background
-            radio.</small
+            >Software, hardware and the work behind them.</small
           >
         </p>
         <nav aria-label="Footer navigation">
-          <a href="#about">ABOUT / SOURCES</a><a href="#radio">RADIO</a
+          <a href="#about">ABOUT / SOURCES</a
           ><button id="city-footer-theme">SETTINGS</button
           ><a
             href="https://github.com/hirsu-dev/hirsu-dev.github.io"
@@ -357,9 +351,7 @@
       <nav class="menu-pages" aria-label="Menu navigation">
         <a href="#index">HOME</a><a href="#projects">ALL PROJECTS</a
         ><a href="#network">NETWORK</a><a href="#stack">STACK</a
-        ><a href="#log">BUILD LOGS / STATUS</a
-        ><a href="#experiments">EXPERIMENTS</a><a href="#saved">SAVED</a
-        ><a href="#lab">BUILD LAB</a><a href="#radio">RADIO / MUSIC</a
+        ><a href="#log">BUILD LOGS / STATUS</a><a href="#saved">SAVED</a
         ><a href="#about">ABOUT / SOURCES</a
         ><button id="city-commands">COMMANDS / CTRL K</button>
       </nav>
@@ -450,13 +442,7 @@
             <p>
               No portfolio account or first-party analytics. Preferences and
               saved projects stay in this browser; they do not sync to another
-              device. Optional background music plays five owner-supplied
-              recordings from this site, with a quiet startup attempt and a
-              click-to-play fallback. No third-party music player or account is
-              used. Volume starts at 15% and is adjustable. The × hides all
-              controls without stopping playback; Stop &amp; unload ends it. The
-              optional Stellarium embed loads only on request and uses its own
-              servers and analytics.
+              device. Project links open only the pages you choose.
             </p>
           </div>
           <button class="settings-secondary" id="settings-reset">
@@ -603,10 +589,21 @@
                   >Interactive / move, trace & compare builds</small
                 ></label
               >
+              <label class="layout-choice"
+                ><input
+                  type="radio"
+                  name="layout"
+                  data-setting="layout"
+                  value="orbit"
+                /><b>Orbit</b
+                ><span class="layout-schematic scheme-orbit" aria-hidden="true"
+                  ><i></i><i></i><i></i></span
+                ><small>Project wheel / terminal portfolio</small></label
+              >
             </div>
             <p class="settings-lead">
-              Home and project browsing change structure. Music stays connected.
-              Visit Home to explore the selected interface.
+              Choose a layout, then visit Home to explore it. Project pages and
+              saved projects carry across every mode.
             </p>
           </fieldset>
           <fieldset class="style-picker">

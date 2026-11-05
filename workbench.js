@@ -1,11 +1,10 @@
-import { projects } from "./projects.js?v=24";
-import { escapeHTML as esc } from "./console-model.js?v=24";
+import { projects } from "./projects.js?v=27";
+import { escapeHTML as esc } from "./console-model.js?v=27";
 import {
   buildEntries,
   filterEntries,
   statusTypes,
-  experiments,
-} from "./workbench-data.js?v=24";
+} from "./workbench-data.js?v=27";
 
 const projectById = (id) => projects.find((p) => p.id === id);
 const date = (value) =>
@@ -21,7 +20,7 @@ function entryCard(e) {
   return `<article class="wb-entry"><div><span class="eyebrow">${esc(e.kind)} / <time datetime="${e.date}">${date(e.date)}</time></span><h2><a href="#entry-${e.id}">${esc(e.title)}</a></h2><p>${esc(e.summary)}</p><a class="bracket" href="#entry-${e.id}">[ Read build note → ]</a></div><a class="wb-entry-image" href="#entry-${e.id}" aria-label="Read ${esc(e.title)}"><img src="${e.image}" alt="${esc(e.alt)}" loading="lazy" width="600" height="375" /><span>${esc(e.caption)}</span></a></article>`;
 }
 export function workbenchContent() {
-  return `<header class="page-head"><div><p class="eyebrow">04 / BUILD LOGS & OPEN LOOPS</p><h1>On the workbench.</h1><p>What changed, what still needs work, and the next useful step.</p></div><a class="bracket" href="#experiments">[ Explore upcoming experiments → ]</a></header>
+  return `<header class="page-head"><div><p class="eyebrow">04 / BUILD LOGS & OPEN LOOPS</p><h1>On the workbench.</h1><p>What changed, what still needs work, and the next useful step.</p></div><a class="bracket" href="#projects">[ Browse the project archive → ]</a></header>
   <section class="panel wb-status" aria-labelledby="wb-status-title"><h2 id="wb-status-title">Project status board</h2><p>Manually reviewed project states. No live home-network or hardware checks.</p><div class="wb-legend">${Object.entries(
     statusTypes,
   )
@@ -105,37 +104,4 @@ export function entryContent(id) {
     .join(
       "",
     )}</div><p class="fineprint">A project note compiled from the published implementation and owner-provided project status. Review date: ${date(e.date)}.</p></article>`;
-}
-export function experimentsContent() {
-  return `<header class="page-head"><div><p class="eyebrow">EXPERIMENTS / THE NEXT ITERATIONS</p><h1>Ideas with a next step.</h1><p>Runnable prototypes and planned tools connected to the things I build.</p></div><a class="bracket" href="#log">[ See current build logs → ]</a></header><p class="panel">Open a prototype to try its current release. Planned ideas are labeled and have no demo link. The original builds live in the <a href="#projects">project archive</a>.</p><form class="wb-filters" role="search" aria-label="Filter experiments"><label>Show<select id="experiment-state"><option value="all">All experiments</option><option value="runnable">Runnable prototypes</option><option value="planned">Planned ideas</option></select></label><label>Search<input id="experiment-query" type="search" maxlength="120" placeholder="Astronomy, Python, privacy…" /></label></form><p id="experiment-count" role="status"></p><div class="wb-experiments">${experiments.map((e) => `<article class="panel" data-experiment="${e.id}"><span class="status-chip">${e.state}</span><h2>${esc(e.title)}</h2><p>${esc(e.purpose)}</p><div class="od-tags">${e.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div><p><strong>Next experiment</strong><br />${esc(e.next)}</p>${e.demo ? `<a class="bracket" href="${esc(e.demo)}">[ Open working prototype ↗ ]</a><a href="${esc(e.source)}">Source & local setup ↗</a>` : ""}<a href="#${e.project}">Related: ${esc(projectById(e.project).title)} ↗</a></article>`).join("")}</div><p class="empty" id="experiment-empty" hidden>No matching experiments. Try another filter or search.</p>`;
-}
-export function mountExperiments(host) {
-  const form = host.querySelector("form"),
-    state = host.querySelector("#experiment-state"),
-    query = host.querySelector("#experiment-query");
-  const render = () => {
-    let count = 0;
-    const terms = query.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
-    for (const e of experiments) {
-      const show =
-        (state.value === "all" ||
-          (state.value === "runnable" ? !!e.demo : !e.demo)) &&
-        terms.every((t) =>
-          [e.title, e.purpose, ...e.tags].join(" ").toLowerCase().includes(t),
-        );
-      host.querySelector(`[data-experiment="${e.id}"]`).hidden = !show;
-      if (show) count++;
-    }
-    host.querySelector("#experiment-count").textContent =
-      `${count} experiments`;
-    host.querySelector("#experiment-empty").hidden = !!count;
-  };
-  const submit = (e) => e.preventDefault();
-  form.addEventListener("input", render);
-  form.addEventListener("submit", submit);
-  render();
-  return () => {
-    form.removeEventListener("input", render);
-    form.removeEventListener("submit", submit);
-  };
 }
