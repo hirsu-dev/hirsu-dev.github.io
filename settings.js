@@ -6,7 +6,7 @@ import {
   normalizeSettings,
   applySettings,
   nextSettingsTab,
-} from "./settings-model.js?v=27";
+} from "./settings-model.js?v=28";
 
 export function mountSettings({ read, write, onApply, onReset }) {
   const root = document.documentElement;

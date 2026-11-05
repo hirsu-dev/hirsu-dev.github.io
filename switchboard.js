@@ -1,4 +1,4 @@
-import { escapeHTML as esc } from "./console-model.js?v=27";
+import { escapeHTML as esc } from "./console-model.js?v=28";
 import {
   boardKey,
   boardProjects,
@@ -10,7 +10,7 @@ import {
   visibleProjects,
   compareProjects,
   wirePath,
-} from "./switchboard-model.js?v=27";
+} from "./switchboard-model.js?v=28";
 
 const byId = (id) => boardProjects.find((p) => p.id === id);
 const number = (i) => String(i + 1).padStart(2, "0");

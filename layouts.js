@@ -1,16 +1,13 @@
-import { projects } from "./projects.js?v=27";
-import { escapeHTML as esc } from "./console-model.js?v=27";
+import { featuredProjectIds, buildNoteContent } from "./build-stories.js?v=28";
+import { projects } from "./projects.js?v=28";
+import { escapeHTML as esc } from "./console-model.js?v=28";
 import { cityPhoto, photoCredit } from "./photo.js?v=11";
 
 export const layoutProjects = [
-  "maintaineros",
-  "civiclens",
-  "custom-keyboard",
-  "robo-telescope",
-  "pi-homelab",
-  "nexus-ai",
-  "hyprland-forge",
-  ...projects.filter((p) => p.demo).map((p) => p.id),
+  ...featuredProjectIds,
+  ...projects
+    .filter((p) => !featuredProjectIds.includes(p.id))
+    .map((p) => p.id),
 ].map((id) => projects.find((p) => p.id === id));
 const number = (i) => String(i + 1).padStart(2, "0");
 const tags = (p) =>
@@ -36,7 +33,7 @@ const projectButtons = (mode) =>
 
 export function netrunnerHome() {
   return `<div class="netrunner-home" data-layout-home="netrunner">
-    <header class="nr-masthead"><div><p class="eyebrow">HIRSU / PERSONAL WORKSTATION / 01</p><h1>BUILD. BREAK.<br /><em>RECONNECT_</em></h1><p>Software meets the physical world. ${projects.length} experiments from hirsu’s workbench.</p></div><div class="nr-session"><span>LOCAL INDEX</span><strong>${projects.length} <small>FILES</small></strong><p>${projects.filter((p) => p.source).length} public repositories<br />No live device connection</p><a href="#about">Operator profile ↗</a></div></header>
+    <header class="nr-masthead"><div><p class="eyebrow">HIRSU / PERSONAL WORKSTATION / 01</p><h1>BUILD. BREAK.<br /><em>RECONNECT_</em></h1><p>Software meets the physical world. ${featuredProjectIds.length} selected builds, then ${projects.length - featuredProjectIds.length} smaller projects in progress.</p></div><div class="nr-session"><span>LOCAL INDEX</span><strong>${projects.length} <small>FILES</small></strong><p>${projects.filter((p) => p.source).length} public repositories<br />No live device connection</p><a href="#about">Operator profile ↗</a></div></header>
     <div class="nr-workspace">
       <section class="nr-window nr-explorer" aria-labelledby="nr-files-title">${windowBar("01 / PROJECT DIRECTORY", "<span>READ ONLY</span>")}<div class="nr-windowbody"><h2 id="nr-files-title">Find a signal.</h2><label class="nr-search"><span>Filter files</span><input id="layout-search" type="search" maxlength="120" placeholder="Try Python, telescope…" autocomplete="off" /></label><div class="nr-file-list" aria-label="Project files">${projectButtons("netrunner")}</div><p id="layout-empty" hidden>No matching files. Try another tool or project name.</p><p class="nr-file-count" role="status"><span id="layout-result-count">${projects.length}</span> / ${projects.length} files visible</p></div></section>
       <section class="nr-window nr-inspector" aria-labelledby="layout-inspector-title">${windowBar("02 / FILE INSPECTOR", '<span id="nr-selected-number">FILE 01</span>')}<div id="layout-inspector" aria-live="polite"></div></section>
@@ -56,7 +53,7 @@ function netrunnerFile(p) {
   return `${image(p)}<div class="nr-windowbody"><p class="eyebrow">${esc(p.category)}</p><h2 id="layout-inspector-title">${esc(p.title)}</h2><p>${esc(p.description)}</p><div class="layout-status"><span>CURRENT STATE</span><strong>${esc(p.status)}</strong></div>${tags(p)}<details class="nr-notes"><summary>Read build notes</summary><p>${esc(p.progress)}</p></details><div class="layout-links"><a class="layout-primary" href="#${p.id}">Open full project ↗</a>${source(p)}</div></div>`;
 }
 function relicFile(p) {
-  return `<div class="relic-spread">${image(p)}<div class="relic-copy"><p class="eyebrow">${esc(p.category)}</p><h2 id="layout-inspector-title">${esc(p.title)}</h2><p class="relic-subtitle">${esc(p.subtitle)}</p><p class="layout-status"><span>CURRENT STATE</span><strong>${esc(p.status)}</strong></p><div class="relic-tabs" role="tablist" aria-label="Project chapters">${["Overview", "Build notes", "Tools"].map((label, i) => `<button id="relic-tab-${i}" role="tab" data-chapter="${i}" aria-selected="${i === 0}" aria-controls="relic-chapter-${i}" tabindex="${i === 0 ? 0 : -1}">${label}</button>`).join("")}</div><div id="relic-chapter-0" class="relic-chapter" role="tabpanel" aria-labelledby="relic-tab-0" tabindex="0"><p>${esc(p.overview)}</p><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div><div id="relic-chapter-1" class="relic-chapter" role="tabpanel" aria-labelledby="relic-tab-1" tabindex="0" hidden><p>${esc(p.progress)}</p><p class="relic-evidence">SOURCE / ${esc(p.evidence)}</p></div><div id="relic-chapter-2" class="relic-chapter" role="tabpanel" aria-labelledby="relic-tab-2" tabindex="0" hidden>${tags(p)}<p>Tools documented for this project—not a proficiency rating.</p></div><div class="layout-links"><a class="layout-primary" href="#${p.id}">Read the full file ↗</a>${source(p)}</div></div></div>`;
+  return `<div class="relic-spread">${image(p)}<div class="relic-copy"><p class="eyebrow">${esc(p.category)}</p><h2 id="layout-inspector-title">${esc(p.title)}</h2><p class="relic-subtitle">${esc(p.subtitle)}</p><p class="layout-status"><span>CURRENT STATE</span><strong>${esc(p.status)}</strong></p><div class="relic-tabs" role="tablist" aria-label="Project chapters">${["Overview", "Build notes", "Tools"].map((label, i) => `<button id="relic-tab-${i}" role="tab" data-chapter="${i}" aria-selected="${i === 0}" aria-controls="relic-chapter-${i}" tabindex="${i === 0 ? 0 : -1}">${label}</button>`).join("")}</div><div id="relic-chapter-0" class="relic-chapter" role="tabpanel" aria-labelledby="relic-tab-0" tabindex="0"><p>${esc(p.overview)}</p><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div><div id="relic-chapter-1" class="relic-chapter" role="tabpanel" aria-labelledby="relic-tab-1" tabindex="0" hidden><p>${esc(p.progress)}</p>${buildNoteContent(p, true)}<p class="relic-evidence">SOURCE / ${esc(p.evidence)}</p></div><div id="relic-chapter-2" class="relic-chapter" role="tabpanel" aria-labelledby="relic-tab-2" tabindex="0" hidden>${tags(p)}<p>Tools documented for this project—not a proficiency rating.</p></div><div class="layout-links"><a class="layout-primary" href="#${p.id}">Read the full file ↗</a>${source(p)}</div></div></div>`;
 }
 
 export function mountLayout(container, { animate = () => {} } = {}) {

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { Window } from "happy-dom";
+import { featuredProjectIds } from "./build-stories.js";
 import { projects } from "./projects.js";
 import {
   orbitHome,
@@ -48,8 +49,15 @@ function harness(t, stored = null) {
       ),
   };
 }
-test("Orbit exposes every real project with a selected file, source, app and credited media", (t) => {
+test("Orbit features five builds and exposes the full archive with a selected file, source, app and credited media", (t) => {
   const h = harness(t);
+  assert.equal(
+    h.host.querySelectorAll("#orbit-list [role=tab]").length,
+    featuredProjectIds.length,
+  );
+  const scope = h.$("#orbit-scope");
+  scope.checked = true;
+  scope.dispatchEvent(new h.win.Event("change", { bubbles: true }));
   assert.equal(
     h.host.querySelectorAll("#orbit-list [role=tab]").length,
     projects.length,
@@ -70,7 +78,7 @@ test("Orbit exposes every real project with a selected file, source, app and cre
   );
   assert.match(
     h.$("#orbit-preview-caption").textContent,
-    /not a gameplay screenshot/,
+    /Actual browser capture.*simulated solo-practice field/,
   );
   const ids = [...h.host.querySelectorAll("[id]")].map((n) => n.id);
   assert.equal(ids.length, new Set(ids).size);
@@ -86,7 +94,9 @@ test("search and shared-tool filters compose without replacing focused input", (
   h.input("python sqlite");
   assert.equal(
     h.host.querySelectorAll("#orbit-list [role=tab]").length,
-    orbitMatches("python sqlite").length,
+    orbitMatches("python sqlite").filter((p) =>
+      featuredProjectIds.includes(p.id),
+    ).length,
   );
   assert.equal(h.win.document.activeElement, input);
   h.input("no-matching-build-723");
@@ -96,12 +106,16 @@ test("search and shared-tool filters compose without replacing focused input", (
   h.$('[data-orbit-tag="JavaScript"]').click();
   assert.equal(
     h.host.querySelectorAll("#orbit-list [role=tab]").length,
-    projects.filter((p) => p.tags.includes("JavaScript")).length,
+    projects.filter(
+      (p) => featuredProjectIds.includes(p.id) && p.tags.includes("JavaScript"),
+    ).length,
   );
 });
 test("arrow keys wrap, focus follows selection and Enter opens a project route", (t) => {
   const h = harness(t),
-    last = orbitProjects.at(-1);
+    last = orbitProjects
+      .filter((p) => featuredProjectIds.includes(p.id))
+      .at(-1);
   h.key(h.$("#orbit-list [role=tab]"), "End");
   assert.equal(
     h.$("#orbit-list [aria-selected=true]").dataset.orbitProject,

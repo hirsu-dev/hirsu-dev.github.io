@@ -137,7 +137,13 @@ test("Netrunner filters real project files and keeps the inspector and source fa
   assert.equal(h.$("#layout-result-count").textContent, "1");
   assert.match(h.$("#layout-inspector").textContent, /currently broken/);
   assert.equal(
-    h.$('[data-layout-project="3"]').getAttribute("aria-pressed"),
+    h
+      .$(
+        '[data-layout-project="' +
+          layoutProjects.findIndex((p) => p.id === "robo-telescope") +
+          '"]',
+      )
+      .getAttribute("aria-pressed"),
     "true",
   );
   h.input(h.$("#layout-search"), "no such project");
@@ -148,7 +154,11 @@ test("Netrunner filters real project files and keeps the inspector and source fa
     h.$("#layout-result-count").textContent,
     String(projects.length),
   );
-  h.$('[data-layout-project="5"]').click();
+  h.$(
+    '[data-layout-project="' +
+      layoutProjects.findIndex((p) => p.id === "nexus-ai") +
+      '"]',
+  ).click();
   assert.match(h.$("#layout-inspector").textContent, /existing models/);
   assert.equal(h.$(".nr-notes").open, false);
 });
@@ -164,7 +174,11 @@ test("Relic changes project files and supports keyboard chapter navigation and c
   );
   h.$('[data-file-step="1"]').click();
   assert.match(h.$("#layout-inspector-title").textContent, /MaintainerOS/);
-  h.$('[data-layout-project="3"]').click();
+  h.$(
+    '[data-layout-project="' +
+      layoutProjects.findIndex((p) => p.id === "robo-telescope") +
+      '"]',
+  ).click();
   h.$('[data-chapter="1"]').click();
   assert.equal(h.$("#relic-chapter-1").hidden, false);
   assert.match(h.$("#relic-chapter-1").textContent, /currently broken/);

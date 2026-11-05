@@ -1,0 +1,164 @@
+.build-story {
+  line-height: 1.8;
+}
+.orbit-scope { display: flex; align-items: center; gap: 8px; margin: 12px 0; font-size: 10px; color: var(--orbit-dim); }
+.orbit-scope input { width: auto; accent-color: var(--cyan); }
+.build-story :is(h2, h4) {
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1.25;
+  text-transform: none;
+}
+.build-story .eyebrow {
+  color: var(--cyan);
+}
+.story-decisions,
+.story-evidence {
+  margin: 20px 0;
+}
+.story-decisions > div,
+.story-evidence > div {
+  padding: 12px 0;
+  border-top: 1px solid #5f5b5466;
+}
+.story-decisions dt,
+.story-evidence dt {
+  font: 600 11px/1.6 var(--mono);
+  color: var(--cyan);
+  text-transform: uppercase;
+}
+.story-decisions dd,
+.story-evidence dd {
+  margin: 6px 0 0;
+}
+.story-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  font: 11px/1.6 var(--mono);
+}
+.detail-layout > .build-story {
+  grid-column: 1/-1;
+}
+.od-build .build-story {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #6c625466;
+}
+.od-build .build-story :is(h2, h4) {
+  font-size: 22px;
+}
+.od-build .build-story p,
+.od-build .build-story dd {
+  font-size: 14px;
+}
+.od-build .build-story .eyebrow {
+  font-size: 10px;
+}
+.portfolio-progress {
+  border-top: 1px solid #665d4b;
+  margin-top: 48px;
+  padding-top: 28px;
+}
+.portfolio-progress > p {
+  max-width: 650px;
+  color: #c1b9ad;
+}
+.progress-files {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.progress-file {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 14px;
+  padding: 18px;
+  background: #111015cc;
+  border: 1px solid #665d4b66;
+}
+.progress-file figure {
+  margin: 0;
+}
+.progress-file img {
+  width: 100%;
+  height: 64px;
+  object-fit: cover;
+}
+.progress-file figcaption {
+  font: 8px/1.5 var(--mono);
+  color: #b8b0a5;
+  margin-top: 6px;
+}
+.progress-file h4 {
+  margin: 6px 0;
+  font-size: 17px;
+}
+.progress-file p {
+  margin: 0;
+  font-size: 12px;
+  color: #c1b9ad;
+}
+.progress-file small {
+  font: 10px/1.5 var(--mono);
+  color: var(--cyan);
+}
+.portfolio-origin {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 40px;
+  padding-block: 48px;
+}
+.portfolio-origin h2 {
+  font-size: clamp(28px, 4vw, 52px);
+  line-height: 1.1;
+  margin: 12px 0;
+}
+.portfolio-origin p {
+  color: #d1c7ba;
+  max-width: 650px;
+  line-height: 1.8;
+}
+.portfolio-origin aside {
+  border-left: 2px solid var(--cyan);
+  padding-left: 24px;
+  align-self: center;
+}
+.portfolio-origin aside b {
+  display: block;
+  font: 11px/1.6 var(--mono);
+  color: var(--cyan);
+}
+.portfolio-origin aside span {
+  display: block;
+  padding: 10px 0;
+  font-size: 15px;
+}
+.orbit-file-notes + .build-story {
+  margin-top: 22px;
+  border-top: 1px solid var(--orbit-line);
+  padding-top: 22px;
+}
+.orbit-home .build-story :is(h2, h4) {
+  font-size: 20px;
+}
+.orbit-home .build-story dt {
+  font-size: 10px;
+}
+html[data-contrast="high"] .progress-file,
+html[data-contrast="high"] .portfolio-origin p {
+  color: #fff;
+}
+@media (max-width: 680px) {
+  .progress-files,
+  .portfolio-origin {
+    grid-template-columns: 1fr;
+  }
+  .progress-file {
+    padding: 14px;
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
+  .portfolio-origin {
+    gap: 20px;
+  }
+}

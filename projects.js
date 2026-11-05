@@ -1,6 +1,6 @@
-import { projectStatus } from "./workbench-data.js?v=27";
-import { newProjects } from "./new-projects.js?v=27";
-import { repositoryFor } from "./repository-data.js?v=27";
+import { projectStatus } from "./workbench-data.js?v=28";
+import { newProjects } from "./new-projects.js?v=28";
+import { repositoryFor } from "./repository-data.js?v=28";
 
 export const projects = [
   {

@@ -16,20 +16,17 @@ test("Overdrive and the archived theme use only the credited real photograph for
     assert.ok(html.includes(`srcset="${cityPhoto.srcset}"`));
     assert.ok(html.includes(cityPhoto.source));
     assert.ok(html.includes(cityPhoto.license));
-    assert.doesNotMatch(
-      html,
-      /FICTIONAL KEY ART/,
-    );
+    assert.doesNotMatch(html, /FICTIONAL KEY ART/);
   }
   assert.match(
     photoCredit(),
     /Display crop, dark overlay &amp; animated slices/,
   );
 });
-test("directory has all real projects and a single keyboard tab stop", () => {
+test("directory features five real projects and a single keyboard tab stop", () => {
   const html = projectTerminal();
-  assert.equal(new Set(terminalIds).size, projects.length);
-  assert.equal((html.match(/role="tab"/g) || []).length, projects.length);
+  assert.equal(new Set(terminalIds).size, 5);
+  assert.equal((html.match(/role="tab"/g) || []).length, 5);
   assert.equal((html.match(/aria-selected="true"/g) || []).length, 1);
   assert.match(html, /role="tablist".*aria-orientation="vertical"/);
   for (const id of terminalIds) {
@@ -107,15 +104,15 @@ function harness() {
 }
 test("click updates preview, source, count and accessible selection together", () => {
   const h = harness();
-  h.listeners.click({ target: h.tabs[3] });
-  assert.equal(h.tabs[3].attrs["aria-selected"], "true");
+  h.listeners.click({ target: h.tabs[4] });
+  assert.equal(h.tabs[4].attrs["aria-selected"], "true");
   assert.equal(h.tabs[0].tabIndex, -1);
-  assert.equal(h.tabs[3].tabIndex, 0);
-  assert.equal(h.panel.attrs["aria-labelledby"], h.tabs[3].id);
-  assert.equal(h.counter.textContent, `04 / ${terminalIds.length}`);
+  assert.equal(h.tabs[4].tabIndex, 0);
+  assert.equal(h.panel.attrs["aria-labelledby"], h.tabs[4].id);
+  assert.equal(h.counter.textContent, `05 / ${terminalIds.length}`);
   assert.match(h.panel.innerHTML, /Under repair|UNDER REPAIR|Under Repair/);
   assert.equal(h.animations.length, 1);
-  h.listeners.click({ target: h.tabs[3] });
+  h.listeners.click({ target: h.tabs[4] });
   assert.equal(h.animations.length, 1);
 });
 test("arrow keys wrap; Home/End focus selection; unrelated keys are untouched", () => {
@@ -124,14 +121,14 @@ test("arrow keys wrap; Home/End focus selection; unrelated keys are untouched", 
   assert.equal(h.tabs[terminalIds.length - 1].focused, true);
   assert.equal(
     h.counter.textContent,
-    `${terminalIds.length} / ${terminalIds.length}`,
+    `${String(terminalIds.length).padStart(2, "0")} / ${terminalIds.length}`,
   );
   h.key(terminalIds.length - 1, "ArrowDown");
   assert.equal(h.counter.textContent, `01 / ${terminalIds.length}`);
   h.key(0, "End");
   assert.equal(
     h.counter.textContent,
-    `${terminalIds.length} / ${terminalIds.length}`,
+    `${String(terminalIds.length).padStart(2, "0")} / ${terminalIds.length}`,
   );
   h.key(terminalIds.length - 1, "Home");
   assert.equal(h.counter.textContent, `01 / ${terminalIds.length}`);

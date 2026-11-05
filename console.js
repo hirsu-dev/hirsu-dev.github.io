@@ -1,17 +1,18 @@
-import { projects } from "./projects.js?v=27";
+import { buildNoteContent } from "./build-stories.js?v=28";
+import { projects } from "./projects.js?v=28";
 import {
   workbenchContent,
   mountWorkbench,
   entryContent,
   statusPanel,
-} from "./workbench.js?v=27";
+} from "./workbench.js?v=28";
 import { languageCounts } from "./stack-data.js";
-import { repositorySnapshot } from "./repository-data.js?v=27";
+import { repositorySnapshot } from "./repository-data.js?v=28";
 import {
   archiveOptions,
   mountArchiveOptions,
   projectDate,
-} from "./discovery.js?v=27";
+} from "./discovery.js?v=28";
 import {
   interfaces,
   interfaceFromSearch,
@@ -22,22 +23,22 @@ import {
   findProjects,
   resolveRoute,
   escapeHTML as esc,
-} from "./console-model.js?v=27";
-import { createProjectNetwork } from "./project-network.js?v=27";
-import { networkContent } from "./network-view.js?v=27";
-import { orbitHome, mountOrbit } from "./orbit-layout.js?v=27";
-import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=27";
-import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=27";
-import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=27";
-import { createCityMotion } from "./city-motion.js?v=27";
-import { mountSettings } from "./settings.js?v=27";
+} from "./console-model.js?v=28";
+import { createProjectNetwork } from "./project-network.js?v=28";
+import { networkContent } from "./network-view.js?v=28";
+import { orbitHome, mountOrbit } from "./orbit-layout.js?v=28";
+import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=28";
+import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=28";
+import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=28";
+import { createCityMotion } from "./city-motion.js?v=28";
+import { mountSettings } from "./settings.js?v=28";
 import {
   introById,
   defaultIntro,
   introOptions,
   introStorageKey,
 } from "./intro-variants.js?v=25";
-import { mountProjectTerminal } from "./project-terminal.js?v=27";
+import { mountProjectTerminal } from "./project-terminal.js?v=28";
 import { photoCredit } from "./photo.js?v=11";
 
 const $ = (s) => document.querySelector(s);
@@ -431,7 +432,7 @@ function renderProject(p) {
   screen.innerHTML = `<a class="back-link" href="#projects">← Back to all projects</a><header class="page-head"><div><p class="eyebrow">PROJECT / ${String(projects.indexOf(p) + 1).padStart(2, "0")} / ${esc(p.category)}</p><h1>${esc(p.title)}</h1><p>${esc(p.subtitle)}</p><div class="detail-links">${p.demo ? `<a class="bracket" href="${esc(p.demo)}" target="_blank" rel="noopener noreferrer">[ ${esc(p.demoLabel || "Open working prototype")} ↗ ]</a>` : ""}${sourceLink(p, "[ Source & setup ↗ ]")}<button class="bracket" data-save="${p.id}" aria-pressed="${saved.has(p.id)}" aria-label="${saved.has(p.id) ? "Unsave" : "Save"} ${esc(p.title)}">[ ${saved.has(p.id) ? "Saved" : "Save project"} ]</button></div></div><span class="project-badge ${p.statusClass || ""}">${esc(p.status)}</span></header>
   <div class="detail-layout"><section class="panel"><h2>01 / The idea</h2><p>${esc(p.overview)}</p></section><section class="panel"><h2>02 / What it does</h2><ul>${p.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section><section class="panel"><h2>03 / Current state</h2><p class="status-note">${esc(p.progress)}</p>${statusPanel(p)}</section>
   <figure class="project-media"><button class="media-open" data-preview="${p.id}" aria-label="Enlarge ${esc(p.title)} image"><img id="project-image" src="${images[at].image}" alt="${esc(images[at].alt)}" /></button><figcaption id="project-caption">${esc(images[at].caption)}</figcaption>${images.length > 1 ? `<div class="gallery-controls"><button data-shot="-1" aria-label="Previous project image">←</button><span id="shot-position">${at + 1} / ${images.length}</span><button data-shot="1" aria-label="Next project image">→</button></div>` : ""}</figure>
-  <p class="detail-evidence">SOURCE NOTE / ${esc(p.evidence)}</p></div>`;
+  ${buildNoteContent(p)}<p class="detail-evidence">SOURCE NOTE / ${esc(p.evidence)}</p></div>`;
 }
 function changeShot(step) {
   const p = projectById(route);

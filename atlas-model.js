@@ -1,4 +1,4 @@
-import { skyObjects } from "./sky-model.js?v=27";
+import { skyObjects } from "./sky-model.js?v=28";
 import { project3, seededRandom } from "./space-math.js?v=21";
 
 export const atlasHubs = Object.freeze([

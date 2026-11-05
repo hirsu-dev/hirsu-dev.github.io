@@ -1,8 +1,12 @@
-import { projects } from "./projects.js?v=27";
-import { escapeHTML as esc } from "./console-model.js?v=27";
+import { projects } from "./projects.js?v=28";
+import { escapeHTML as esc } from "./console-model.js?v=28";
 import { cityPhoto, photoCredit } from "./photo.js?v=11";
-import { projectTerminal } from "./project-terminal.js?v=27";
-import { recentWork } from "./discovery.js?v=27";
+import { projectTerminal } from "./project-terminal.js?v=28";
+import {
+  featuredProjectIds,
+  buildStories,
+  buildNoteContent,
+} from "./build-stories.js?v=28";
 
 export const overdriveSections = [
   "od-recent",
@@ -12,16 +16,7 @@ export const overdriveSections = [
   "od-workbench",
 ];
 export function overdriveHome(network) {
-  const order = [
-    "maintaineros",
-    "civiclens",
-    "custom-keyboard",
-    "robo-telescope",
-    "pi-homelab",
-    "nexus-ai",
-    "hyprland-forge",
-    ...projects.filter((p) => p.demo).map((p) => p.id),
-  ];
+  const order = featuredProjectIds;
   return `<div class="overdrive-home">
     <section class="od-hero" aria-labelledby="od-title">
       <div class="od-hero-art" aria-hidden="true"><img src="${cityPhoto.src}" srcset="${cityPhoto.srcset}" sizes="100vw" alt="" width="3888" height="2592" fetchpriority="high" /></div>
@@ -39,22 +34,22 @@ export function overdriveHome(network) {
       <aside class="terminal-profile od-enter" aria-label="Portfolio summary"><p>BUILDER PROFILE / HIRSU</p><div class="terminal-stats"><span><b>${projects.length}</b>PROJECT FILES</span><span><b>${projects.filter((p) => p.source).length}</b>PUBLIC REPOS</span><span><b>${projects.filter((p) => p.demo).length}</b>BROWSER APPS</span></div><div class="terminal-directive"><span>ONGOING WORK</span><a href="#robo-telescope">Repair Robo Telescope <b>↗</b></a><a href="#custom-keyboard">Validate the macro pad <b>↗</b></a></div></aside>
       </div>
       ${projectTerminal()}
-      <div class="od-hero-bottom od-enter">${photoCredit()}<a href="#od-projects" data-home-section="od-projects">SCROLL / FULL ARCHIVE <span class="od-scroll-arrow">↓</span></a></div>
+      <div class="od-hero-bottom od-enter">${photoCredit()}<a href="#od-projects" data-home-section="od-projects">SCROLL / SELECTED WORK <span class="od-scroll-arrow">↓</span></a></div>
     </section>
     <div class="od-ticker" aria-hidden="true"><div>${Array.from({ length: 2 }, () => `<span>PYTHON <b>×</b> JAVASCRIPT <b>×</b> ROBOTICS <b>×</b> LOCAL AI <b>×</b> RASPBERRY PI <b>×</b> OPEN SOURCE <b>×</b> `).join("")}</div></div>
-    <nav class="od-jump" aria-label="Home sections"><span>SCROLL / INDEX</span>${overdriveSections.map((id, i) => `<a href="#${id}" data-home-section="${id}">0${i + 1} / ${["LATEST", "BUILDS", "NIGHT SKY", "STACK", "WORKBENCH"][i]}</a>`).join("")}</nav>
+    <nav class="od-jump" aria-label="Home sections"><span>SCROLL / INDEX</span>${overdriveSections.map((id, i) => `<a href="#${id}" data-home-section="${id}">0${i + 1} / ${["WHY I BUILD", "SELECTED WORK", "PROJECT MAP", "STACK", "BUILD NOTES"][i]}</a>`).join("")}</nav>
     <nav class="channel-links od-section" aria-label="Explore the portfolio"><a href="#projects">PROJECT ARCHIVE / ALL THE WORK ↗</a><a href="#log">BUILD NOTES / THE PROCESS ↗</a><a href="#about">PROFILE / ABOUT HIRSU ↗</a></nav>
-    ${recentWork()}
+    ${originSection()}
     <section id="od-projects" class="od-section" aria-labelledby="od-projects-title">
-      <header class="od-section-head" data-reveal><p class="od-kicker">01 / SELECTED SIGNALS</p><div><h2 id="od-projects-title">BUILT TO<br /><em>DO SOMETHING.</em></h2><p>Useful tools. Physical experiments. Unfinished ideas worth pursuing. Every project includes its actual current state.</p></div></header>
+      <header class="od-section-head" data-reveal><p class="od-kicker">01 / FIVE PROJECTS TO START WITH</p><div><h2 id="od-projects-title">BUILT TO<br /><em>DO SOMETHING.</em></h2><p>Five builds with a different problem behind each. Open a project for the decision, evidence and work that remains.</p></div></header>
       <div class="od-builds">${order
         .map((id, i) => {
           const p = projects.find((item) => item.id === id);
-          return `<article class="od-build" data-reveal aria-labelledby="od-${id}"><a class="od-build-media" href="#${id}" aria-label="Explore ${esc(p.title)}"><img src="${p.image}" alt="${esc(p.alt)}" loading="lazy" width="1200" height="750" /><span class="od-media-caption">${esc(p.caption)}</span><span class="od-open" aria-hidden="true">↗</span></a><div class="od-build-copy"><div class="od-build-meta"><span>FILE / ${String(i + 1).padStart(2, "0")}</span><span class="od-status ${p.statusClass || ""}">${esc(p.status)}</span></div><p class="od-kicker">${esc(p.category)}</p><h3 id="od-${id}"><a href="#${id}">${esc(p.title)}</a></h3><p>${esc(p.description)}</p><div class="od-tags">${p.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div><a class="od-text-link" href="#${id}">OPEN PROJECT <span>↗</span></a></div></article>`;
+          return `<article class="od-build" data-reveal aria-labelledby="od-${id}"><a class="od-build-media" href="#${id}" aria-label="Explore ${esc(p.title)}"><img src="${p.image}" alt="${esc(p.alt)}" loading="lazy" width="1200" height="750" /><span class="od-media-caption">${esc(p.caption)}</span><span class="od-open" aria-hidden="true">↗</span></a><div class="od-build-copy"><div class="od-build-meta"><span>FILE / ${String(i + 1).padStart(2, "0")}</span><span class="od-status ${p.statusClass || ""}">${esc(p.status)}</span></div><p class="od-kicker">${esc(p.category)}</p><h3 id="od-${id}"><a href="#${id}">${esc(p.title)}</a></h3><p>${esc(p.description)}</p><div class="od-tags">${p.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div><a class="od-text-link" href="#${id}">OPEN PROJECT <span>↗</span></a>${buildNoteContent(p, true)}</div></article>`;
         })
         .join(
           "",
-        )}</div><a class="od-button od-archive" href="#projects">SEARCH THE FULL ARCHIVE <span>↗</span></a>
+        )}</div>${progressSection()}<a class="od-button od-archive" href="#projects">SEARCH THE FULL ARCHIVE <span>↗</span></a>
     </section>
     <section id="od-network" class="od-section od-network" aria-labelledby="od-network-title"><header class="od-section-head" data-reveal><p class="od-kicker">02 / AFTER DARK</p><div><h2 id="od-network-title">SMALL IDEAS.<br /><em>BRIGHT STARS.</em></h2><p>A night sky made from the things I build. Drift between ${projects.length} constellations and follow the threads connecting software, circuits and the home lab.</p></div></header><div data-reveal>${network}</div></section>
     <section id="od-stack" class="od-section" aria-labelledby="od-stack-title"><header class="od-section-head" data-reveal><p class="od-kicker">03 / THE LOADOUT</p><div><h2 id="od-stack-title">TOOLS, NOT<br /><em>SKILL BARS.</em></h2><p>The technologies behind the work. No invented proficiency percentages. Just things I build with.</p></div></header><div class="od-stack-grid">${[
@@ -90,4 +85,13 @@ export function overdriveHome(network) {
     <section id="od-workbench" class="od-section od-workbench" aria-labelledby="od-workbench-title"><div data-reveal><p class="od-kicker">04 / ALWAYS A WORK IN PROGRESS</p><h2 id="od-workbench-title">THE NEXT<br /><em>ITERATION.</em></h2><p>The interesting part is figuring it out. These are personal projects—not polished products pretending to be finished.</p><a class="od-text-link" href="#log">OPEN THE WORKBENCH ↗</a></div><div class="od-bench-list" data-reveal><a href="#robo-telescope"><span>01 / REPAIR</span><h3>Get back to the stars.</h3><p>Robo Telescope worked before. Right now it's broken and needs repair.</p><b>↗</b></a><a href="#custom-keyboard"><span>02 / VALIDATE</span><h3>From CAD to real keys.</h3><p>Verify the macro pad's assembly, clearances and physical fit.</p><b>↗</b></a><a href="#hyprland-forge"><span>03 / ITERATE</span><h3>Make the desktop mine.</h3><p>Keep developing the Linux shell and validate it on real hardware.</p><b>↗</b></a></div></section>
     <section class="od-outro" data-reveal><p class="od-kicker">END OF TRANSMISSION / NOT THE END OF THE WORK</p><h2>STAY CURIOUS<span>_</span></h2><a class="od-button" href="https://github.com/hirsu-dev" target="_blank" rel="noopener noreferrer">FOLLOW THE SOURCE <span>↗</span></a><a class="od-text-link" href="#about">ABOUT / SOURCES</a></section>
   </div>`;
+}
+
+function originSection() {
+  const s = buildStories["robo-telescope"];
+  return `<section class="od-section portfolio-origin" id="od-recent" aria-labelledby="origin-title"><div><p class="od-kicker">WHY I BUILD / ROBO TELESCOPE</p><h2 id="origin-title">IT WAS EXPENSIVE.<br /><em>SO I TRIED BUILDING IT.</em></h2><p>${esc(s.origin)}</p><a class="od-text-link" href="#robo-telescope">THE BUILD & WHAT BROKE ↗</a></div><aside><b>WHERE IT STANDS</b><span>Worked before. Currently under repair.</span><b>NEXT EVIDENCE TO ADD</b><span>A real build photo and a repeatable pointing test.</span></aside></section>`;
+}
+function progressSection() {
+  const remaining = projects.filter((p) => !featuredProjectIds.includes(p.id));
+  return `<section class="portfolio-progress" aria-labelledby="progress-title"><p class="od-kicker">THE REST OF THE WORKBENCH</p><h3 id="progress-title">In progress / smaller projects</h3><p>Prototypes, personal setups and designs still being tested. These have their own statuses; they are not all equally finished.</p><div class="progress-files">${remaining.map((p) => `<article class="progress-file"><figure><img src="${p.image}" alt="${esc(p.alt)}" width="160" height="100" loading="lazy"/><figcaption>${esc(p.caption)}</figcaption></figure><div><small>${esc(p.status)}</small><h4><a href="#${p.id}">${esc(p.title)} ↗</a></h4><p>${esc(p.description)}</p></div></article>`).join("")}</div></section>`;
 }

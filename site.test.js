@@ -1,4 +1,9 @@
 import test from "node:test";
+import {
+  featuredProjectIds,
+  buildNoteContent,
+  buildStories,
+} from "./build-stories.js";
 import assert from "node:assert/strict";
 import { calendarDays, languageCounts, snapshot } from "./stack-data.js";
 import { wrap } from "./motion.js";
@@ -154,7 +159,7 @@ test("all project and cinematic image assets exist in the static checkout", () =
   for (const path of assets)
     assert.ok(existsSync(new URL(path, import.meta.url)), path);
 });
-test("Overdrive has a continuous, accessible home for all all real builds", () => {
+test("Overdrive has a continuous, accessible home for all real builds", () => {
   const html = overdriveHome('<div id="network-shell"></div>');
   for (const p of projects) {
     assert.ok(html.includes(`href="#${p.id}"`));
@@ -166,6 +171,47 @@ test("Overdrive has a continuous, accessible home for all all real builds", () =
   assert.equal(new Set(ids).size, ids.length);
   assert.match(html, /not polished products/i);
   assert.equal((html.match(/<h1\b/g) || []).length, 1);
+});
+
+test("the homepage focuses five builds and keeps every other project in progress", () => {
+  const html = overdriveHome("");
+  assert.equal(featuredProjectIds.length, 5);
+  assert.equal(new Set(featuredProjectIds).size, 5);
+  assert.equal((html.match(/class="od-build"/g) || []).length, 5);
+  assert.equal(
+    (html.match(/class="progress-file"/g) || []).length,
+    projects.length - 5,
+  );
+  for (const p of projects) {
+    assert.ok(html.includes(`href="#${p.id}"`), p.id);
+    assert.ok(buildNoteContent(p).includes(`data-build-story="${p.id}"`), p.id);
+  }
+  assert.match(html, /In progress \/ smaller projects/);
+  assert.match(html, /really expensive/);
+});
+
+test("featured notes distinguish source evidence, simulations and unperformed device checks", () => {
+  for (const id of featuredProjectIds) {
+    const p = projects.find((p) => p.id === id),
+      note = buildNoteContent(p);
+    assert.ok(note.includes(escapeHTML(buildStories[id].checked)));
+    assert.ok(note.includes(escapeHTML(buildStories[id].estimated)));
+    assert.ok(note.includes(escapeHTML(buildStories[id].next)));
+    for (const [, url] of buildStories[id].links)
+      assert.ok(url.startsWith("https://github.com/hirsu-dev/"));
+  }
+  assert.match(
+    buildNoteContent(projects.find((p) => p.id === "robo-telescope")),
+    /currently broken/,
+  );
+  assert.match(
+    buildNoteContent(projects.find((p) => p.id === "hyprland-forge")),
+    /19 passed, 2 skipped/,
+  );
+  assert.match(
+    buildNoteContent(projects.find((p) => p.id === "civiclens")),
+    /synthetic records/,
+  );
 });
 test("visual progress reaches 100 before the glitch release finishes", () => {
   assert.equal(bootProgressAt(-10), 0);

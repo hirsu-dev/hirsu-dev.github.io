@@ -1,5 +1,5 @@
-import { projects } from "./projects.js?v=27";
-import { escapeHTML as esc } from "./console-model.js?v=27";
+import { projects } from "./projects.js?v=28";
+import { escapeHTML as esc } from "./console-model.js?v=28";
 
 export function archiveOptions({
   availability = "all",
@@ -50,7 +50,7 @@ export function recentWork() {
   const featured = projects.find((p) => p.id === "biobuzz-simulator");
   return `<section class="od-section recent-work" id="od-recent" aria-labelledby="recent-title">
     <header class="od-section-head" data-reveal><p class="od-kicker">NEW / FROM THE WORKBENCH</p><div><h2 id="recent-title">FRESH<br /><em>OFF THE BENCH.</em></h2><p>Drive a robot, explore my desktop project, or take a notebook into your next build.</p></div></header>
-    <article class="latest-feature" data-reveal><a class="latest-art" href="#${featured.id}"><img src="${featured.image}" width="1200" height="750" loading="lazy" alt="${esc(featured.alt)}" /><span>${esc(featured.caption)}</span></a><div class="latest-copy"><p class="od-kicker">FEATURED BUILD / ROBOTICS</p>${projectDate(featured)}<h3><a href="#${featured.id}">${esc(featured.title)}</a></h3><p>${esc(featured.description)}</p><dl class="latest-specs"><div><dt>ROBOT PRESETS</dt><dd>10</dd></div><div><dt>MATCH FORMAT</dt><dd>2 vs 2</dd></div><div><dt>RUNS IN</dt><dd>Your browser</dd></div></dl><div class="latest-actions"><a class="od-button" href="${featured.demo}" target="_blank" rel="noopener noreferrer">PLAY BIOBUZZ <span>↗</span></a><a class="od-text-link" href="#${featured.id}">BUILD NOTES ↗</a></div><p class="fineprint">Singleplayer practice with simplified physics. Java editing is supported; browser Java execution is not.</p></div></article>
+    <article class="latest-feature" data-reveal><a class="latest-art" href="#${featured.id}"><img src="${featured.image}" width="1200" height="750" loading="lazy" alt="${esc(featured.alt)}" /><span>${esc(featured.caption)}</span></a><div class="latest-copy"><p class="od-kicker">FEATURED BUILD / ROBOTICS</p>${projectDate(featured)}<h3><a href="#${featured.id}">${esc(featured.title)}</a></h3><p>${esc(featured.description)}</p><dl class="latest-specs"><div><dt>ROBOT PRESETS</dt><dd>15</dd></div><div><dt>MATCH FORMAT</dt><dd>2 vs 2</dd></div><div><dt>RUNS IN</dt><dd>Your browser</dd></div></dl><div class="latest-actions"><a class="od-button" href="${featured.demo}" target="_blank" rel="noopener noreferrer">PLAY BIOBUZZ <span>↗</span></a><a class="od-text-link" href="#${featured.id}">BUILD NOTES ↗</a></div><p class="fineprint">Singleplayer practice with simplified physics. Java editing is supported; browser Java execution is not.</p></div></article>
     <div class="recent-secondary">${[
       "hyprland-forge",
       "offline-project-notebook",

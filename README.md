@@ -2,9 +2,11 @@
 
 [Live portfolio](https://hirsu-dev.github.io/)
 
-A personal portfolio with 15 projects, source links, screenshots, build notes, a stack overview and a project map. It runs on free GitHub Pages without a backend or account.
+A personal portfolio with five featured builds and ten smaller projects in progress. The full archive keeps all 15 projects, source links, screenshots, build notes, a stack overview and a project map. It runs on free GitHub Pages without a backend or account.
 
 Settings → Customize has five layouts: Overdrive, Netrunner, Relic, Switchboard and Orbit. Orbit uses a thumbnail project wheel, a terminal-style reader and a branching project map. It takes visual inspiration from [Hancore](https://hancore.dev/site/), with original code and my own project content.
+
+Featured build notes explain a project-specific decision, what was checked and what is still unfinished. Robo Telescope includes my reason for starting it: the motorized telescopes I saw online were expensive, so I wanted to build one myself.
 
 The Build Lab, experiments page, music player and hosted audio files have been removed. The actual telescope, Pi and software projects remain. Old utility links lead back to the archive or home.
 

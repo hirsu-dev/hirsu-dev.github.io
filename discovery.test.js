@@ -115,7 +115,7 @@ test("native archive controls apply their combined values and dispose their list
   win.happyDOM.abort();
 });
 
-test("the latest-work feature has playable links, labeled diagrams and no embedded game overhead", () => {
+test("the latest-work feature has playable links, labeled captures and no embedded game overhead", () => {
   const win = new Window(),
     host = win.document.createElement("main");
   host.innerHTML = recentWork();
@@ -124,7 +124,7 @@ test("the latest-work feature has playable links, labeled diagrams and no embedd
   );
   assert.equal(play.target, "_blank");
   assert.match(play.rel, /noopener/);
-  assert.match(host.textContent, /not a gameplay screenshot/);
+  assert.match(host.textContent, /Actual browser capture.*simulated solo-practice field/);
   assert.match(host.textContent, /browser Java execution is not/);
   assert.equal(host.querySelectorAll("canvas,iframe,video,audio").length, 0);
   const ids = [...host.querySelectorAll("[id]")].map((n) => n.id);

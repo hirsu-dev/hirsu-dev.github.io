@@ -6,21 +6,21 @@ export const newProjects = [
     category: "ROBOTICS / 3D SIMULATION",
     tags: ["JavaScript", "Three.js", "Rapier", "Robotics"],
     description:
-      "A browser-based 3D FTC practice game: ten robot designs, 2-vs-2 matches and touch, keyboard or gamepad driving.",
+      "A browser-based 3D FTC practice game: fifteen robot designs, 2-vs-2 matches and touch, keyboard or gamepad driving.",
     features: [
-      "Ten procedural robot presets with different drive types and mechanisms",
+      "Fifteen procedural robot presets with different drive types and mechanisms",
       "Timed matches, free drive, AI teammates and opponents, and local replays",
       "Mobile touch controls, camera selection and render-quality settings",
       "A local Java draft editor with import and download; no Java execution in the browser",
     ],
     progress:
-      "The public browser game is playable. Physics, scoring and robot geometry are simplified estimates for practice, not calibrated hardware or an official scorer. Multiplayer and accounts are not implemented. Physical mobile devices still need testing.",
+      "The public browser game is playable. Physics, scoring and robot geometry are simplified estimates for practice, not calibrated hardware or an official scorer. Private multiplayer rooms use host-browser physics; accounts and public matchmaking are not implemented. Physical mobile devices still need testing.",
     filters: ["software", "robotics"],
     status: "Playable prototype",
     artwork: "biobuzz-simulator",
-    image: "assets/apps/biobuzz-simulator.svg",
-    alt: "Original isometric diagram of a robot practice field with opposing robots and a ball trajectory",
-    caption: "Original simulation diagram · not a gameplay screenshot",
+    image: "assets/biobuzz-practice-2026-11-05.jpg",
+    alt: "Actual BIOBUZZ browser solo-practice screen with a simulated field and robot",
+    caption: "Actual browser capture · simulated solo-practice field · November 5, 2026",
     overview:
       "Drive one robot alongside an AI teammate against two AI opponents. Three.js draws the field and Rapier handles rigid-body physics on the visitor's device. Quick matches, full matches and free drive support different kinds of driver practice.",
     source: "https://github.com/hirsu-dev/biobuzz-simulator",
@@ -28,7 +28,7 @@ export const newProjects = [
     demo: "https://hirsu-dev.github.io/biobuzz-simulator/",
     demoLabel: "Play BIOBUZZ",
     evidence:
-      "Public README, package and default-branch commit 99c93d0, reviewed October 27, 2026.",
+      "Public README and source c6cdcd5; 47 Node checks and a desktop browser capture, November 5, 2026.",
   },
   {
     id: "observatory-planner",

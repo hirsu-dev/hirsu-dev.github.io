@@ -1,12 +1,11 @@
-import { projects } from "./projects.js?v=27";
-import { escapeHTML as esc } from "./console-model.js?v=27";
-import { repositorySnapshot } from "./repository-data.js?v=27";
+import { featuredProjectIds, buildNoteContent } from "./build-stories.js?v=28";
+import { projects } from "./projects.js?v=28";
+import { escapeHTML as esc } from "./console-model.js?v=28";
+import { repositorySnapshot } from "./repository-data.js?v=28";
 
 const first = [
   "biobuzz-simulator",
-  "hyprland-forge",
-  "custom-keyboard",
-  "observatory-planner",
+  ...featuredProjectIds.filter((id) => id !== "biobuzz-simulator"),
 ];
 export const orbitProjects = [...projects].sort((a, b) => {
   const rank = (p) =>
@@ -63,10 +62,10 @@ export function orbitProjectContent(p, shot = 0) {
     .map((f) => `<li>${esc(f)}</li>`)
     .join(
       "",
-    )}</ul></div><div class="orbit-project-links"><a class="orbit-primary" href="#${p.id}">READ PROJECT ↗</a>${p.demo ? `<a href="${esc(p.demo)}" target="_blank" rel="noopener noreferrer">${esc(p.demoLabel || "OPEN APP")} ↗</a>` : ""}${p.source ? `<a href="${esc(p.source)}" target="_blank" rel="noopener noreferrer">SOURCE ↗</a>` : "<span>Personal build</span>"}</div>`;
+    )}</ul></div>${buildNoteContent(p, true)}<div class="orbit-project-links"><a class="orbit-primary" href="#${p.id}">READ PROJECT ↗</a>${p.demo ? `<a href="${esc(p.demo)}" target="_blank" rel="noopener noreferrer">${esc(p.demoLabel || "OPEN APP")} ↗</a>` : ""}${p.source ? `<a href="${esc(p.source)}" target="_blank" rel="noopener noreferrer">SOURCE ↗</a>` : "<span>Personal build</span>"}</div>`;
 }
 export function orbitHome() {
-  return `<div class="orbit-home" data-layout-home="orbit"><header class="orbit-heading"><div><p>HIRSU / INDEPENDENT BUILDER</p><h1>A personal orbit of work<span>_</span></h1></div><nav aria-label="Portfolio sections"><a href="#projects">all projects ↗</a><a href="#log">build notes ↗</a><a href="#about">whoami ↗</a></nav></header><div class="orbit-workspace"><aside class="orbit-rail" aria-labelledby="orbit-index-title"><header><h2 id="orbit-index-title">PROJECT INDEX</h2><span id="orbit-count">${projects.length} FILES</span></header><label class="orbit-search"><span class="sr-only">Find a project in Orbit</span><span aria-hidden="true">⌕</span><input id="orbit-search" type="search" maxlength="120" placeholder="find a project…" autocomplete="off" /></label><div id="orbit-active-filter" class="orbit-active-filter" hidden></div><div class="orbit-wheel-controls"><button data-orbit-step="-1" aria-label="Previous project">↑</button><span>scroll to browse</span><button data-orbit-step="1" aria-label="Next project">↓</button></div><div id="orbit-list" class="orbit-wheel" role="tablist" aria-label="Orbit project files" aria-orientation="vertical"></div><p id="orbit-empty" hidden>No matching projects. <button data-orbit-clear>Clear filters</button></p><p class="orbit-rail-hint">↑ ↓ select · Home / End jump<br />Enter opens the project</p></aside><section class="orbit-reader" aria-labelledby="orbit-project-title"><div class="orbit-windowbar"><span><i></i> PORTFOLIO / FILE VIEW</span><span id="orbit-file-number"></span></div><div id="orbit-project-panel" role="tabpanel" tabindex="0"></div></section><aside class="orbit-insight" aria-label="Project connections"><header><h2>THE PROJECT TREE</h2><span>ONE BRANCH / ONE BUILD</span></header><div id="orbit-graph" class="orbit-graph"></div><p class="orbit-graph-note">An original map of this portfolio. The selected build lights its branch.</p><div class="orbit-stack"><span class="orbit-label">SHARED TOOLS / FILTER THE INDEX</span><div id="orbit-tags"></div></div><div class="orbit-connections"><span class="orbit-label">CONNECTED WORK</span><div id="orbit-related"></div></div></aside></div><footer class="orbit-status"><span><b>${projects.length}</b> PROJECTS / <b>${projects.filter((p) => p.source).length}</b> PUBLIC REPOS</span><span><b>${projects.filter((p) => p.demo).length}</b> BROWSER APPS</span><a href="#stack">STACK SNAPSHOT / ${repositorySnapshot.date} ↗</a></footer><p class="orbit-provenance">Code, circuits and things that move. Every file keeps its actual status, sources and image credits.</p><p class="sr-only" id="orbit-announcement" role="status" aria-live="polite"></p></div>`;
+  return `<div class="orbit-home" data-layout-home="orbit"><header class="orbit-heading"><div><p>HIRSU / INDEPENDENT BUILDER</p><h1>A personal orbit of work<span>_</span></h1></div><nav aria-label="Portfolio sections"><a href="#projects">all projects ↗</a><a href="#log">build notes ↗</a><a href="#about">whoami ↗</a></nav></header><div class="orbit-workspace"><aside class="orbit-rail" aria-labelledby="orbit-index-title"><header><h2 id="orbit-index-title">PROJECT INDEX</h2><span id="orbit-count">${projects.length} FILES</span></header><label class="orbit-search"><span class="sr-only">Find a project in Orbit</span><span aria-hidden="true">⌕</span><input id="orbit-search" type="search" maxlength="120" placeholder="find a project…" autocomplete="off" /></label><label class="orbit-scope"><input id="orbit-scope" type="checkbox" /> Include in progress / ${projects.length - featuredProjectIds.length} more</label><div id="orbit-active-filter" class="orbit-active-filter" hidden></div><div class="orbit-wheel-controls"><button data-orbit-step="-1" aria-label="Previous project">↑</button><span>scroll to browse</span><button data-orbit-step="1" aria-label="Next project">↓</button></div><div id="orbit-list" class="orbit-wheel" role="tablist" aria-label="Orbit project files" aria-orientation="vertical"></div><p id="orbit-empty" hidden>No matching projects. <button data-orbit-clear>Clear filters</button></p><p class="orbit-rail-hint">↑ ↓ select · Home / End jump<br />Enter opens the project</p></aside><section class="orbit-reader" aria-labelledby="orbit-project-title"><div class="orbit-windowbar"><span><i></i> PORTFOLIO / FILE VIEW</span><span id="orbit-file-number"></span></div><div id="orbit-project-panel" role="tabpanel" tabindex="0"></div></section><aside class="orbit-insight" aria-label="Project connections"><header><h2>THE PROJECT TREE</h2><span>ONE BRANCH / ONE BUILD</span></header><div id="orbit-graph" class="orbit-graph"></div><p class="orbit-graph-note">An original map of this portfolio. The selected build lights its branch.</p><div class="orbit-stack"><span class="orbit-label">SHARED TOOLS / FILTER THE INDEX</span><div id="orbit-tags"></div></div><div class="orbit-connections"><span class="orbit-label">CONNECTED WORK</span><div id="orbit-related"></div></div></aside></div><footer class="orbit-status"><span><b>${projects.length}</b> PROJECTS / <b>${projects.filter((p) => p.source).length}</b> PUBLIC REPOS</span><span><b>${projects.filter((p) => p.demo).length}</b> BROWSER APPS</span><a href="#stack">STACK SNAPSHOT / ${repositorySnapshot.date} ↗</a></footer><p class="orbit-provenance">Code, circuits and things that move. Every file keeps its actual status, sources and image credits.</p><p class="sr-only" id="orbit-announcement" role="status" aria-live="polite"></p></div>`;
 }
 
 export function mountOrbit(
@@ -78,7 +77,8 @@ export function mountOrbit(
   const $ = (selector) => home.querySelector(selector),
     input = $("#orbit-search"),
     rail = $("#orbit-list"),
-    panel = $("#orbit-project-panel");
+    panel = $("#orbit-project-panel"),
+    scope = $("#orbit-scope");
   const stored = read("hirsu-orbit-selected");
   let selected = orbitProjects.some((p) => p.id === stored)
       ? stored
@@ -87,6 +87,12 @@ export function mountOrbit(
     tag = "",
     shot = 0,
     visible = [];
+  let showProgress = !featuredProjectIds.includes(selected);
+  scope.checked = showProgress;
+  const matching = () =>
+    orbitMatches(query, tag).filter(
+      (p) => showProgress || featuredProjectIds.includes(p.id),
+    );
   const moving = () =>
     host.ownerDocument.documentElement.dataset.motion === "on";
   const narrow =
@@ -121,7 +127,7 @@ export function mountOrbit(
     });
   }
   function renderRail(focus = false) {
-    visible = orbitMatches(query, tag);
+    visible = matching();
     const at = visible.findIndex((p) => p.id === selected);
     rail.innerHTML = visible
       .map((p, i) => {
@@ -181,6 +187,7 @@ export function mountOrbit(
   function select(id, focus = false) {
     if (!orbitProjects.some((p) => p.id === id)) return;
     selected = id;
+    if (!featuredProjectIds.includes(id)) showProgress = scope.checked = true;
     shot = 0;
     if (!orbitMatches(query, tag).some((p) => p.id === id)) {
       query = "";
@@ -193,7 +200,7 @@ export function mountOrbit(
   }
   function filter() {
     query = input.value;
-    const matches = orbitMatches(query, tag);
+    const matches = matching();
     if (matches.length && !matches.some((p) => p.id === selected)) {
       selected = matches[0].id;
       shot = 0;
@@ -260,6 +267,11 @@ export function mountOrbit(
       } else step(["ArrowUp", "ArrowLeft"].includes(event.key) ? -1 : 1, true);
     }
   };
+  const changeScope = () => {
+    showProgress = scope.checked;
+    filter();
+  };
+  scope.addEventListener("change", changeScope);
   home.addEventListener("click", click);
   home.addEventListener("keydown", key);
   input.addEventListener("input", filter);
@@ -270,6 +282,7 @@ export function mountOrbit(
     home.removeEventListener("click", click);
     home.removeEventListener("keydown", key);
     input.removeEventListener("input", filter);
+    scope.removeEventListener("change", changeScope);
     narrow.removeEventListener("change", alignRail);
   };
 }

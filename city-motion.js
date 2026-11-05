@@ -1,5 +1,5 @@
 import { introById, introArtwork } from "./intro-variants.js?v=25";
-import { mountSignalFX } from "./signal-fx.js?v=27";
+import { mountSignalFX } from "./signal-fx.js?v=28";
 export const panelFrames = [
   {
     opacity: 0,
