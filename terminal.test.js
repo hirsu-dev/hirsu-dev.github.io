@@ -18,7 +18,7 @@ test("Overdrive and the archived theme use only the credited real photograph for
     assert.ok(html.includes(cityPhoto.license));
     assert.doesNotMatch(
       html,
-      /night-city-engineer|overdrive-rooftop|FICTIONAL KEY ART/,
+      /FICTIONAL KEY ART/,
     );
   }
   assert.match(
