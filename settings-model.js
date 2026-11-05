@@ -1,4 +1,5 @@
 export const settingsKey = "hirsu-settings-v14";
+export const motionChoiceKey = "hirsu-motion-choice-v26";
 export const settingOptions = Object.freeze({
   layout: ["overdrive", "netrunner", "relic", "switchboard"],
   motion: ["system", "on", "off"],
@@ -8,7 +9,7 @@ export const settingOptions = Object.freeze({
 });
 export const defaultSettings = Object.freeze({
   layout: "overdrive",
-  motion: "system",
+  motion: "on",
   skin: "overdrive",
   fx: "signal",
   textSize: "standard",
@@ -31,13 +32,21 @@ export function normalizeSettings(value) {
   }
   return result;
 }
-export function readSettings(raw, legacyMotion) {
+export function readSettings(raw, legacyMotion, motionChoice = null) {
   try {
-    if (raw) return normalizeSettings(JSON.parse(raw));
-  } catch {
-  }
+    if (raw) {
+      const settings = normalizeSettings(JSON.parse(raw));
+      if (settings.motion === "system" && motionChoice !== "system")
+        settings.motion = "on";
+      return settings;
+    }
+  } catch {}
   return normalizeSettings({
-    motion: ["on", "off"].includes(legacyMotion) ? legacyMotion : "system",
+    motion: ["on", "off"].includes(legacyMotion)
+      ? legacyMotion
+      : motionChoice === "system"
+        ? "system"
+        : "on",
   });
 }
 export function motionEnabled(settings, reducedMotion) {

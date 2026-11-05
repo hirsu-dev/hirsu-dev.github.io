@@ -1,18 +1,23 @@
 import {
   settingsKey,
+  motionChoiceKey,
   defaultSettings,
   readSettings,
   normalizeSettings,
   applySettings,
   nextSettingsTab,
-} from "./settings-model.js?v=18";
+} from "./settings-model.js?v=26";
 
 export function mountSettings({ read, write, onApply, onReset }) {
   const root = document.documentElement;
   const dialog = document.querySelector("#settings-dialog");
   const media = matchMedia("(prefers-reduced-motion: reduce)");
   const status = dialog.querySelector("#settings-status");
-  let value = readSettings(read(settingsKey), read("hirsu-console-motion"));
+  let value = readSettings(
+    read(settingsKey),
+    read("hirsu-console-motion"),
+    read(motionChoiceKey),
+  );
   const controls = [...dialog.querySelectorAll("[data-setting]")];
   function apply() {
     applySettings(root, value, media.matches);
@@ -32,6 +37,7 @@ export function mountSettings({ read, write, onApply, onReset }) {
   function persist() {
     const saved = write(settingsKey, JSON.stringify(value));
     write("hirsu-console-motion", value.motion);
+    write(motionChoiceKey, value.motion);
     status.textContent = saved
       ? "Saved in this browser. No account or tracking."
       : "Applied for this session. Browser storage is unavailable.";

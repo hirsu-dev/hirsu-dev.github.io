@@ -28,13 +28,10 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <script>
       document.documentElement.dataset.view = "blacksite";
-      document.documentElement.dataset.motion = matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches
-        ? "off"
-        : "on";
+      document.documentElement.dataset.motion = "on";
       try {
         const motion = localStorage.getItem("hirsu-console-motion");
+        const motionChoice = localStorage.getItem("hirsu-motion-choice-v26");
         let preferences = {},
           hasPreferences = false;
         try {
@@ -44,11 +41,17 @@
             hasPreferences = true;
           }
         } catch {}
-        const mode = ["system", "on", "off"].includes(preferences.motion)
+        const mode = ["on", "off"].includes(preferences.motion)
           ? preferences.motion
-          : hasPreferences
+          : preferences.motion === "system" && motionChoice === "system"
             ? "system"
-            : motion;
+            : hasPreferences
+              ? "on"
+              : ["on", "off"].includes(motion)
+                ? motion
+                : motionChoice === "system"
+                  ? "system"
+                  : "on";
         document.documentElement.dataset.motion =
           mode === "off" ||
           (mode !== "on" &&
@@ -91,7 +94,7 @@
     <link rel="stylesheet" href="workbench.css?v=24" />
     <link rel="stylesheet" href="discovery.css?v=24" />
     <link rel="stylesheet" href="signal-fx.css?v=25" />
-    <script type="module" src="console.js?v=25"></script>
+    <script type="module" src="console.js?v=26"></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>

@@ -33,7 +33,7 @@ import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=24";
 import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=24";
 import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=24";
 import { createCityMotion } from "./city-motion.js?v=25";
-import { mountSettings } from "./settings.js?v=18";
+import { mountSettings } from "./settings.js?v=26";
 import {
   introById,
   defaultIntro,

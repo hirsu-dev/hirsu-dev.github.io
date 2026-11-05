@@ -317,9 +317,7 @@ test("full app routes new pages, preserves the deck, and retains existing projec
   );
   go("biobuzz-simulator");
   assert.match(h.$("#screen").textContent, /simplified estimates/);
-  assert.ok(
-    h.$('a[href="https://hirsu-dev.github.io/biobuzz-simulator/"]'),
-  );
+  assert.ok(h.$('a[href="https://hirsu-dev.github.io/biobuzz-simulator/"]'));
   go("stack");
   assert.match(h.$("#screen").textContent, /13 public project repos/);
   assert.equal(h.doc.querySelectorAll(".repo-activity li").length, 13);
@@ -346,4 +344,32 @@ test("full app routes new pages, preserves the deck, and retains existing projec
     ).length,
     0,
   );
+});
+
+test("a fresh visit starts Redline even when the OS reports reduced motion", async (t) => {
+  const h = dom(t, "", (win) => ({
+    Event: win.Event,
+    IntersectionObserver: win.IntersectionObserver,
+    history: win.history,
+    localStorage: win.localStorage,
+    matchMedia: () => ({
+      matches: true,
+      addEventListener() {},
+      removeEventListener() {},
+    }),
+    requestAnimationFrame: () => 0,
+    cancelAnimationFrame: () => {},
+  }));
+  h.doc.write(readFileSync(new URL("index.html", import.meta.url), "utf8"));
+  h.win.HTMLCanvasElement.prototype.getContext = () => null;
+  h.win.HTMLMediaElement.prototype.play = () =>
+    Promise.reject(new Error("Autoplay blocked"));
+  await import("./console.js?intro-default-regression-v26");
+  assert.equal(h.doc.documentElement.dataset.motion, "on");
+  assert.equal(h.$("#boot-dialog").open, true);
+  assert.equal(h.$("#boot-dialog").dataset.intro, "redline");
+  assert.equal(h.$("#boot-percent").textContent, "000%");
+  h.$("#skip-intro").click();
+  assert.equal(h.$("#boot-dialog").open, false);
+  assert.equal(h.doc.documentElement.dataset.booting, undefined);
 });

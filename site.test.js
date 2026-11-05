@@ -195,15 +195,15 @@ test("opening timeline is ordered, bounded and has one release stage", () => {
     if (i) assert.ok(phase.at > bootPhases[i - 1].at);
   }
 });
-test("system reduced motion bypasses boot by default, even with blocked storage", () => {
+test("fresh visits enable startup while explicit motion-off survives blocked or unavailable storage", () => {
   const source = readFileSync(
     new URL("index.html", import.meta.url),
     "utf8",
   ).match(/<script>([\s\S]*?)<\/script>/)[1];
   for (const [reduce, stored, blocked, expected] of [
-    [true, null, false, "off"],
+    [true, null, false, "on"],
     [false, null, false, "on"],
-    [true, null, true, "off"],
+    [true, null, true, "on"],
     [false, "off", false, "off"],
     [true, "on", false, "on"],
   ]) {

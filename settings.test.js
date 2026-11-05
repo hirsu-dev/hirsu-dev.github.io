@@ -11,6 +11,7 @@ import {
   applySettings,
   nextSettingsTab,
   settingsKey,
+  motionChoiceKey,
 } from "./settings-model.js";
 import { mountSettings } from "./settings.js";
 
@@ -186,6 +187,7 @@ test("blocked storage keeps session state and announces the limitation", (t) => 
 });
 test("system preference reacts live without overriding an explicit selection", (t) => {
   const h = settingsHarness(t);
+  h.api.set("motion", "system");
   h.media.matches = true;
   h.media.change();
   assert.equal(h.root.dataset.motion, "off");
@@ -263,13 +265,54 @@ test("preferences validate every value and ignore unknown or inherited keys", ()
 test("legacy motion migrates; current valid preferences take precedence", () => {
   assert.equal(readSettings(null, "off").motion, "off");
   assert.equal(readSettings(null, "on").motion, "on");
-  assert.equal(readSettings(null, "system").motion, "system");
-  assert.equal(readSettings("broken", null).motion, "system");
+  assert.equal(readSettings(null, "system").motion, "on");
+  assert.equal(readSettings("broken", null).motion, "on");
   assert.equal(
     readSettings('{"motion":"system","skin":"icewire"}', "off").motion,
-    "system",
+    "on",
   );
   assert.equal(readSettings('{"skin":"monolith"}', null).skin, "monolith");
+});
+
+test("fresh visits and the former system default keep the intro enabled without losing other preferences", () => {
+  assert.equal(defaultSettings.motion, "on");
+  assert.equal(motionEnabled(readSettings(null, null), true), true);
+  const restored = readSettings(
+    JSON.stringify({
+      motion: "system",
+      layout: "relic",
+      autoplay: true,
+      skin: "icewire",
+    }),
+    "system",
+  );
+  assert.equal(restored.motion, "on");
+  assert.equal(restored.layout, "relic");
+  assert.equal(restored.skin, "icewire");
+  assert.equal(restored.autoplay, true);
+  assert.equal(readSettings('{"motion":"off"}', "on").motion, "off");
+  assert.equal(readSettings('{"autoplay":false}', null).autoplay, false);
+});
+
+test("an intentional Follow system choice persists and still follows reduced motion after reload", (t) => {
+  const h = settingsHarness(t, { reduced: true });
+  assert.equal(h.root.dataset.motion, "on");
+  h.api.set("motion", "system");
+  assert.equal(h.root.dataset.motion, "off");
+  assert.equal(h.store.get(motionChoiceKey), "system");
+  const restored = readSettings(
+    h.store.get(settingsKey),
+    h.store.get("hirsu-console-motion"),
+    h.store.get(motionChoiceKey),
+  );
+  assert.equal(restored.motion, "system");
+  assert.equal(motionEnabled(restored, true), false);
+  h.api.set("motion", "off");
+  assert.equal(
+    readSettings(h.store.get(settingsKey), "on", h.store.get(motionChoiceKey))
+      .motion,
+    "off",
+  );
 });
 test("system motion follows OS; explicit off/on always wins", () => {
   for (const reduced of [true, false]) {
@@ -365,7 +408,11 @@ test("pre-paint preferences agree with validated current settings and system mot
         matchMedia: () => ({ matches: reduced }),
         localStorage: {
           getItem: (key) =>
-            key === "hirsu-settings-v14" ? JSON.stringify(prefs) : "on",
+            key === settingsKey
+              ? JSON.stringify(prefs)
+              : key === motionChoiceKey
+                ? motion
+                : "on",
         },
       });
       assert.equal(
@@ -391,6 +438,7 @@ test("partial or malformed stored preferences cannot cause a different first-pai
     "[]",
     '{"skin":"icewire"}',
     '{"motion":"invalid"}',
+    '{"motion":"system","skin":"icewire"}',
   ]) {
     for (const legacy of ["on", "off", "system", null])
       for (const reduced of [true, false]) {
@@ -399,7 +447,12 @@ test("partial or malformed stored preferences cannot cause a different first-pai
           document,
           matchMedia: () => ({ matches: reduced }),
           localStorage: {
-            getItem: (key) => (key === settingsKey ? raw : legacy),
+            getItem: (key) =>
+              key === settingsKey
+                ? raw
+                : key === "hirsu-console-motion"
+                  ? legacy
+                  : null,
           },
         });
         assert.equal(
