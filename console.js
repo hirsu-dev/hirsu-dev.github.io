@@ -32,14 +32,14 @@ import { mountRadio } from "./music.js?v=21";
 import { netrunnerHome, relicHome, mountLayout } from "./layouts.js?v=24";
 import { switchboardHome, mountSwitchboard } from "./switchboard.js?v=24";
 import { overdriveHome, overdriveSections } from "./overdrive-content.js?v=24";
-import { createCityMotion } from "./city-motion.js?v=19";
+import { createCityMotion } from "./city-motion.js?v=25";
 import { mountSettings } from "./settings.js?v=18";
 import {
   introById,
   defaultIntro,
   introOptions,
   introStorageKey,
-} from "./intro-variants.js?v=17";
+} from "./intro-variants.js?v=25";
 import { mountProjectTerminal } from "./project-terminal.js?v=24";
 import { photoCredit } from "./photo.js?v=11";
 

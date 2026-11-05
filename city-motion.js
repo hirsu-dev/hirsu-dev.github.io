@@ -1,4 +1,5 @@
-import { introById, introArtwork } from "./intro-variants.js?v=17";
+import { introById, introArtwork } from "./intro-variants.js?v=25";
+import { mountSignalFX } from "./signal-fx.js?v=25";
 export const panelFrames = [
   {
     opacity: 0,
@@ -34,6 +35,7 @@ export function bootPhaseAt(elapsed) {
 }
 
 export function createCityMotion() {
+  const signalFX = mountSignalFX();
   const root = document.documentElement;
   root.dataset.visibility = document.hidden ? "hidden" : "visible";
   const boot = document.querySelector("#boot-dialog");
@@ -87,6 +89,7 @@ export function createCityMotion() {
     observer?.disconnect();
     observer = null;
     decorate(container);
+    signalFX.decorate(container);
     const elements = [
       ...container.querySelectorAll(
         "[data-reveal],.detail-layout>.panel,.project-media,.stack-grid>.panel,.project-card",
@@ -129,6 +132,7 @@ export function createCityMotion() {
     scene = container;
     observe(container);
     if (!transition || (bootActive && !bootReleasing)) return;
+    signalFX.transition();
     const hero = container.querySelector(".city-hero,.od-hero");
     if (hero) {
       animate(

@@ -29,7 +29,10 @@ test("Redline is an independent split-screen scene with bounded red particle geo
   const html = introArtwork("redline");
   assert.equal((html.match(/class="cut-panel /g) || []).length, 2);
   assert.match(html, /class="cut-beam"/);
-  assert.equal((html.match(/class="cut-spark"/g) || []).length, 72);
+  assert.equal(
+    (html.match(/class="cut-spark"/g) || []).length,
+    redlineParticles.length,
+  );
   assert.doesNotMatch(html, /intro-backdrop|red-gate|red-blades/);
   for (const p of redlineParticles) {
     assert.ok(p.y >= 0 && p.y <= 100);
